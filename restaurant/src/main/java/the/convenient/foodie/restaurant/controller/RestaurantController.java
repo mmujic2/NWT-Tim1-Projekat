@@ -1,15 +1,22 @@
 package the.convenient.foodie.restaurant.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dao.RestaurantRepository;
 import the.convenient.foodie.restaurant.entity.Restaurant;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-@Controller // This means that this class is a Controller
+import static java.util.Arrays.stream;
+
+@RestController
 @RequestMapping(path="/restaurant")
 public class RestaurantController {
     @Autowired
@@ -17,7 +24,7 @@ public class RestaurantController {
 
     @PostMapping(path="/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody String addNewRestaurant (@RequestParam String name
+    public @ResponseBody ResponseEntity<Restaurant> addNewRestaurant (@RequestParam String name
             , @RequestParam String managerUUID,@RequestParam String userId) {
 
         Restaurant restaurant = new Restaurant();
@@ -26,14 +33,13 @@ public class RestaurantController {
         restaurant.setCreated(LocalDateTime.now());
         restaurant.setCreatedBy(userId);
         restaurantRepository.save(restaurant);
-        return "Saved";
+        return new ResponseEntity<>(restaurant,HttpStatus.CREATED);
     }
 
     @GetMapping(path="/all")
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Iterable<Restaurant> getAllRestaurants() {
+    public @ResponseBody ResponseEntity<List<Restaurant>> getAllRestaurants() {
 
-        return restaurantRepository.findAll();
+        return new ResponseEntity<>(StreamSupport.stream(restaurantRepository.findAll().spliterator(),false).collect(Collectors.toList()), HttpStatus.OK);
     }
 }
 

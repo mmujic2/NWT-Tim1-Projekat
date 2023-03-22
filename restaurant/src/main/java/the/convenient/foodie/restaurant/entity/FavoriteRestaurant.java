@@ -1,11 +1,12 @@
 package the.convenient.foodie.restaurant.entity;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
