@@ -1,9 +1,9 @@
 package the.convenient.foodie.restaurant.entity;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

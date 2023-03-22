@@ -1,11 +1,11 @@
 package the.convenient.foodie.restaurant.entity;
 
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
