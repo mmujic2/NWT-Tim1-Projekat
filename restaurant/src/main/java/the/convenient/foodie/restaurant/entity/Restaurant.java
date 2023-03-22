@@ -27,7 +27,6 @@ public class Restaurant implements Serializable {
     private String name;
 
     @Column(name = "address")
-    @NotNull(message="Restaurant address must be specified!")
     @Size(min=3,max=80,message = "Restaurant address must be between 3 and 80 characters!")
     private String address;
 
