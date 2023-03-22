@@ -28,15 +28,15 @@ public class MenuItem implements Serializable {
     @NotNull(message = "Menu item price should not be null")
     @Positive(message = "Price can not be negative")
     @Column(name = "price")
-    private Number price;
+    private Double price;
 
     @Column(name = "discount_price")
     @Positive(message = "Discount price can not be negative")
-    private Number discount_price;
+    private Double discount_price;
 
     @Column(name = "prep_time")
     @Positive(message = "Prep time can not be negative")
-    private Number prep_time;
+    private Double prep_time;
 
     @Column(name = "uuid", updatable = false,unique = true, nullable = false, columnDefinition = "VARCHAR(60)")
     private String uuid;
@@ -65,7 +65,7 @@ public class MenuItem implements Serializable {
         }
     }
 
-    public MenuItem(Long id, String name, String description, Number price, Number discount_price, Number prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified, Menu menu) {
+    public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified, Menu menu) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -106,27 +106,27 @@ public class MenuItem implements Serializable {
         this.description = description;
     }
 
-    public Number getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Number price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public Number getDiscount_price() {
+    public Double getDiscount_price() {
         return discount_price;
     }
 
-    public void setDiscount_price(Number discount_price) {
+    public void setDiscount_price(Double discount_price) {
         this.discount_price = discount_price;
     }
 
-    public Number getPrep_time() {
+    public Double getPrep_time() {
         return prep_time;
     }
 
-    public void setPrep_time(Number prep_time) {
+    public void setPrep_time(Double prep_time) {
         this.prep_time = prep_time;
     }
 
