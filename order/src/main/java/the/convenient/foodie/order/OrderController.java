@@ -80,7 +80,7 @@ public class OrderController {
         return orderRepository.findAll();
     }
 
-    @GetMapping(path = "/get")
+    @GetMapping(path = "/getid")
     public @ResponseBody Order GetOrderById(@RequestParam Long id) {
         return orderRepository.findById(id).get();
     }
