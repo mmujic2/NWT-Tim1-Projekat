@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;
 
@@ -31,11 +32,13 @@ public class Restaurant implements Serializable {
     private String address;
 
     @Column(name = "map_coordinates")
+    @Pattern(regexp ="^((-)?[0-9]?[0-9]\\.\\d+,(\\s)*(-)?[1]?[0-9]?[0-9]\\.\\d+)",message = "Map coordinates must represent latitude and longitude values!")
     private String mapCoordinates;
 
 
     @Column(name = "manager_uuid",columnDefinition = "VARCHAR(60)")
     @NotNull(message="Restaurant manager must be specified!")
+    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
     private String managerUUID;
 
     @Column(name = "logo")
@@ -56,7 +59,7 @@ public class Restaurant implements Serializable {
     private String modifiedBy;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name="opening_hours")
     private OpeningHours openingHours;
 

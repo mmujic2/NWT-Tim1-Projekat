@@ -8,4 +8,6 @@ import the.convenient.foodie.restaurant.entity.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
+
+
 }
