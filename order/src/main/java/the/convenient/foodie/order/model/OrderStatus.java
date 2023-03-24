@@ -1,4 +1,4 @@
-package the.convenient.foodie.order;
+package the.convenient.foodie.order.model;
 
 public enum OrderStatus {
     Processing,

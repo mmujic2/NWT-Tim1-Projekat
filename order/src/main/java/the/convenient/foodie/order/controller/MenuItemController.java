@@ -1,8 +1,9 @@
-package the.convenient.foodie.order;
+package the.convenient.foodie.order.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import the.convenient.foodie.order.model.MenuItem;
+import the.convenient.foodie.order.repository.MenuItemRepository;
 
 @RestController
 @RequestMapping(path="/menuitem")
