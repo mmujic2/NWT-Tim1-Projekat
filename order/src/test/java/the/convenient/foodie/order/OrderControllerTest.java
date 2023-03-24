@@ -9,10 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,12 +30,6 @@ import java.util.ArrayList;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class OrderControllerTest {
-    /*@Value(value="${local.server.port}")
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;*/
-
     @Autowired
     private OrderRepository orderRepository;
 
@@ -54,9 +46,10 @@ public class OrderControllerTest {
     }
     @Before
     public void setUp() {
+        // Ovdje napuniti lokalnu bazu sa testnim podacima
         InitMenuItems();
         var menuItems = new ArrayList<Long>(); menuItems.add(1L);
-        Order newOrder = null;
+        Order newOrder;
         try {
             newOrder = new Order(1L,
                     1L,
@@ -77,14 +70,19 @@ public class OrderControllerTest {
 
     @Test
     public void OrderGetTest() throws Exception {
+        // Za testiranjem koristi se MockMvc
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/order/get")).andReturn();
+        // Get tijelo response-a
         String content = result.getResponse().getContentAsString();
 
+        // Koristi se objectmapper da bi se rekreirao objekat iz json-a, ne mora se ovo koristiti, moze se sve kroz
+        // kroz mockmvc objekat ali ovako je brze i ljepse
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
 
         var order = objectMapper.treeToValue(objectMapper.readTree(content).get(0), Order.class);
+        // Moze se koristiti Junit ili jupyter
         Assert.assertEquals(order.getOrderStatus(), "Fresh");
     }
 }
