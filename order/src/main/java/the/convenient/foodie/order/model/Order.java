@@ -54,6 +54,7 @@ public class Order {
     private Double deliveryFee;
 
     // @NotNull(message = "Order must have code")
+    @Nullable
     private String orderCode;
 
     @ManyToMany(fetch = FetchType.LAZY,

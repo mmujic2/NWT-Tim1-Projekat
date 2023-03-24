@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.transaction.Transactional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,10 +17,11 @@ import the.convenient.foodie.order.model.MenuItem;
 import the.convenient.foodie.order.model.Order;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {OrderApplication.class, JpaConfig.class})
 @Transactional
 @ActiveProfiles("test")
@@ -39,33 +36,50 @@ public class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    public void InitMenuItems() {
-        var newMenuItem = new MenuItem("Baklava", "Veoma lijepo", 3.0, 3.0, null, 30);
-        newMenuItem.setId(1L);
-        menuItemRepository.saveAndFlush(newMenuItem);
+    private static ObjectMapper objectMapper;
+
+    @BeforeAll
+    public static void setUp() {
+        // System.out.println("shjkshjkushjkshjkshjkshjkshjskhjkshsjkshjkshjkshjksjkhsjhkshjjhksshjkshjkkjhs");
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new ParameterNamesModule());
     }
-    @Before
-    public void setUp() {
+
+    public List<MenuItem> InitMenuItems() {
+        List<MenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(new MenuItem("Baklava", "Veoma lijepo", 3.0, 3.0, null, 30));
+        menuItemList.add(new MenuItem("Burek", "300g, dobar", 2.0, 1.5, null, 5));
+        menuItemList.add(new MenuItem("Grah", "400ml, sa suhim mesom", 6.5, 6.0, null, 5));
+
+        menuItemRepository.saveAll(menuItemList);
+        return menuItemRepository.findAll();
+    }
+
+    @BeforeEach
+    public void loadData() {
         // Ovdje napuniti lokalnu bazu sa testnim podacima
-        InitMenuItems();
-        var menuItems = new ArrayList<Long>(); menuItems.add(1L);
-        Order newOrder;
+        var menuItemList = InitMenuItems();
+
+        List<Order> orderItemList = new ArrayList<>();
         try {
-            newOrder = new Order(1L,
-                    1L,
-                    10,
-                    LocalDateTime.now(),
-                    1L,
-                    "Fresh",
-                    25.5,
-                    1L,
-                    3.5,
-                    "nope",
-                    menuItems);
+            orderItemList.add(new Order(1L, 1L, 30, LocalDateTime.now(), 1L, "Fresh", 25.5, null, 3.5, "somecode",
+                    new ArrayList<>(List.of(menuItemList.get(0).getId(), menuItemList.get(2).getId()))));
+            orderItemList.add(new Order(2L, 1L, 25, LocalDateTime.now(), null, "In delivery", 25.5, 1L, 3.5, null,
+                    new ArrayList<>(List.of(menuItemList.get(1).getId()))));
+            orderItemList.add(new Order(3L, 2L, 10, LocalDateTime.now(), null, "Delivered", 25.5, null, 3.5, null,
+                    new ArrayList<>(List.of(menuItemList.get(0).getId(), menuItemList.get(1).getId(), menuItemList.get(2).getId()))));
+
         } catch (MenuItemNotFoundException e) {
             throw new RuntimeException(e);
         }
-        orderRepository.saveAndFlush(newOrder);
+        orderRepository.saveAll(orderItemList);
+    }
+
+    @AfterEach
+    public void deleteData() {
+        orderRepository.deleteAll();
+        menuItemRepository.deleteAll();
     }
 
     @Test
@@ -77,12 +91,26 @@ public class OrderControllerTest {
 
         // Koristi se objectmapper da bi se rekreirao objekat iz json-a, ne mora se ovo koristiti, moze se sve kroz
         // kroz mockmvc objekat ali ovako je brze i ljepse
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.registerModule(new ParameterNamesModule());
 
-        var order = objectMapper.treeToValue(objectMapper.readTree(content).get(0), Order.class);
+        var orders = objectMapper.convertValue(objectMapper.readTree(content), Order[].class);
         // Moze se koristiti Junit ili jupyter
-        Assert.assertEquals(order.getOrderStatus(), "Fresh");
+        Assertions.assertEquals(3, orders.length);
+        for(var order : orders) {
+           Assertions.assertNotNull(order);
+        }
+    }
+
+    @Test
+    public void OrderGetByIdTest() throws Exception {
+        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders.get("/order/get/1")).andReturn();
+        MvcResult result2 = mockMvc.perform(MockMvcRequestBuilders.get("/order/get/2")).andReturn();
+
+        var order1 = objectMapper.convertValue(objectMapper.readTree(result1.getResponse().getContentAsString()), Order.class);
+        var order2 = objectMapper.convertValue(objectMapper.readTree(result2.getResponse().getContentAsString()), Order.class);
+
+        Assertions.assertEquals(order1.getId().longValue(), 1L);
+        Assertions.assertEquals(order2.getId().longValue(), 2L);
+        Assertions.assertEquals(order1.getOrderStatus(), "Fresh");
+        Assertions.assertEquals(order2.getOrderStatus(), "In delivery");
     }
 }
