@@ -1,5 +1,6 @@
 package the.convenient.foodie.order.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -43,6 +44,7 @@ public class MenuItem {
 
     }
 
+    @JsonCreator
     public MenuItem(String name, String description, Double price, Double discountPrice, Byte[] image, Integer preparationTime) {
         this.name = name;
         this.description = description;

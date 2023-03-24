@@ -10,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import the.convenient.foodie.order.exception.MenuItemDoesntExistException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +33,20 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(MenuItemDoesntExistException.class)
-    public String handleMenuItemDoesntExistException(MenuItemDoesntExistException ex) {
+    @ExceptionHandler(MenuItemNotFoundException.class)
+    public String handleMenuItemDoesntExistException(MenuItemNotFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(OrderNotFoundException.class)
+    public String handleOrderDoesntExistException(OrderNotFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(OrderPatchInvalidException.class)
+    public String handleOrderPatchInvalidException(OrderPatchInvalidException ex) {
         return ex.getMessage();
     }
 

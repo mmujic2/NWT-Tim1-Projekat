@@ -3,26 +3,36 @@ package the.convenient.foodie.order.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import io.swagger.v3.core.util.Json;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import the.convenient.foodie.order.exception.OrderNotFoundException;
+import the.convenient.foodie.order.exception.OrderPatchInvalidException;
 import the.convenient.foodie.order.model.Order;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
 
+import java.io.IOException;
+import java.util.List;
+
 @RestController
 @RequestMapping(path="/order")
 public class OrderController {
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    public OrderController(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
 
     @PostMapping(path = "/add")
@@ -38,15 +48,25 @@ public class OrderController {
         objectMapper.registerModule(new ParameterNamesModule());
 
         JsonNode patched = patch.apply(objectMapper.convertValue(targetOrder, JsonNode.class));
+        System.out.println(patched);
         return objectMapper.treeToValue(patched, Order.class);
     }
 
     @PatchMapping(path = "/update/{id}", consumes = "application/json")
     @ResponseBody
-    public String UpdateOrderStatus(@PathVariable Long id, @RequestBody JsonPatch patch) {
-        var order = orderRepository.findById(id).orElseThrow(RuntimeException::new);
+    public String UpdateOrderStatus(@PathVariable Long id, @RequestBody JsonNode patch) throws OrderNotFoundException, OrderPatchInvalidException, IOException {
+        List<String> allowedFields = List.of("/orderStatus", "/deliveryPersonId");
+        for(var p : patch) {
+            if(!p.get("path").asText().equals(allowedFields.get(0)) && !p.get("path").asText().equals(allowedFields.get(0))) {
+                throw new OrderPatchInvalidException();
+            }
+        }
+
+        JsonPatch patchClean = JsonPatch.fromJson(patch);
+
+        var order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
         try {
-            var orderPatched = applyPatchToOrder(patch, order);
+            var orderPatched = applyPatchToOrder(patchClean, order);
             orderRepository.save(orderPatched);
         } catch (JsonPatchException | JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -59,9 +79,9 @@ public class OrderController {
         return orderRepository.findAll();
     }
 
-    @GetMapping(path = "/getid")
-    public @ResponseBody Order GetOrderById(@RequestParam Long id) {
-        return orderRepository.findById(id).get();
+    @GetMapping(path = "/get/{id}")
+    public @ResponseBody Order GetOrderById(@PathVariable Long id) throws OrderNotFoundException {
+        return orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
     }
 
     @PostConstruct

@@ -1,6 +1,7 @@
 package the.convenient.foodie.order.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -8,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import the.convenient.foodie.order.repository.MenuItemRepository;
-import the.convenient.foodie.order.exception.MenuItemDoesntExistException;
+import the.convenient.foodie.order.exception.MenuItemNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class Order {
     }
 
     @JsonCreator
-    public Order(Long userId, Long restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, Long couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemDoesntExistException {
+    public Order(Long userId, Long restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, Long couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -91,13 +92,14 @@ public class Order {
         if(menuItemIds != null) {
             var menuItems = menuItemRepository.findAllById(menuItemIds);
             if(Iterables.size(menuItems) != menuItemIds.size()) {
-                throw new MenuItemDoesntExistException("One ore more menu items don't exist!");
+                throw new MenuItemNotFoundException();
             }
             this.menuItems = new ArrayList<>();
-            menuItems.forEach(this.menuItems::add);
+            this.menuItems.addAll(menuItems);
         }
-
     }
+
+
 
     public Long getId() {
         return id;
