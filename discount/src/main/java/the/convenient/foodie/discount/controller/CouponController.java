@@ -11,12 +11,11 @@ public class CouponController {
     private CouponRepository couponRepository;
 
     @PostMapping(path="/add") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewCoupon (@RequestParam String code, @RequestParam Integer quantity, @RequestParam Integer restaurant_id,@RequestParam Integer discount_percentage,@RequestParam String guid) {
+    public @ResponseBody String addNewCoupon (@RequestParam String code, @RequestParam Integer quantity, @RequestParam Integer restaurant_id,@RequestParam Integer discount_percentage,@RequestParam String coupon_uuid) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-        Coupon n = new Coupon(code,quantity,restaurant_id,discount_percentage,guid);
+        Coupon n = new Coupon(code,quantity,restaurant_id,discount_percentage,coupon_uuid);
         couponRepository.save(n);
         return "Added coupon";
     }
