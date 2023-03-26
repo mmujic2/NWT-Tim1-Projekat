@@ -16,6 +16,12 @@ public class Score {
     @Column(name = "money_spent", columnDefinition = "integer")
     private Integer money_spent;
 
+    public Score() {
+        this.user_id = null;
+        this.number_of_orders = 0;
+        this.money_spent = 0;
+    }
+
     public Score(Integer user_id, Integer number_of_orders, Integer money_spent) {
         this.user_id = user_id;
         this.number_of_orders = number_of_orders;

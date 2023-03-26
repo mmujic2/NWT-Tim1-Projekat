@@ -15,6 +15,12 @@ public class RequiredScore {
     @Column(name = "money_required", columnDefinition = "integer")
     private Integer     money_required;
 
+
+    public RequiredScore() {
+        this.orders_required = 0;
+        this.money_required = 0;
+    }
+
     public RequiredScore(Integer orders_required, Integer money_required) {
         this.orders_required = orders_required;
         this.money_required = money_required;

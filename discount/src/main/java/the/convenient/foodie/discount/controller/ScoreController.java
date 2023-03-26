@@ -1,11 +1,11 @@
 package the.convenient.foodie.discount.controller;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.discount.dao.ScoreRepository;
 import the.convenient.foodie.discount.entity.Score;
 
-@Controller // This means that this class is a Controller
+@RestController
 @RequestMapping(path="/score") // This means URL's start with /demo (after Application path)
 public class ScoreController {
     private ScoreRepository scoreRepository;
@@ -22,6 +22,7 @@ public class ScoreController {
     }
 
     @GetMapping(path="/all")
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Score> getAllScores() {
         // This returns a JSON or XML with the users
         return scoreRepository.findAll();

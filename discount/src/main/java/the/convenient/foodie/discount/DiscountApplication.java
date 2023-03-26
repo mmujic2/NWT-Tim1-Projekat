@@ -31,10 +31,17 @@ public class DiscountApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		dumpData();
+		cleanup();
+		startingData();
 	}
 
-	private void dumpData() {
+	private void cleanup() {
+		couponRepository.deleteAll();
+		scoreRepository.deleteAll();
+		requiredScoreRepository.deleteAll();
+	}
+
+	private void startingData() {
 		Coupon c = new Coupon("kod1213",5,132,20,"uuidkod1213");
 		couponRepository.save(c);
 		Score s = new Score(341,10,3150);

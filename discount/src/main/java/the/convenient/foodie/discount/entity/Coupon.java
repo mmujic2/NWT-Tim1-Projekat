@@ -20,6 +20,14 @@ public class Coupon {
     @Column(name = "coupon_uuid", unique = true, columnDefinition = "VARCHAR(60)")
     private String      coupon_uuid;
 
+    public Coupon() {
+        this.code = "";
+        this.quantity = 0;
+        this.restaurant_id = null;
+        this.discount_percentage = 0;
+        this.coupon_uuid = "";
+    }
+
     public Coupon(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage, String coupon_uuid) {
         this.code = code;
         this.quantity = quantity;
