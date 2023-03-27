@@ -37,6 +37,7 @@ public class MenuService {
     }
 
     public String deleteMenu(Long id) {
+        var menu = menuRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Menu with id " + id + " does not exist!"));
         menuRepository.deleteById(id);
         return "Menu with id " + id + " is successfully deleted!";
     }
