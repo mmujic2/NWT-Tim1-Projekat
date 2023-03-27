@@ -46,6 +46,7 @@ public class MenuApplication implements CommandLineRunner {
 		menu.setActive(true);
 		menu.setRestaurant_uuid(null);
 		menu.setDate_created(LocalDateTime.now());
+		menu.setRestaurant_uuid(UUIDGenerator.generateType1UUID().toString());
 		menuRepository.save(menu);
 		MenuItem menuItem = new MenuItem();
 		menuItem.setMenu(menu);

@@ -3,6 +3,7 @@ package the.convenient.foodie.menu.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import the.convenient.foodie.menu.util.UUIDGenerator;
@@ -19,10 +20,12 @@ public class MenuItem implements Serializable {
     private Long id;
 
     @NotNull(message = "Menu item name should not be null")
+    @Size(min = 2, max = 30, message = "Menu item name must be between 2 and 30 characters!")
     @Column(name = "name")
     private String name;
 
     @Column(name = "description")
+    @Size(max = 100, message = "Menu item description can contain a maximum of 100 characters!")
     private String description;
 
     @NotNull(message = "Menu item price should not be null")

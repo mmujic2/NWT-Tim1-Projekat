@@ -2,6 +2,7 @@ package the.convenient.foodie.menu.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -18,13 +19,14 @@ public class Menu implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "restaurant_uuid", unique = true, columnDefinition = "VARCHAR(60)")
+    @Column(name = "restaurant_uuid", columnDefinition = "VARCHAR(60)")
+    @NotNull(message="Menu restaurant must be specified!")
+    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
     private String restaurant_uuid;
 
     @Column(name = "active")
     @NotNull(message = "Active status should not be null")
     private boolean active;
-
 
     @Column(name="date_created")
     @NotNull(message = "Creation date must be specified!")
