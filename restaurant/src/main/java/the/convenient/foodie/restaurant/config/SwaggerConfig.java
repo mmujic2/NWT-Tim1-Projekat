@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.service;
+package the.convenient.foodie.restaurant.config;
 
 import io.swagger.v3.oas.models.media.Schema;
 import org.springdoc.core.utils.SpringDocUtils;

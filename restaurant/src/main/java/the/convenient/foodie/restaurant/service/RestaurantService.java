@@ -25,8 +25,6 @@ public class RestaurantService {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private OpeningHoursRepository openingHoursRepository;
 
     public Restaurant addNewRestaurant(RestaurantCreateRequest request) {
         Restaurant restaurant = new Restaurant();
@@ -67,7 +65,8 @@ public class RestaurantService {
     }
 
     public String deleteRestaurant(Long id) {
-        restaurantRepository.deleteById(id);
+        var restaurant = restaurantRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Restaurant with id " + id + " does not exist!"));
+        restaurantRepository.delete(restaurant);
         return "Restaurant with id " + id + " successfully deleted!";
     }
 
