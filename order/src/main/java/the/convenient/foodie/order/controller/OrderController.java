@@ -3,15 +3,12 @@ package the.convenient.foodie.order.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import io.swagger.v3.core.util.Json;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
@@ -27,13 +24,12 @@ import java.util.List;
 public class OrderController {
     private final OrderRepository orderRepository;
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
 
-    public OrderController(OrderRepository orderRepository) {
+    public OrderController(OrderRepository orderRepository, MenuItemRepository menuItemRepository) {
         this.orderRepository = orderRepository;
+        this.menuItemRepository = menuItemRepository;
     }
-
 
     @PostMapping(path = "/add")
      public @ResponseBody String addNewOrder(@Valid @RequestBody Order order) {
@@ -82,6 +78,13 @@ public class OrderController {
     @GetMapping(path = "/get/{id}")
     public @ResponseBody Order GetOrderById(@PathVariable Long id) throws OrderNotFoundException {
         return orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    public @ResponseBody String DeleteOrderById(@PathVariable Long id) throws OrderNotFoundException {
+
+        orderRepository.delete(orderRepository.findById(id).orElseThrow(OrderNotFoundException::new));
+        return "Order successfully deleted!";
     }
 
     @PostConstruct

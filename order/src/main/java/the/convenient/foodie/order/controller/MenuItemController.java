@@ -8,18 +8,19 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.order.exception.MenuItemNotFoundException;
 import the.convenient.foodie.order.model.MenuItem;
-import the.convenient.foodie.order.model.Order;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 
 @RestController
 @RequestMapping(path="/menuitem")
 public class MenuItemController {
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
+
+    public MenuItemController(MenuItemRepository menuItemRepository) {
+        this.menuItemRepository = menuItemRepository;
+    }
 
     @PostMapping(path = "/add")
     @ResponseBody
