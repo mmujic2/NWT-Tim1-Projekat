@@ -15,7 +15,6 @@ import the.convenient.foodie.menu.util.UUIDGenerator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@EnableJpaRepositories("the.convenient.foodie.menu.dao")
 @EntityScan(basePackages = "the.convenient.foodie.menu.entity")
 @SpringBootApplication
 public class MenuApplication implements CommandLineRunner {
@@ -33,8 +32,8 @@ public class MenuApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		cleanDB();
-		dumpData();
+		//cleanDB();
+		//dumpData();
 	}
 
 	private void cleanDB() {
