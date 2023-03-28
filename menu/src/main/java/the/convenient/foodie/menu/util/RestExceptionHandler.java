@@ -61,7 +61,7 @@ public class RestExceptionHandler {
         String errorMessage = "";
         if (!violations.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            violations.forEach(violation -> builder.append(" " + violation.getMessage()));
+            violations.forEach(violation -> builder.append("\n" + violation.getMessage()));
             errorMessage = builder.toString();
         } else {
             errorMessage = "ConstraintViolationException occured.";

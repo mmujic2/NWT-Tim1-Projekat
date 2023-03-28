@@ -12,7 +12,7 @@ public class MenuItemDto implements Serializable {
     @Size(max = 100, message = "Menu item description can contain a maximum of 100 characters!")
     private String description;
     @NotNull(message = "Menu item price should not be null")
-    @Min(value=0, message = "Price can n      fvdfgot be negative")
+    @Min(value=0, message = "Price can not be negative")
     private Double price;
 
     @Min(value = 0, message = "Discount price can not be negative")
