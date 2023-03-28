@@ -2,6 +2,7 @@ package the.convenient.foodie.menu.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "menu")
@@ -18,13 +21,14 @@ public class Menu implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "restaurant_uuid", unique = true, columnDefinition = "VARCHAR(60)")
+    @Column(name = "restaurant_uuid", columnDefinition = "VARCHAR(60)")
+    @NotNull(message="Menu restaurant must be specified!")
+    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
     private String restaurant_uuid;
 
     @Column(name = "active")
     @NotNull(message = "Active status should not be null")
     private boolean active;
-
 
     @Column(name="date_created")
     @NotNull(message = "Creation date must be specified!")
@@ -33,7 +37,19 @@ public class Menu implements Serializable {
     @Column(name="date_modified")
     private LocalDateTime date_modified;
 
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name="menu_id")
+    private List<MenuItem> menuItems;
+
     public Menu() {
+    }
+
+    public List<MenuItem> getMenuItems() {
+        return menuItems;
+    }
+
+    public void setMenuItems(List<MenuItem> menuItems) {
+        this.menuItems = menuItems;
     }
 
     public Menu(Long id, String restaurant_uuid, boolean active, LocalDateTime date_created, LocalDateTime date_modified) {

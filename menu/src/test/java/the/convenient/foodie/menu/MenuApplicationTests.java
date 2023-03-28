@@ -10,4 +10,5 @@ class MenuApplicationTests {
 	void contextLoads() {
 	}
 
+
 }
