@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import the.convenient.foodie.menu.dao.MenuItemRepository;
 import the.convenient.foodie.menu.dao.MenuRepository;
 import the.convenient.foodie.menu.model.Menu;
@@ -14,6 +15,7 @@ import the.convenient.foodie.menu.util.UUIDGenerator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@EnableDiscoveryClient
 @EntityScan(basePackages = "the.convenient.foodie.menu.model")
 @SpringBootApplication
 public class MenuApplication implements CommandLineRunner {
