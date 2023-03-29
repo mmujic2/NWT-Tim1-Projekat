@@ -11,15 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantUpdateRequest;
-import the.convenient.foodie.restaurant.dao.dto.ReviewCreateRequest;
-import the.convenient.foodie.restaurant.entity.Restaurant;
-import the.convenient.foodie.restaurant.entity.Review;
-import the.convenient.foodie.restaurant.service.RestaurantService;
+import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.service.ReviewService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path="/review")

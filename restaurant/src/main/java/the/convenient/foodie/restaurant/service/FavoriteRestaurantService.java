@@ -3,11 +3,9 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.restaurant.dao.FavoriteRestaurantRepository;
-import the.convenient.foodie.restaurant.dao.RestaurantRepository;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.entity.FavoriteRestaurant;
-import the.convenient.foodie.restaurant.entity.Restaurant;
+import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
+import the.convenient.foodie.restaurant.repository.RestaurantRepository;
+import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 
 import java.time.LocalDateTime;
 

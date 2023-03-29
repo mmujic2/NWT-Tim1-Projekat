@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dao.dto.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantUpdateRequest;
-import the.convenient.foodie.restaurant.entity.FavoriteRestaurant;
-import the.convenient.foodie.restaurant.entity.Restaurant;
+import the.convenient.foodie.restaurant.dto.OpeningHoursCreateRequest;
+import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
+import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
+import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
+import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
 import the.convenient.foodie.restaurant.service.RestaurantService;
 

@@ -1,17 +1,15 @@
 package the.convenient.foodie.restaurant.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.restaurant.dao.CategoryRepository;
-import the.convenient.foodie.restaurant.dao.OpeningHoursRepository;
-import the.convenient.foodie.restaurant.dao.RestaurantRepository;
-import the.convenient.foodie.restaurant.dao.dto.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dao.dto.RestaurantUpdateRequest;
-import the.convenient.foodie.restaurant.entity.OpeningHours;
-import the.convenient.foodie.restaurant.entity.Restaurant;
+import the.convenient.foodie.restaurant.repository.CategoryRepository;
+import the.convenient.foodie.restaurant.repository.RestaurantRepository;
+import the.convenient.foodie.restaurant.dto.OpeningHoursCreateRequest;
+import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
+import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
+import the.convenient.foodie.restaurant.model.OpeningHours;
+import the.convenient.foodie.restaurant.model.Restaurant;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
