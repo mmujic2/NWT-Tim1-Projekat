@@ -40,7 +40,6 @@ public class OrderControllerTest {
 
     @BeforeAll
     public static void setUp() {
-        // System.out.println("shjkshjkushjkshjkshjkshjkshjskhjkshsjkshjkshjkshjksjkhsjhkshjjhksshjkshjkkjhs");
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
