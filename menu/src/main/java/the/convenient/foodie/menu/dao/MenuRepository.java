@@ -2,7 +2,7 @@ package the.convenient.foodie.menu.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import the.convenient.foodie.menu.entity.Menu;
+import the.convenient.foodie.menu.model.Menu;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {

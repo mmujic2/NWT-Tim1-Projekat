@@ -1,11 +1,9 @@
-package the.convenient.foodie.menu.entity;
+package the.convenient.foodie.menu.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import the.convenient.foodie.menu.util.UUIDGenerator;
 
 import java.io.Serializable;
@@ -29,16 +27,16 @@ public class MenuItem implements Serializable {
     private String description;
 
     @NotNull(message = "Menu item price should not be null")
-    @Positive(message = "Price can not be negative")
+    @Min(value = 0, message = "Price can not be negative")
     @Column(name = "price")
     private Double price;
 
     @Column(name = "discount_price")
-    @Positive(message = "Discount price can not be negative")
+    @Min(value = 0, message = "Discount price can not be negative")
     private Double discount_price;
 
     @Column(name = "prep_time")
-    @Positive(message = "Prep time can not be negative")
+    @Min(value = 0,message = "Prep time can not be negative")
     private Double prep_time;
 
     @Column(name = "uuid", updatable = false,unique = true, nullable = false, columnDefinition = "VARCHAR(60)")
@@ -55,11 +53,6 @@ public class MenuItem implements Serializable {
     @Column(name="date_modified")
     private LocalDateTime date_modified;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "menu_id")
-    @NotNull(message = "The menu item belongs to the menu")
-    Menu menu;
 
     @PrePersist
     public void initializeUUID() {
@@ -68,7 +61,7 @@ public class MenuItem implements Serializable {
         }
     }
 
-    public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified, Menu menu) {
+    public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -79,7 +72,6 @@ public class MenuItem implements Serializable {
         this.image = image;
         this.date_created = date_created;
         this.date_modified = date_modified;
-        this.menu = menu;
     }
 
     public MenuItem() {
@@ -165,11 +157,4 @@ public class MenuItem implements Serializable {
         this.date_modified = date_modified;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
 }

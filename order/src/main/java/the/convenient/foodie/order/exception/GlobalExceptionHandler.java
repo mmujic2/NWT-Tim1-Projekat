@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,25 +35,32 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MenuItemNotFoundException.class)
-    public String handleMenuItemDoesntExistException(MenuItemNotFoundException ex) {
-        return ex.getMessage();
+    public ResponseEntity<Map<String, List<String>>>  handleMenuItemDoesntExistException(MenuItemNotFoundException ex) {
+        return new ResponseEntity<>(messageToMap(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseBody
     @ExceptionHandler(OrderNotFoundException.class)
-    public String handleOrderDoesntExistException(OrderNotFoundException ex) {
-        return ex.getMessage();
+    public ResponseEntity<Map<String, List<String>>>  handleOrderDoesntExistException(OrderNotFoundException ex) {
+        return new ResponseEntity<>(messageToMap(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseBody
     @ExceptionHandler(OrderPatchInvalidException.class)
-    public String handleOrderPatchInvalidException(OrderPatchInvalidException ex) {
-        return ex.getMessage();
+    public ResponseEntity<Map<String, List<String>>> handleOrderPatchInvalidException(OrderPatchInvalidException ex) {
+        return new ResponseEntity<>(messageToMap(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_MODIFIED);
     }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();
         errorResponse.put("errors", errors);
+        return errorResponse;
+    }
+
+    private Map<String, List<String>> messageToMap(String message) {
+        Map<String, List<String>> errorResponse = new HashMap<>();
+        List<String> messageList = new ArrayList<>(); messageList.add(message);
+        errorResponse.put("errors", messageList);
         return errorResponse;
     }
 
