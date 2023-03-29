@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dao.dto.CategoryCreateRequest;
-import the.convenient.foodie.restaurant.entity.Category;
+import the.convenient.foodie.restaurant.dto.CategoryCreateRequest;
+import the.convenient.foodie.restaurant.model.Category;
+import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.CategoryService;
 
 import java.util.List;
@@ -94,6 +95,17 @@ public class CategoryController {
         var category = categoryService.getCategory(id);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
+
+    @Operation(description = "Get restaurants by category id")
+    @GetMapping(path="/{id}/restaurant")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<Restaurant>> getRestaurantsWithCategory(
+            @Parameter(description = "Category ID", required = true)
+            @PathVariable Long id)
+    {
+                return new ResponseEntity<>(categoryService.getRestaurantsWithCategory(id),HttpStatus.OK);
+    }
+
 
     @Operation(description = "Delete a category")
     @ApiResponses ( value = {

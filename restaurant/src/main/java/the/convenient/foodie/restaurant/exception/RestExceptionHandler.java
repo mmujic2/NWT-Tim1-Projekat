@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.util;
+package the.convenient.foodie.restaurant.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;

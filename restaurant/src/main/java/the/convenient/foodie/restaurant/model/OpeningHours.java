@@ -1,8 +1,7 @@
-package the.convenient.foodie.restaurant.entity;
+package the.convenient.foodie.restaurant.model;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;

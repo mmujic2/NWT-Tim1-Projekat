@@ -1,32 +1,30 @@
-package the.convenient.foodie.restaurant.entity;
-
+package the.convenient.foodie.restaurant.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="favorite_restaurant")
-public class FavoriteRestaurant implements Serializable {
+@Table(name="restaurant_image")
+public class RestaurantImage implements Serializable {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
 
-    @Column(name="user_uuid")
-    @NotNull(message = "A user must be specified!")
-    private String userUUID;
+    @Column(name="image")
+    @Lob
+    @NotNull(message = "Image data must be defined!")
+    private byte[] image;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull(message = "A restaurant must be specified!")
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
+    @JoinColumn(name="restaurant_id")
+    @NotNull(message = "The image must be tied to a restaurant!")
+    Restaurant restaurant;
 
     @Column(name="created")
     @NotNull(message = "Creation date must be specified!")
@@ -41,9 +39,9 @@ public class FavoriteRestaurant implements Serializable {
     @Column(name="modified_by")
     private String modifiedBy;
 
-    public FavoriteRestaurant(Long id, String userUUID, Restaurant restaurant, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
+    public RestaurantImage(Long id, byte[] image, Restaurant restaurant, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
         this.id = id;
-        this.userUUID = userUUID;
+        this.image = image;
         this.restaurant = restaurant;
         this.created = created;
         this.createdBy = createdBy;
@@ -51,14 +49,14 @@ public class FavoriteRestaurant implements Serializable {
         this.modifiedBy = modifiedBy;
     }
 
-    public FavoriteRestaurant(String userUUID, Restaurant restaurant, LocalDateTime created, String createdBy) {
-        this.userUUID = userUUID;
+    public RestaurantImage(@NotNull(message = "Image data must be defined!") byte[] image, Restaurant restaurant, LocalDateTime created, String createdBy) {
+        this.image = image;
         this.restaurant = restaurant;
         this.created = created;
         this.createdBy = createdBy;
     }
 
-    public FavoriteRestaurant() {
+    public RestaurantImage() {
     }
 
     public Long getId() {
@@ -69,12 +67,12 @@ public class FavoriteRestaurant implements Serializable {
         this.id = id;
     }
 
-    public String getUserUUID() {
-        return userUUID;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setUserUUID(String userUUID) {
-        this.userUUID = userUUID;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public Restaurant getRestaurant() {
@@ -117,3 +115,4 @@ public class FavoriteRestaurant implements Serializable {
         this.modifiedBy = modifiedBy;
     }
 }
+

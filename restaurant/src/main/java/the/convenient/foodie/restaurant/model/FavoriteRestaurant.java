@@ -1,35 +1,32 @@
-package the.convenient.foodie.restaurant.entity;
+package the.convenient.foodie.restaurant.model;
 
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
-@Table(name="category")
-public class Category implements Serializable {
-
+@Table(name="favorite_restaurant")
+public class FavoriteRestaurant implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 
+    @Column(name="user_uuid")
+    @NotNull(message = "A user must be specified!")
+    private String userUUID;
 
-    @Size(min=3,max=80,message="Category name must be between 3 and 80 characters!")
-    @NotNull(message = "Category name must be defined!")
-    @Column(name="name")
-    private String name;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "categories")
-    Set<Restaurant> restaurants;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull(message = "A restaurant must be specified!")
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
     @Column(name="created")
     @NotNull(message = "Creation date must be specified!")
@@ -44,23 +41,24 @@ public class Category implements Serializable {
     @Column(name="modified_by")
     private String modifiedBy;
 
-
-    public Category(Long id, String name, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
+    public FavoriteRestaurant(Long id, String userUUID, Restaurant restaurant, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
         this.id = id;
-        this.name = name;
+        this.userUUID = userUUID;
+        this.restaurant = restaurant;
         this.created = created;
         this.createdBy = createdBy;
         this.modified = modified;
         this.modifiedBy = modifiedBy;
     }
 
-    public Category(String name,LocalDateTime created, String createdBy) {
-        this.name = name;
+    public FavoriteRestaurant(String userUUID, Restaurant restaurant, LocalDateTime created, String createdBy) {
+        this.userUUID = userUUID;
+        this.restaurant = restaurant;
         this.created = created;
         this.createdBy = createdBy;
     }
 
-    public Category() {
+    public FavoriteRestaurant() {
     }
 
     public Long getId() {
@@ -71,20 +69,20 @@ public class Category implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserUUID() {
+        return userUUID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserUUID(String userUUID) {
+        this.userUUID = userUUID;
     }
 
-    public Set<Restaurant> getRestaurants() {
-        return restaurants;
+    public Restaurant getRestaurant() {
+        return restaurant;
     }
 
-    public void setRestaurants(Set<Restaurant> restaurants) {
-        this.restaurants = restaurants;
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 
     public LocalDateTime getCreated() {

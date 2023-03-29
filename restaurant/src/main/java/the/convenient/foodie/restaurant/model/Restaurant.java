@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.entity;
+package the.convenient.foodie.restaurant.model;
 
 
 import jakarta.persistence.*;

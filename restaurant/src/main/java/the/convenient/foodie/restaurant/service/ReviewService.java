@@ -3,17 +3,12 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.restaurant.dao.CategoryRepository;
-import the.convenient.foodie.restaurant.dao.RestaurantRepository;
-import the.convenient.foodie.restaurant.dao.ReviewRepository;
-import the.convenient.foodie.restaurant.dao.dto.ReviewCreateRequest;
-import the.convenient.foodie.restaurant.entity.Category;
-import the.convenient.foodie.restaurant.entity.Review;
+import the.convenient.foodie.restaurant.repository.RestaurantRepository;
+import the.convenient.foodie.restaurant.repository.ReviewRepository;
+import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.model.Review;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ReviewService {

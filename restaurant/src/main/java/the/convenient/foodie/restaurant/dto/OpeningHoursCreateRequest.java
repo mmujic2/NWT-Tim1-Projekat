@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.dao.dto;
+package the.convenient.foodie.restaurant.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

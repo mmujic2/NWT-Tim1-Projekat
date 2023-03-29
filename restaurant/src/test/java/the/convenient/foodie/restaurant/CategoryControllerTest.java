@@ -14,11 +14,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import the.convenient.foodie.restaurant.config.JPAConfig;
-import the.convenient.foodie.restaurant.dao.CategoryRepository;
-import the.convenient.foodie.restaurant.dao.RestaurantRepository;
-import the.convenient.foodie.restaurant.dao.dto.CategoryCreateRequest;
-import the.convenient.foodie.restaurant.entity.Category;
-import the.convenient.foodie.restaurant.entity.Restaurant;
+import the.convenient.foodie.restaurant.repository.CategoryRepository;
+import the.convenient.foodie.restaurant.repository.RestaurantRepository;
+import the.convenient.foodie.restaurant.dto.CategoryCreateRequest;
+import the.convenient.foodie.restaurant.model.Category;
+import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;
 
 import java.time.LocalDateTime;
