@@ -10,6 +10,7 @@ import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
 import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
 import the.convenient.foodie.restaurant.model.OpeningHours;
 import the.convenient.foodie.restaurant.model.Restaurant;
+import the.convenient.foodie.restaurant.repository.ReviewRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,6 +24,9 @@ public class RestaurantService {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public Restaurant addNewRestaurant(RestaurantCreateRequest request) {
         Restaurant restaurant = new Restaurant();
@@ -115,5 +119,11 @@ public class RestaurantService {
         restaurant.setModifiedBy("test");
         restaurantRepository.save(restaurant);
         return restaurant;
+    }
+
+    public Double calculateAverageRatingForRestaurant(Long restaurantId) {
+        var exception = new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!");
+        restaurantRepository.findById(restaurantId).orElseThrow(()->exception);
+        return reviewRepository.calculateAverageRatingForRestaurant(restaurantId);
     }
 }

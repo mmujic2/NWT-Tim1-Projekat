@@ -36,16 +36,16 @@ public class ReviewService {
     }
 
     public List<Review> getReviewsForRestaurant(Long restaurantId) {
-        return null;
+        var exception = new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!");
+        restaurantRepository.findById(restaurantId).orElseThrow(()-> exception);
+        return reviewRepository.getReviewsForRestaurant(restaurantId);
     }
 
     public List<Review> getUserReviews(String userUUID) {
-        return null;
+
+        return reviewRepository.getUserReviews(userUUID);
     }
 
-    public Double calculateAverageRatingForRestaurant(Long restaurantId) {
-        return null;
-    }
 
     public String deleteReview(Long id) {
         var review = reviewRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Review with id " + id + " does not exist!"));

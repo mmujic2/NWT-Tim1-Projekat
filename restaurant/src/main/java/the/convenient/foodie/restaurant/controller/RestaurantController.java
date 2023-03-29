@@ -105,6 +105,11 @@ public class RestaurantController {
     }
 
     @Operation(description = "Get restaurants with categories")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found restaurants with provided categories",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    })})
     @GetMapping(path="/category")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<List<Restaurant>> getRestaurantsWithCategories(
@@ -112,6 +117,24 @@ public class RestaurantController {
             @RequestParam List<Long> categoryIds)
     {
         return new ResponseEntity<>(restaurantService.getRestaurantsWithCategories(categoryIds),HttpStatus.OK);
+    }
+
+    @Operation(description = "Get restaurant average rating")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully calculated average restaurant rating",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided ID not found",
+                    content = @Content)
+    })
+    @GetMapping(path="/{id}/rating")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<Double> getAverageRatingForRestaurant(
+            @Parameter(description = "Restaurant ID", required = true)
+            @PathVariable Long id)
+    {
+        return new ResponseEntity<>(restaurantService.calculateAverageRatingForRestaurant(id),HttpStatus.OK);
     }
 
     @Operation(description = "Delete a restaurant")

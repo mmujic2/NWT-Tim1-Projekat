@@ -3,11 +3,13 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class FavoriteRestaurantService {
@@ -15,6 +17,10 @@ public class FavoriteRestaurantService {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private FavoriteRestaurantRepository favoriteRestaurantRepository;
+
+    public List<Restaurant> getFavoriteRestaurants(String userUUID) {
+        return null;
+    }
     public FavoriteRestaurant addRestaurantToFavorites(Long restaurantId,String userUUID) {
         FavoriteRestaurant favoriteRestaurant = new FavoriteRestaurant();
         var exception = new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!");
@@ -27,6 +33,10 @@ public class FavoriteRestaurantService {
         favoriteRestaurantRepository.save(favoriteRestaurant);
 
         return favoriteRestaurant;
+    }
+
+    public String removeRestaurantFromFavorites(Long restaurantId, String userUUID) {
+        return null;
     }
 
 

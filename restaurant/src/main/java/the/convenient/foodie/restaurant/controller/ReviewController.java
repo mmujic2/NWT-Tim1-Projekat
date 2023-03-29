@@ -15,6 +15,8 @@ import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.service.ReviewService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path="/review")
 public class ReviewController {
@@ -22,6 +24,38 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+
+    @Operation(description = "Get all reviews of a restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found all reviews for the restaurant",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Review.class)) }),
+            @ApiResponse(responseCode = "400", description = "Restaurant with provided ID does not exist",
+                    content = @Content)})
+    @GetMapping(path="/restaurant/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody ResponseEntity<List<Review>> getReviewsForRestaurant (
+            @Parameter(description = "Restaurant ID", required = true)
+            @PathVariable Long id) {
+        var reviews = reviewService.getReviewsForRestaurant(id);
+        return new ResponseEntity<>(reviews,HttpStatus.CREATED);
+    }
+
+    @Operation(description = "Get all reviews created by a user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found all reviews for the user",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Review.class)) }),
+            @ApiResponse(responseCode = "400", description = "User with provided UUID does not exist",
+                    content = @Content)})
+    @GetMapping(path="/user/{uuid}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody ResponseEntity<List<Review>> getReviewsForUser (
+            @Parameter(description = "User UUID", required = true)
+            @PathVariable String uuid) {
+        var reviews = reviewService.getUserReviews(uuid);
+        return new ResponseEntity<>(reviews,HttpStatus.CREATED);
+    }
 
     @Operation(description = "Create a new review")
     @ApiResponses(value = {
