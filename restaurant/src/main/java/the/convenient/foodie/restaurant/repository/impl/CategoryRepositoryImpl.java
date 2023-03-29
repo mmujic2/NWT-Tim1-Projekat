@@ -16,7 +16,8 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     @Override
     public List<Restaurant> getRestaurantsWithCategories(List<Long> categoryIds) {
         var hql = "SELECT r from Restaurant r, Category c where c.id in (:categoryIds)"
-                + " and c member of r.categories";
+                + " and c member of r.categories and NOT EXISTS (SELECT c2 from Category c2" +
+                " where c2.id in (:categoryIds) and c2 not member of r.categories)";
         var query = entityManager.createQuery(hql, Restaurant.class).setParameter("categoryIds",categoryIds);
         return query.getResultList();
     }

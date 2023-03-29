@@ -109,7 +109,7 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<List<Restaurant>> getRestaurantsWithCategories(
             @Parameter(description = "List of category IDs", required = true)
-            @RequestBody List<Long> categoryIds)
+            @RequestParam List<Long> categoryIds)
     {
         return new ResponseEntity<>(restaurantService.getRestaurantsWithCategories(categoryIds),HttpStatus.OK);
     }
