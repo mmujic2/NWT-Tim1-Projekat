@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,15 +39,20 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex){
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    private ResponseEntity<Map<String, List<String>>> handleEntityNotFound(EntityNotFoundException ex){
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getMessage().toString());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private ResponseEntity<String> handleEmptyResultDataAccessNotFound(EmptyResultDataAccessException ex){
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    private ResponseEntity<Map<String, List<String>>> handleEmptyResultDataAccessNotFound(EmptyResultDataAccessException ex){
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getMessage().toString());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.NOT_FOUND);
     }
+
 
 
 }
