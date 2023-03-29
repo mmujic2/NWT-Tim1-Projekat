@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import the.convenient.foodie.restaurant.model.*;
 import the.convenient.foodie.restaurant.repository.*;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-
+@EnableDiscoveryClient
 @EntityScan(basePackages="the.convenient.foodie.restaurant.model")
 @SpringBootApplication
 public class RestaurantApplication implements CommandLineRunner {

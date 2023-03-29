@@ -5,5 +5,5 @@ import the.convenient.foodie.restaurant.model.Restaurant;
 import java.util.List;
 
 public interface CategoryRepositoryCustom {
-    List<Restaurant> getRestaurantsWithCategory(Long categoryId);
+    List<Restaurant> getRestaurantsWithCategories(List<Long> categoryId);
 }

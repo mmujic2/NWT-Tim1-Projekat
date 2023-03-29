@@ -15,6 +15,7 @@ import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
 import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 import the.convenient.foodie.restaurant.model.Restaurant;
+import the.convenient.foodie.restaurant.service.CategoryService;
 import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
 import the.convenient.foodie.restaurant.service.RestaurantService;
 
@@ -28,6 +29,7 @@ public class RestaurantController {
 
     @Autowired
     private FavoriteRestaurantService favoriteRestaurantService;
+
 
 
     @Operation(description = "Create a new restaurant")
@@ -100,6 +102,16 @@ public class RestaurantController {
             @PathVariable  Long id) {
         var restaurant = restaurantService.getRestaurant(id);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
+    @Operation(description = "Get restaurants with categories")
+    @GetMapping(path="/category")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<Restaurant>> getRestaurantsWithCategories(
+            @Parameter(description = "List of category IDs", required = true)
+            @RequestBody List<Long> categoryIds)
+    {
+        return new ResponseEntity<>(restaurantService.getRestaurantsWithCategories(categoryIds),HttpStatus.OK);
     }
 
     @Operation(description = "Delete a restaurant")
