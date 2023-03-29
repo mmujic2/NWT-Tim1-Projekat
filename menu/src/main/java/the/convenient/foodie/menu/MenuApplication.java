@@ -5,17 +5,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import the.convenient.foodie.menu.dao.MenuItemRepository;
 import the.convenient.foodie.menu.dao.MenuRepository;
-import the.convenient.foodie.menu.entity.Menu;
-import the.convenient.foodie.menu.entity.MenuItem;
+import the.convenient.foodie.menu.model.Menu;
+import the.convenient.foodie.menu.model.MenuItem;
 import the.convenient.foodie.menu.util.UUIDGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@EntityScan(basePackages = "the.convenient.foodie.menu.entity")
+@EntityScan(basePackages = "the.convenient.foodie.menu.model")
 @SpringBootApplication
 public class MenuApplication implements CommandLineRunner {
 
@@ -32,8 +31,8 @@ public class MenuApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		//cleanDB();
-		//dumpData();
+		cleanDB();
+		dumpData();
 	}
 
 	private void cleanDB() {
@@ -56,9 +55,7 @@ public class MenuApplication implements CommandLineRunner {
 		menuItem.setDate_created(LocalDateTime.now());
 		var itemi = new ArrayList<MenuItem>();
 		itemi.add(menuItem);
-		menu.setMenuItems(itemi);
-		menuRepository.save(menu);
-		menuItemRepository.save(menuItem);
+
 
 		MenuItem menuItem2 = new MenuItem();
 		menuItem2.setName("Ćevapi desetka");
@@ -67,7 +64,10 @@ public class MenuApplication implements CommandLineRunner {
 		menuItem2.setDiscount_price(null);
 		menuItem2.setPrep_time(5.0);
 		menuItem2.setDate_created(LocalDateTime.now());
-		menuItemRepository.save(menuItem2);
+		itemi.add(menuItem2);
+
+		menu.setMenuItems(itemi);
+		menuRepository.save(menu);
 
 	}
 }

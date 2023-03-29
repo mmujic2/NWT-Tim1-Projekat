@@ -1,12 +1,9 @@
-package the.convenient.foodie.menu.entity;
+package the.convenient.foodie.menu.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import the.convenient.foodie.menu.util.UUIDGenerator;
 
 import java.io.Serializable;

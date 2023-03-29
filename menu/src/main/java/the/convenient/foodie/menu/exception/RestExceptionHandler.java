@@ -1,4 +1,4 @@
-package the.convenient.foodie.menu.util;
+package the.convenient.foodie.menu.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;

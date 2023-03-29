@@ -10,12 +10,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.menu.dao.dto.MenuDto;
-import the.convenient.foodie.menu.dao.dto.MenuItemDto;
-import the.convenient.foodie.menu.entity.Menu;
+import the.convenient.foodie.menu.dto.MenuDto;
+import the.convenient.foodie.menu.dto.MenuItemDto;
+import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.service.MenuService;
 
 import java.util.List;

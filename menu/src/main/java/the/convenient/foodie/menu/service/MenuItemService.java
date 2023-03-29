@@ -4,10 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.menu.dao.MenuItemRepository;
-import the.convenient.foodie.menu.dao.dto.MenuDto;
-import the.convenient.foodie.menu.dao.dto.MenuItemDto;
-import the.convenient.foodie.menu.entity.Menu;
-import the.convenient.foodie.menu.entity.MenuItem;
+import the.convenient.foodie.menu.dto.MenuItemDto;
+import the.convenient.foodie.menu.model.MenuItem;
 
 import java.time.LocalDateTime;
 

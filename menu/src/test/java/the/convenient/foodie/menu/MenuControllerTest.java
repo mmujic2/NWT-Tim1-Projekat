@@ -16,14 +16,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import the.convenient.foodie.menu.config.JPAConfig;
 import the.convenient.foodie.menu.dao.MenuItemRepository;
 import the.convenient.foodie.menu.dao.MenuRepository;
-import the.convenient.foodie.menu.dao.dto.MenuDto;
-import the.convenient.foodie.menu.entity.Menu;
-import the.convenient.foodie.menu.entity.MenuItem;
+import the.convenient.foodie.menu.dto.MenuDto;
+import the.convenient.foodie.menu.model.Menu;
+import the.convenient.foodie.menu.model.MenuItem;
 import the.convenient.foodie.menu.util.UUIDGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -155,7 +154,7 @@ public class MenuControllerTest {
         Assertions.assertTrue(content.contains("UUID must be 36 characters long!"));
     }
 
-    
+
 
     @Test
     public void test() {

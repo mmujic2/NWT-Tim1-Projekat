@@ -1,4 +1,4 @@
-package the.convenient.foodie.menu.dao.dto;
+package the.convenient.foodie.menu.dto;
 
 import jakarta.validation.constraints.*;
 

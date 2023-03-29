@@ -11,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.menu.dao.dto.MenuDto;
-import the.convenient.foodie.menu.dao.dto.MenuItemDto;
-import the.convenient.foodie.menu.entity.Menu;
-import the.convenient.foodie.menu.entity.MenuItem;
+import the.convenient.foodie.menu.dto.MenuItemDto;
+import the.convenient.foodie.menu.model.Menu;
+import the.convenient.foodie.menu.model.MenuItem;
 import the.convenient.foodie.menu.service.MenuItemService;
 
 @RestController
