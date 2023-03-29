@@ -9,6 +9,7 @@ import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReviewService {
@@ -34,6 +35,17 @@ public class ReviewService {
         return review;
     }
 
+    public List<Review> getReviewsForRestaurant(Long restaurantId) {
+        return null;
+    }
+
+    public List<Review> getUserReviews(String userUUID) {
+        return null;
+    }
+
+    public Double calculateAverageRatingForRestaurant(Long restaurantId) {
+        return null;
+    }
 
     public String deleteReview(Long id) {
         var review = reviewRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Review with id " + id + " does not exist!"));

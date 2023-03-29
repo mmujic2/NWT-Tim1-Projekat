@@ -14,10 +14,10 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<Restaurant> getRestaurantsWithCategory(Long categoryId) {
-        var hql = "SELECT r from Restaurant r, Category c where c.id = : categoryId"
+    public List<Restaurant> getRestaurantsWithCategories(List<Long> categoryIds) {
+        var hql = "SELECT r from Restaurant r, Category c where c.id in (:categoryIds)"
                 + " and c member of r.categories";
-        var query = entityManager.createQuery(hql, Restaurant.class).setParameter("categoryId",categoryId);
+        var query = entityManager.createQuery(hql, Restaurant.class).setParameter("categoryIds",categoryIds);
         return query.getResultList();
     }
 }

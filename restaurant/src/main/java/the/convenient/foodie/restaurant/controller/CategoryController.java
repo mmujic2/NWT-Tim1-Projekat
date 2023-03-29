@@ -96,15 +96,6 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @Operation(description = "Get restaurants by category id")
-    @GetMapping(path="/{id}/restaurant")
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<List<Restaurant>> getRestaurantsWithCategory(
-            @Parameter(description = "Category ID", required = true)
-            @PathVariable Long id)
-    {
-                return new ResponseEntity<>(categoryService.getRestaurantsWithCategory(id),HttpStatus.OK);
-    }
 
 
     @Operation(description = "Delete a category")

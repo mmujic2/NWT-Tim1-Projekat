@@ -62,6 +62,12 @@ public class RestaurantService {
         return restaurant.orElseThrow(()-> exception);
     }
 
+    public List<Restaurant> getRestaurantsWithCategories(List<Long> categoryIds) {
+
+        return categoryRepository.getRestaurantsWithCategories(categoryIds);
+
+    }
+
     public String deleteRestaurant(Long id) {
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Restaurant with id " + id + " does not exist!"));
         restaurantRepository.delete(restaurant);
