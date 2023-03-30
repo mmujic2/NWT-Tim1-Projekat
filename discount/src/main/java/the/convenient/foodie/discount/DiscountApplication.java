@@ -12,6 +12,7 @@ import the.convenient.foodie.discount.dao.ScoreRepository;
 import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.entity.RequiredScore;
 import the.convenient.foodie.discount.entity.Score;
+import the.convenient.foodie.discount.util.UUIDGenerator;
 
 @EnableJpaRepositories("the.convenient.foodie.discount.dao")
 @EntityScan(basePackages = "the.convenient.foodie.discount.entity")
@@ -43,6 +44,7 @@ public class DiscountApplication implements CommandLineRunner {
 
 	private void startingData() {
 		Coupon c = new Coupon("kod1213",5,132,20);
+		c.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 		couponRepository.save(c);
 		Score s = new Score(341,10,3150);
 		scoreRepository.save(s);
