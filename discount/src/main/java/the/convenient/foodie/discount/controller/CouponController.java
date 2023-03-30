@@ -17,7 +17,7 @@ public class CouponController {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-        Coupon n = new Coupon(code,quantity,restaurant_id,discount_percentage,coupon_uuid);
+        Coupon n = new Coupon(code,quantity,restaurant_id,discount_percentage);
         couponRepository.save(n);
         return new ResponseEntity<>(n,HttpStatus.CREATED);
     }

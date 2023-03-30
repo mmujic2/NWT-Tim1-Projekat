@@ -1,6 +1,9 @@
 package the.convenient.foodie.discount.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import the.convenient.foodie.discount.util.UUIDGenerator;
 
 @Entity
 @Table(name = "coupon")
@@ -9,31 +12,48 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer     id;
+
+    @NotNull(message = "Coupon code should not be null")
     @Column(name = "code", unique = true, columnDefinition = "VARCHAR(60)")
     private String      code;
+
+    @NotNull(message = "Quantity should not be null")
+    @Positive(message = "Quantity can not be negative")
     @Column(name = "quantity", columnDefinition = "integer")
     private Integer     quantity;
+
+    @NotNull(message = "Restaurant ID should not be null")
     @Column(name = "restaurant_id", unique = true, columnDefinition = "integer")
     private Integer     restaurant_id;
+
+    @NotNull(message = "Discount percentage should not be null")
+    @Positive(message = "Discount percentage can not be negative")
     @Column(name = "discount_percentage", columnDefinition = "integer")
     private Integer     discount_percentage;
+
+
     @Column(name = "coupon_uuid", unique = true, columnDefinition = "VARCHAR(60)")
     private String      coupon_uuid;
+
+    @PrePersist
+    public void initializeUUID() {
+        if (coupon_uuid == null) {
+            coupon_uuid = UUIDGenerator.generateType1UUID().toString();
+        }
+    }
 
     public Coupon() {
         this.code = "";
         this.quantity = 0;
         this.restaurant_id = null;
         this.discount_percentage = 0;
-        this.coupon_uuid = "";
     }
 
-    public Coupon(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage, String coupon_uuid) {
+    public Coupon(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage) {
         this.code = code;
         this.quantity = quantity;
         this.restaurant_id = restaurant_id;
         this.discount_percentage = discount_percentage;
-        this.coupon_uuid = coupon_uuid;
     }
 
     public Integer getId() {

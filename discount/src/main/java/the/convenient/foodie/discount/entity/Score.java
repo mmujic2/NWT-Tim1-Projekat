@@ -1,6 +1,8 @@
 package the.convenient.foodie.discount.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "score")
@@ -9,10 +11,18 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer     id;
+
+    @NotNull(message = "User ID should not be null")
     @Column(name = "user_id", unique = true ,columnDefinition = "integer")
     private Integer user_id;
+
+    @NotNull(message = "Number of orders should not be null")
+    @Positive(message = "Number of orders can not be negative")
     @Column(name = "number_of_orders", columnDefinition = "integer")
     private Integer number_of_orders;
+
+    @NotNull(message = "Money spent should not be null")
+    @Positive(message = "Money spent can not be negative")
     @Column(name = "money_spent", columnDefinition = "integer")
     private Integer money_spent;
 

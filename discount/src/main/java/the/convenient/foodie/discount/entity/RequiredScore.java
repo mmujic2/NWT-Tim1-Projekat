@@ -1,6 +1,8 @@
 package the.convenient.foodie.discount.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "requiredscore")
@@ -10,8 +12,14 @@ public class RequiredScore {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer     id;
+
+    @NotNull(message = "Orders required should not be null")
+    @Positive(message = "Orders required can not be negative")
     @Column(name = "orders_required", columnDefinition = "integer")
     private Integer     orders_required;
+
+    @NotNull(message = "Money required should not be null")
+    @Positive(message = "Money required can not be negative")
     @Column(name = "money_required", columnDefinition = "integer")
     private Integer     money_required;
 
