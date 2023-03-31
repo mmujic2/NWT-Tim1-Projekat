@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import java.util.List;
 @Validated
 @RequestMapping(path="/score") // This means URL's start with /demo (after Application path)
 public class ScoreController {
+    @Autowired
     private ScoreService scoreService;
 
     @Operation(description = "Get all scores")
@@ -39,11 +41,11 @@ public class ScoreController {
 
     @Operation(description = "Get a score by score ID")
     @ApiResponses ( value = {
-            @ApiResponse(responseCode = "200", description = "Successfully found the score with provided ID",
+            @ApiResponse(responseCode = "200", description = "Successfully found the score for provided ID",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Score.class)),
                     }),
-            @ApiResponse(responseCode = "404", description = "Score with provided ID not found",
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
                     content = @Content)})
     @GetMapping(path = "/{id}")
     public  @ResponseBody ResponseEntity<Score> getScore(@Parameter(description = "Score ID", required = true) @PathVariable  Integer id) {
@@ -72,7 +74,7 @@ public class ScoreController {
                             schema = @Schema(implementation = Score.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content),
-            @ApiResponse(responseCode = "404", description = "Score with provided ID not found",
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
                     content = @Content)}
     )
     @PutMapping(path = "/update/{id}")
@@ -83,8 +85,8 @@ public class ScoreController {
 
     @Operation(description = "Delete a score")
     @ApiResponses ( value = {
-            @ApiResponse(responseCode = "200", description = "Successfully deleted the score with provided ID"),
-            @ApiResponse(responseCode = "404", description = "Score with provided ID not found",
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the score for provided ID"),
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
                     content = @Content)})
     @DeleteMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<String> deleteScore(@Parameter(description = "Score ID", required = true) @PathVariable Integer id) {
