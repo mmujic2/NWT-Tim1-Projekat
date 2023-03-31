@@ -1,4 +1,4 @@
-package the.convenient.foodie.discount.dao;
+package the.convenient.foodie.discount.dao.dto;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -3,7 +3,7 @@ package the.convenient.foodie.discount.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.discount.dao.CouponDto;
+import the.convenient.foodie.discount.dao.dto.CouponDto;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.entity.Coupon;
 
@@ -22,8 +22,8 @@ public class CouponService {
 
     public Coupon getCoupon(Integer id) {
         var exception = new EntityNotFoundException("Coupon with id " + id + " does not exist!");
-        var menu = couponRepository.findById(id);
-        return menu.orElseThrow(() -> exception);
+        var coupon = couponRepository.findById(id);
+        return coupon.orElseThrow(() -> exception);
     }
 
     public Coupon addNewCoupon(CouponDto couponDto) {
