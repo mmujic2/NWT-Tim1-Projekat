@@ -4,13 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.discount.dao.ScoreRepository;
-import the.convenient.foodie.discount.dao.dto.ScoreDto;
-import the.convenient.foodie.discount.entity.Score;
+import the.convenient.foodie.discount.dto.ScoreDto;
+import the.convenient.foodie.discount.model.Score;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ScoreService {

@@ -12,8 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.discount.dao.dto.ScoreDto;
-import the.convenient.foodie.discount.entity.Score;
+import the.convenient.foodie.discount.dto.ScoreDto;
+import the.convenient.foodie.discount.model.Score;
 
 import the.convenient.foodie.discount.service.ScoreService;
 

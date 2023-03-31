@@ -1,28 +1,51 @@
-package the.convenient.foodie.discount.dao.dto;
+package the.convenient.foodie.discount.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import the.convenient.foodie.discount.dto.RequiredScoreDto;
 
-import java.io.Serializable;
+@Entity
+@Table(name = "requiredscore")
+public class RequiredScore {
 
-public class RequiredScoreDto implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Integer     id;
 
     @NotNull(message = "Orders required should not be null")
     @Positive(message = "Orders required can not be negative")
+    @Column(name = "orders_required", columnDefinition = "integer")
     private Integer     orders_required;
 
     @NotNull(message = "Money required should not be null")
     @Positive(message = "Money required can not be negative")
+    @Column(name = "money_required", columnDefinition = "integer")
     private Integer     money_required;
 
-    public RequiredScoreDto() {
+
+    public RequiredScore() {
         this.orders_required = 0;
         this.money_required = 0;
     }
 
-    public RequiredScoreDto(Integer orders_required, Integer money_required) {
+    public RequiredScore(Integer orders_required, Integer money_required) {
         this.orders_required = orders_required;
         this.money_required = money_required;
+    }
+
+    public RequiredScore(RequiredScoreDto requiredScoreDto) {
+        this.orders_required = requiredScoreDto.getOrders_required();
+        this.money_required = requiredScoreDto.getMoney_required();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getOrders_required() {

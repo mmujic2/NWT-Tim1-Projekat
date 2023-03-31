@@ -3,9 +3,9 @@ package the.convenient.foodie.discount.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.discount.dao.dto.CouponDto;
+import the.convenient.foodie.discount.dto.CouponDto;
 import the.convenient.foodie.discount.dao.CouponRepository;
-import the.convenient.foodie.discount.entity.Coupon;
+import the.convenient.foodie.discount.model.Coupon;
 
 import java.util.List;
 import java.util.stream.Collectors;

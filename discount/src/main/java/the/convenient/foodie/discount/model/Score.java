@@ -1,9 +1,9 @@
-package the.convenient.foodie.discount.entity;
+package the.convenient.foodie.discount.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import the.convenient.foodie.discount.dao.dto.ScoreDto;
+import the.convenient.foodie.discount.dto.ScoreDto;
 
 @Entity
 @Table(name = "score")

@@ -1,4 +1,4 @@
-package the.convenient.foodie.discount.dao.dto;
+package the.convenient.foodie.discount.dto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
