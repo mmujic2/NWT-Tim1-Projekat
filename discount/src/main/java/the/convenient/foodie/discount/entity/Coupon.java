@@ -15,7 +15,7 @@ public class Coupon {
     @Column(name = "id")
     private Integer     id;
 
-    //@Size(min = 12, max = 12, message = "Coupon code must be 12 characters long!")
+    @Size(min = 12, max = 12, message = "Coupon code must be 12 characters long!")
     @NotNull(message = "Coupon code should not be null")
     @Column(name = "code", unique = true, columnDefinition = "VARCHAR(60)")
     private String      code;

@@ -43,7 +43,7 @@ public class DiscountApplication implements CommandLineRunner {
 	}
 
 	private void startingData() {
-		Coupon c = new Coupon("kod1213",5,132,20);
+		Coupon c = new Coupon("kod121314156",5,132,20);
 		c.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 		couponRepository.save(c);
 		Score s = new Score(341,10,3150);

@@ -33,6 +33,7 @@ public class CouponService {
     }
 
     public String deleteCoupon(Integer id) {
+        var coupon = couponRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Coupon with id " + id + " does not exist!"));
         couponRepository.deleteById(id);
         return "Coupon with id " + id + " is successfully deleted!";
     }
