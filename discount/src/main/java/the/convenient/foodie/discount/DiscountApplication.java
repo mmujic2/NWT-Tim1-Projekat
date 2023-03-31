@@ -14,7 +14,7 @@ import the.convenient.foodie.discount.entity.RequiredScore;
 import the.convenient.foodie.discount.entity.Score;
 import the.convenient.foodie.discount.util.UUIDGenerator;
 
-@EnableJpaRepositories("the.convenient.foodie.discount.dao")
+//@EnableJpaRepositories("the.convenient.foodie.discount.dao")
 @EntityScan(basePackages = "the.convenient.foodie.discount.entity")
 @SpringBootApplication
 public class DiscountApplication implements CommandLineRunner {
@@ -32,8 +32,8 @@ public class DiscountApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		cleanup();
-		startingData();
+		//cleanup();
+		//startingData();
 	}
 
 	private void cleanup() {
