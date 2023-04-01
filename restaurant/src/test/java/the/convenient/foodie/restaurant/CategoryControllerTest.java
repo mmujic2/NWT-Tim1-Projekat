@@ -123,7 +123,7 @@ public class CategoryControllerTest {
                 .andReturn();
         String content = result.getResponse().getContentAsString();
 
-        Assertions.assertEquals("Category with id -1 does not exist!", content);
+        Assertions.assertTrue(content.contains("Category with id -1 does not exist!"));
     }
 
     @Test

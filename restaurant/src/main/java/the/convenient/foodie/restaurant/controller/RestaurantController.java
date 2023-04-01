@@ -137,6 +137,22 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantService.calculateAverageRatingForRestaurant(id),HttpStatus.OK);
     }
 
+    @Operation(description = "Get user's favorite restaurants")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found user's favorite restaurants",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    })
+    })
+    @GetMapping(path="/favorites")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<Restaurant>> getFavoriteRestaurants(
+            @Parameter(description = "UUID of the user",required = true)
+            @RequestParam String user) {
+        return new ResponseEntity<>(favoriteRestaurantService.getFavoriteRestaurants(user),HttpStatus.OK);
+
+    }
+
     @Operation(description = "Delete a restaurant")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the restaurant with provided ID"),
@@ -204,12 +220,33 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<FavoriteRestaurant> addRestaurantToFavorites(
             @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable Long id
+            @PathVariable Long id,
+            @Parameter(description = "UUID of the user", required = true)
+            @RequestParam String user
     ) {
-        //Update this with ID of User
-        var userUUID = "test";
-        var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,userUUID);
+
+        var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,user);
         return new ResponseEntity<>(favoriteRestaurant,HttpStatus.CREATED);
+    }
+
+    @Operation(description = "Remove restaurant from user's favorite restaurants")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully removed restaurant from favorites",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FavoriteRestaurant.class)) }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided ID not found",
+                    content = @Content)}
+    )
+    @PutMapping(path="/{id}/remove-from-favorites")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> removeRestaurantFromFavorites(
+            @Parameter(description = "Restaurant ID",required = true)
+            @PathVariable Long id,
+            @Parameter(description = "UUID of the user",required = true)
+            @RequestParam String user) {
+
+        favoriteRestaurantService.removeRestaurantFromFavorites(id,user);
+        return new ResponseEntity<>("Successfully removed restaurant with id " + id + " from favorites!",HttpStatus.OK);
     }
 
 }

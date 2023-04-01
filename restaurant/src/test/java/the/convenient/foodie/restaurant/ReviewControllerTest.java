@@ -55,15 +55,25 @@ public class ReviewControllerTest {
         restaurant1.setCreated(LocalDateTime.now());
         restaurant1.setCreatedBy("test");
         restaurant1.setName("Restaurant 1");
+        restaurant1.setManagerUUID("test");
         restaurant1.setManagerUUID(UUIDGenerator.generateType1UUID().toString());
 
+        var restaurant2 = new Restaurant();
+        restaurant2.setCreated(LocalDateTime.now());
+        restaurant2.setCreatedBy("test");
+        restaurant2.setName("Restaurant 2");
+        restaurant2.setManagerUUID("test");
+        restaurant2.setManagerUUID(UUIDGenerator.generateType1UUID().toString());
+
         restaurantRepository.save(restaurant1);
+        restaurantRepository.save(restaurant2);
 
         var review = new Review();
         review.setRating(5);
         review.setUserUUID(UUIDGenerator.generateType1UUID().toString());
         review.setCreatedBy("test");
         review.setCreated(LocalDateTime.now());
+        review.setUserUUID("test");
         review.setRestaurant(restaurant1);
 
         reviewRepository.save(review);
@@ -90,9 +100,9 @@ public class ReviewControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        var category = objectMapper.convertValue(objectMapper.readTree(content), Review.class);
+        var review = objectMapper.convertValue(objectMapper.readTree(content), Review.class);
 
-        Assertions.assertEquals("Comment",category.getComment());
+        Assertions.assertEquals("Comment",review.getComment());
     }
 
     @Test
@@ -137,6 +147,45 @@ public class ReviewControllerTest {
 
         Assertions.assertTrue(content.contains("Review with id -1 does not exist!"));
 
+    }
+
+    @Test
+    public void getReviewsForRestaurantShouldReturnAllReviewsForExistingRestaurant() throws Exception {
+        var allRestaurants = restaurantRepository.findAll();
+        var id = allRestaurants.stream().filter(r->r.getName().equals("Restaurant 1")).findFirst().get().getId();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
+                        get("/review/restaurant/{id}", id))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        var reviews = objectMapper.convertValue(objectMapper.readTree(content), Review[].class);
+
+        Assertions.assertEquals(reviews.length,1);
+    }
+
+    @Test
+    public void getReviewsForRestaurantShouldReturnErrorForNonExistingRestaurant() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
+                        get("/review/restaurant/{id}", -1))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+
+        Assertions.assertTrue(content.contains("Restaurant with id -1 does not exist!"));    }
+
+    @Test
+    public void getReviewsForUserShouldReturnAllReviewsCreatedByGivenUser() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
+                        get("/review/user/{uuid}", "test"))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        var reviews = objectMapper.convertValue(objectMapper.readTree(content), Review[].class);
+
+        Assertions.assertEquals(1,reviews.length);
     }
 
     private static String asJsonString(final Object obj) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.transaction.Transactional;
+import org.antlr.stringtemplate.language.Cat;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import the.convenient.foodie.restaurant.config.JPAConfig;
+import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
+import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.dto.OpeningHoursCreateRequest;
 import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
@@ -22,11 +25,14 @@ import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
 import the.convenient.foodie.restaurant.model.Category;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 import the.convenient.foodie.restaurant.model.Restaurant;
+import the.convenient.foodie.restaurant.repository.ReviewRepository;
+import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
@@ -42,6 +48,12 @@ public class RestaurantControllerTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private FavoriteRestaurantRepository favoriteRestaurantRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,15 +72,20 @@ public class RestaurantControllerTest {
         var categories = new ArrayList<Category>();
         var category1 = new Category();
         var category2 = new Category();
+        var category3 = new Category();
         category1.setName("Category 1");
         category1.setCreated(LocalDateTime.now());
         category1.setCreatedBy("test");
         category2.setName("Category 2");
         category2.setCreated(LocalDateTime.now());
         category2.setCreatedBy("test");
+        category3.setName("Category 3");
+        category3.setCreated(LocalDateTime.now());
+        category3.setCreatedBy("test");
 
         categories.add(category1);
         categories.add(category2);
+        categories.add(category3);
 
         categoryRepository.saveAll(categories);
 
@@ -92,6 +109,36 @@ public class RestaurantControllerTest {
         listOfRestaurants.add(restaurant2);
 
         restaurantRepository.saveAll(listOfRestaurants);
+
+        var reviews = new ArrayList<Review>();
+        var review1 = new Review();
+        review1.setRestaurant(restaurant1);
+        review1.setCreated(LocalDateTime.now());
+        review1.setCreatedBy("test");
+        review1.setUserUUID("test");
+        review1.setRating(5);
+        var review2 = new Review();
+        review2.setRestaurant(restaurant1);
+        review2.setCreated(LocalDateTime.now());
+        review2.setCreatedBy("test");
+        review2.setUserUUID("test");
+        review2.setRating(4);
+
+        reviews.add(review1);
+        reviews.add(review2);
+
+        reviewRepository.saveAll(reviews);
+
+        var favorites = new ArrayList<FavoriteRestaurant>();
+        var fav1 = new FavoriteRestaurant();
+        fav1.setCreated(LocalDateTime.now());
+        fav1.setUserUUID("test");
+        fav1.setRestaurant(restaurant2);
+        fav1.setCreatedBy("test");
+
+        favorites.add(fav1);
+
+        favoriteRestaurantRepository.saveAll(favorites);
     }
 
 
@@ -137,7 +184,7 @@ public class RestaurantControllerTest {
                 .andReturn();
         String content = result.getResponse().getContentAsString();
 
-        Assertions.assertEquals("Restaurant with id -1 does not exist!", content);
+        Assertions.assertTrue(content.contains("Restaurant with id -1 does not exist!"));
     }
 
     @Test
@@ -322,7 +369,8 @@ public class RestaurantControllerTest {
         var allRestaurants = restaurantRepository.findAll();
         var id = allRestaurants.stream().filter(r->r.getName()=="Restaurant 1").findFirst().get().getId();
        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
-                        post("/restaurant/{id}/add-to-favorites",id))
+                        post("/restaurant/{id}/add-to-favorites",id)
+                       .param("user","test"))
                         .andExpect(status().is2xxSuccessful())
                         .andReturn();
 
@@ -335,14 +383,97 @@ public class RestaurantControllerTest {
     @Test
     public void addRestaurantToFavoritesShouldReturnErrorForNonExistingRestaurant() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
-                        post("/restaurant/-1/add-to-favorites"))
+                        post("/restaurant/-1/add-to-favorites")
+                        .param("user","test"))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
 
-        Assertions.assertEquals("Restaurant with id -1 does not exist!",content);
+        Assertions.assertTrue(content.contains("Restaurant with id -1 does not exist!"));
     }
+
+    @Test
+    public void getRestaurantsWithCategoriesShouldReturnAllRestaurantsWithGivenCategories() throws Exception {
+        var allCategories = categoryRepository.findAll();
+        var categoryIds = allCategories.stream().filter(c->!c.getName().equals("Category 2")).map(c -> c.getId().toString()).collect(Collectors.toList()).stream().collect(Collectors.joining(","));
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/restaurant/category")
+                .param("categoryIds", categoryIds))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        var restaurants = objectMapper.convertValue(objectMapper.readTree(content), Restaurant[].class);
+
+        Assertions.assertEquals(1, restaurants.length);
+    }
+
+    @Test
+    public void getAverageRatingForRestaurantShouldReturnAverageRatingForExistingRestaurant() throws Exception {
+        var allRestaurants = restaurantRepository.findAll();
+        var id = allRestaurants.stream().filter(r->r.getName()=="Restaurant 1").findFirst().get().getId();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/restaurant/{id}/rating",id))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        var rating = objectMapper.convertValue(objectMapper.readTree(content), Double.class);
+
+        Assertions.assertEquals(4.5, rating);
+    }
+
+    @Test
+    public void getAverageRatingForRestaurantShouldReturnErrorForNonExistingRestaurant() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/restaurant/{id}/rating",-1))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+
+        Assertions.assertTrue(content.contains("Restaurant with id -1 does not exist!"));
+    }
+
+    @Test
+    public void getFavoriteRestaurantsShouldReturnFavoriteRestaurantsOfGivenUser() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/restaurant/favorites")
+                        .param("user","test"))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        var restaurants = objectMapper.convertValue(objectMapper.readTree(content),Restaurant[].class);
+
+        Assertions.assertTrue(Arrays.stream(restaurants).map(r -> r.getName()).collect(Collectors.toList()).contains("Restaurant 2"));
+    }
+
+    @Test
+    public void removeRestaurantFromFavoritesShouldDeleteFavoriteRestaurantLinkForExistingRestaurant() throws Exception {
+        var allRestaurants = restaurantRepository.findAll();
+        var id = allRestaurants.stream().filter(r->r.getName()=="Restaurant 2").findFirst().get().getId();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
+                        put("/restaurant/{id}/remove-from-favorites",id)
+                        .param("user","user"))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+
+        Assertions.assertTrue(content.contains("Successfully removed restaurant with id " + id + " from favorites!"));
+    }
+
+    @Test
+    public void removeRestaurantFromFavoritesShouldReturnErrorForNonExistingRestaurant() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
+                        put("/restaurant/{id}/remove-from-favorites",-1)
+                        .param("user","user"))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+
+        Assertions.assertTrue(content.contains("Restaurant with id -1 does not exist!"));
+    }
+
 
     private static String asJsonString(final Object obj) {
         try {

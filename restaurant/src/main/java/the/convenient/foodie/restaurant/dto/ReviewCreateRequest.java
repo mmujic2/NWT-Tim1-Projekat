@@ -1,9 +1,6 @@
 package the.convenient.foodie.restaurant.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 
@@ -15,7 +12,7 @@ public class ReviewCreateRequest implements Serializable {
     @Max(value=5,message="User rating must be an integer value between 1 and 5!")
     private Integer rating;
 
-    @NotNull(message = "User must be specified!")
+    @NotEmpty(message = "User must be specified!")
     private String userUUID;
 
     @NotNull(message = "Restaurant ID must be specified!")
