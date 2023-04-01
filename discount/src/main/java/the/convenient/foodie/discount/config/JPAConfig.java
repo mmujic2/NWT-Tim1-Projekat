@@ -1,7 +1,7 @@
-package the.convenient.foodie.order;
+package the.convenient.foodie.discount.config;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,11 +13,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "the.convenient.foodie.order")
+@EnableJpaRepositories(basePackages = "the.convenient.foodie.discount")
 @EnableTransactionManagement
-public class JpaConfig {
-    // Config klasa koja preusmjerava trenutnu bazu na lokalnu H2 bazu koja se nalazi u memoriji
-    // Kod se moze copy paste, samo promjeniti "basePackages" iznad
+public class JPAConfig {
     @Autowired
     private Environment env;
 

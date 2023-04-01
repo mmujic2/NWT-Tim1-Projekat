@@ -1,30 +1,95 @@
 package the.convenient.foodie.discount.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.discount.dao.ScoreRepository;
-import the.convenient.foodie.discount.entity.Score;
+import the.convenient.foodie.discount.dto.ScoreDto;
+import the.convenient.foodie.discount.model.Score;
+
+import the.convenient.foodie.discount.service.ScoreService;
+
+import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping(path="/score") // This means URL's start with /demo (after Application path)
 public class ScoreController {
-    private ScoreRepository scoreRepository;
+    @Autowired
+    private ScoreService scoreService;
 
-    @PostMapping(path="/add") // Map ONLY POST Requests
+    @Operation(description = "Get all scores")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found all scores",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Score.class)) })}
+    )
+    @GetMapping(path="/all")
     public @ResponseBody
-    String addNewScore (@RequestParam Integer user_id, @RequestParam Integer number_of_orders, @RequestParam Integer money_spent) {
-        // @ResponseBody means the returned String is the response, not a view name
-        // @RequestParam means it is a parameter from the GET or POST request
-
-        Score s = new Score(user_id,number_of_orders,money_spent);
-        scoreRepository.save(s);
-        return "Added score";
+    ResponseEntity<List<Score>> getAllScores() {
+        var scores = scoreService.getAllScores();
+        return new ResponseEntity<>(scores, HttpStatus.OK);
     }
 
-    @GetMapping(path="/all")
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Iterable<Score> getAllScores() {
-        // This returns a JSON or XML with the users
-        return scoreRepository.findAll();
+    @Operation(description = "Get a score by score ID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the score for provided ID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Score.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
+                    content = @Content)})
+    @GetMapping(path = "/{id}")
+    public  @ResponseBody ResponseEntity<Score> getScore(@Parameter(description = "Score ID", required = true) @PathVariable  Integer id) {
+        var score = scoreService.getScore(id);
+        return new ResponseEntity<>(score, HttpStatus.OK);
+    }
+
+    @Operation(description = "Create a new score")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created a new score",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Score.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                    content = @Content)})
+    @PostMapping(path = "/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody ResponseEntity<Score> addNewScore(@Parameter(description = "Information required for score creation", required = true) @Valid @RequestBody ScoreDto scoreDto) {
+        var score = scoreService.addNewScore(scoreDto);
+        return  new ResponseEntity<>(score, HttpStatus.CREATED);
+    }
+
+    @Operation(description = "Update score information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated score information",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Score.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
+                    content = @Content)}
+    )
+    @PutMapping(path = "/update/{id}")
+    public @ResponseBody ResponseEntity<Score> updateScore(@Parameter(description = "Score ID", required = true) @PathVariable Integer id, @Parameter(description = "Score information to be updated", required = true) @Valid @RequestBody ScoreDto scoreDto){
+        var score = scoreService.updateScore(scoreDto, id);
+        return  new ResponseEntity<>(score, HttpStatus.CREATED);
+    }
+
+    @Operation(description = "Delete a score")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the score for provided ID"),
+            @ApiResponse(responseCode = "404", description = "Score for provided ID not found",
+                    content = @Content)})
+    @DeleteMapping(path = "/{id}")
+    public @ResponseBody ResponseEntity<String> deleteScore(@Parameter(description = "Score ID", required = true) @PathVariable Integer id) {
+        return new ResponseEntity<>(scoreService.deleteScore(id), HttpStatus.OK);
     }
 }

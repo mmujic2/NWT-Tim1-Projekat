@@ -1,47 +1,49 @@
-package the.convenient.foodie.discount.entity;
+package the.convenient.foodie.discount.dto;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import the.convenient.foodie.discount.util.UUIDGenerator;
 
-@Entity
-@Table(name = "coupon")
-public class Coupon {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Integer     id;
-    @Column(name = "code", unique = true, columnDefinition = "VARCHAR(60)")
+import java.io.Serializable;
+
+public class CouponDto implements Serializable {
+
+    @Size(min = 12, max = 12, message = "Coupon code must be 12 characters long!")
+    @NotNull(message = "Coupon code should not be null")
     private String      code;
-    @Column(name = "quantity", columnDefinition = "integer")
+
+    @NotNull(message = "Quantity should not be null")
+    @Positive(message = "Quantity can not be negative")
     private Integer     quantity;
-    @Column(name = "restaurant_id", unique = true, columnDefinition = "integer")
+
+    @NotNull(message = "Restaurant ID should not be null")
     private Integer     restaurant_id;
-    @Column(name = "discount_percentage", columnDefinition = "integer")
+
+    @NotNull(message = "Discount percentage should not be null")
+    @Positive(message = "Discount percentage can not be negative")
     private Integer     discount_percentage;
-    @Column(name = "coupon_uuid", unique = true, columnDefinition = "VARCHAR(60)")
+
+    //@NotNull(message="Coupon UUID must be specified!")
+    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
     private String      coupon_uuid;
 
-    public Coupon() {
+
+    public CouponDto() {
         this.code = "";
         this.quantity = 0;
         this.restaurant_id = null;
         this.discount_percentage = 0;
-        this.coupon_uuid = "";
+        this.coupon_uuid = UUIDGenerator.generateType1UUID().toString();
     }
 
-    public Coupon(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage, String coupon_uuid) {
+    public CouponDto(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage) {
         this.code = code;
         this.quantity = quantity;
         this.restaurant_id = restaurant_id;
         this.discount_percentage = discount_percentage;
-        this.coupon_uuid = coupon_uuid;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+        this.coupon_uuid = UUIDGenerator.generateType1UUID().toString();
     }
 
     public String getCode() {
