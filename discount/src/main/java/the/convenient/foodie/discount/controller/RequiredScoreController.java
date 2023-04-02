@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.discount.dto.RequiredScoreDto;
-import the.convenient.foodie.discount.model.RequiredScore;
+import the.convenient.foodie.discount.entity.RequiredScore;
 import the.convenient.foodie.discount.service.RequiredScoreService;
 
 import java.util.List;

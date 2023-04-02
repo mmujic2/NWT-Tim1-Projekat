@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import the.convenient.foodie.discount.config.JPAConfig;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.dto.CouponDto;
-import the.convenient.foodie.discount.model.Coupon;
+import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.util.UUIDGenerator;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

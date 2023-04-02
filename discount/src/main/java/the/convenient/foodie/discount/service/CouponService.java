@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.discount.dto.CouponDto;
 import the.convenient.foodie.discount.dao.CouponRepository;
-import the.convenient.foodie.discount.model.Coupon;
+import the.convenient.foodie.discount.entity.Coupon;
 
 import java.util.List;
 import java.util.stream.Collectors;

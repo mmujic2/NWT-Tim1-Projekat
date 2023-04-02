@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.discount.dao.RequiredScoreRepository;
 import the.convenient.foodie.discount.dto.RequiredScoreDto;
-import the.convenient.foodie.discount.model.RequiredScore;
+import the.convenient.foodie.discount.entity.RequiredScore;
 
 import java.util.ArrayList;
 import java.util.List;

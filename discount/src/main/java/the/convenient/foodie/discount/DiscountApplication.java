@@ -8,12 +8,13 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.dao.RequiredScoreRepository;
 import the.convenient.foodie.discount.dao.ScoreRepository;
-import the.convenient.foodie.discount.model.Coupon;
-import the.convenient.foodie.discount.model.RequiredScore;
-import the.convenient.foodie.discount.model.Score;
+import the.convenient.foodie.discount.entity.Coupon;
+import the.convenient.foodie.discount.entity.RequiredScore;
+import the.convenient.foodie.discount.entity.Score;
 import the.convenient.foodie.discount.util.UUIDGenerator;
 
 //@EnableJpaRepositories("the.convenient.foodie.discount.dao")
+//@EnableDiscoveryClient
 @EntityScan(basePackages = "the.convenient.foodie.discount.entity")
 @SpringBootApplication
 public class DiscountApplication implements CommandLineRunner {
@@ -31,8 +32,8 @@ public class DiscountApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		//cleanup();
-		//startingData();
+		cleanup();
+		startingData();
 	}
 
 	private void cleanup() {
