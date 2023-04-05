@@ -3,7 +3,7 @@ package the.convenient.foodie.menu.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.menu.dao.MenuItemRepository;
+import the.convenient.foodie.menu.repository.MenuItemRepository;
 import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.MenuItem;
 
