@@ -19,7 +19,8 @@ public class FavoriteRestaurantService {
     private FavoriteRestaurantRepository favoriteRestaurantRepository;
 
     public List<Restaurant> getFavoriteRestaurants(String userUUID) {
-        return null;
+
+        return favoriteRestaurantRepository.getFavoriteRestaurants(userUUID);
     }
     public FavoriteRestaurant addRestaurantToFavorites(Long restaurantId,String userUUID) {
         FavoriteRestaurant favoriteRestaurant = new FavoriteRestaurant();
@@ -35,9 +36,11 @@ public class FavoriteRestaurantService {
         return favoriteRestaurant;
     }
 
-    public String removeRestaurantFromFavorites(Long restaurantId, String userUUID) {
-        return null;
+    public void removeRestaurantFromFavorites(Long restaurantId, String userUUID)  {
+        var restaurant = restaurantRepository.findById(restaurantId).orElseThrow(()->new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!"));
+        favoriteRestaurantRepository.removeRestaurantFromFavorites(restaurantId, userUUID);
     }
+
 
 
 }

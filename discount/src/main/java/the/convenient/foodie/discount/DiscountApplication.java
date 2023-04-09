@@ -5,15 +5,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.dao.RequiredScoreRepository;
 import the.convenient.foodie.discount.dao.ScoreRepository;
 import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.entity.RequiredScore;
 import the.convenient.foodie.discount.entity.Score;
+import the.convenient.foodie.discount.util.UUIDGenerator;
 
-@EnableJpaRepositories("the.convenient.foodie.discount.dao")
+//@EnableJpaRepositories("the.convenient.foodie.discount.dao")
+//@EnableDiscoveryClient
 @EntityScan(basePackages = "the.convenient.foodie.discount.entity")
 @SpringBootApplication
 public class DiscountApplication implements CommandLineRunner {
@@ -42,7 +43,8 @@ public class DiscountApplication implements CommandLineRunner {
 	}
 
 	private void startingData() {
-		Coupon c = new Coupon("kod1213",5,132,20,"uuidkod1213");
+		Coupon c = new Coupon("kod121314156",5,132,20);
+		c.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 		couponRepository.save(c);
 		Score s = new Score(341,10,3150);
 		scoreRepository.save(s);

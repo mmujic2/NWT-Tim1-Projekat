@@ -2,10 +2,7 @@ package the.convenient.foodie.restaurant.model;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -31,7 +28,7 @@ public class Review implements Serializable {
     private Integer rating;
 
     @Column(name="user_uuid")
-    @NotNull(message = "User must be specified!")
+    @NotEmpty(message = "User must be specified!")
     private String userUUID;
 
     @Column(name="created")
