@@ -14,9 +14,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
 import the.convenient.foodie.order.model.Order;
@@ -24,11 +28,17 @@ import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/order")
 public class OrderController {
+
+    @Autowired
+    public RestTemplate restTemplate;
+
     private final OrderRepository orderRepository;
 
     private final MenuItemRepository menuItemRepository;
@@ -104,6 +114,9 @@ public class OrderController {
     @GetMapping(path = "/get")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Order> GetAllOrders() {
+        String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        System.out.println(response);
+
         return orderRepository.findAll();
     }
 
@@ -131,6 +144,28 @@ public class OrderController {
         var order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
         orderRepository.delete(order);
         return new ResponseEntity<>("Order successfully deleted", HttpStatus.OK);
+    }
+
+
+    @GetMapping(path = "/count/{sorttype}")
+    public @ResponseBody Map<String, Long> GetRestaurantOrderCounts(@RequestBody List<String> restaurantUids, @PathVariable String sorttype) {
+        var orders = orderRepository.findAll();
+
+        Map<String, Long> orderMap = new HashMap<>();
+        for(var id : restaurantUids) {
+            orderMap.put(id, orders.stream().filter(x -> x.getRestaurant_id().equals(id)).count());
+        }
+
+        if(sorttype.equals("desc")) {
+            return orderMap.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        }
+        else if(sorttype.equals("asc")) {
+            return orderMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        }
+
+        return orderMap;
     }
 
     @PostConstruct
