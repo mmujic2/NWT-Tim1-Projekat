@@ -26,8 +26,8 @@ public class Coupon {
     private Integer     quantity;
 
     @NotNull(message = "Restaurant ID should not be null")
-    @Column(name = "restaurant_id", unique = true, columnDefinition = "integer")
-    private Integer     restaurant_id;
+    @Column(name = "restaurant_uuid", unique = true, columnDefinition = "VARCHAR(60)")
+    private String     restaurant_uuid;
 
     @NotNull(message = "Discount percentage should not be null")
     @Positive(message = "Discount percentage can not be negative")
@@ -49,21 +49,21 @@ public class Coupon {
     public Coupon() {
         this.code = "";
         this.quantity = 0;
-        this.restaurant_id = null;
+        this.restaurant_uuid = null;
         this.discount_percentage = 0;
     }
 
-    public Coupon(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage) {
+    public Coupon(String code, Integer quantity, String restaurant_uuid, Integer discount_percentage) {
         this.code = code;
         this.quantity = quantity;
-        this.restaurant_id = restaurant_id;
+        this.restaurant_uuid = restaurant_uuid;
         this.discount_percentage = discount_percentage;
     }
 
     public Coupon(CouponDto couponDto){
         this.code = couponDto.getCode();
         this.quantity = couponDto.getQuantity();
-        this.restaurant_id = couponDto.getRestaurant_id();
+        this.restaurant_uuid = couponDto.getRestaurant_uuid();
         this.discount_percentage = couponDto.getDiscount_percentage();
         this.coupon_uuid = couponDto.getCoupon_uuid();
     }
@@ -92,12 +92,12 @@ public class Coupon {
         this.quantity = quantity;
     }
 
-    public Integer getRestaurant_id() {
-        return restaurant_id;
+    public String getRestaurant_uuid() {
+        return restaurant_uuid;
     }
 
-    public void setRestaurant_id(Integer restaurant_id) {
-        this.restaurant_id = restaurant_id;
+    public void setRestaurant_uuid(String restaurant_uuid) {
+        this.restaurant_uuid = restaurant_uuid;
     }
 
     public Integer getDiscount_percentage() {

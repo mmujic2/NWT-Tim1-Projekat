@@ -45,10 +45,10 @@ public class CouponControllerTest {
 
     @BeforeEach
     public void initialData() {
-        Coupon c = new Coupon("kod111111111",5,1,20);
+        Coupon c = new Coupon("kod111111111",5,"1",20);
         c.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 
-        Coupon c2 = new Coupon("kod22222222",5,2,25);
+        Coupon c2 = new Coupon("kod22222222",5,"2",25);
         c2.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
         couponRepository.save(c2);
     }
@@ -73,7 +73,7 @@ public class CouponControllerTest {
     @Test
     public void addNewCouponTest() throws Exception {
         var coupon_uuid = UUIDGenerator.generateType1UUID().toString();
-        CouponDto menuDao = new CouponDto("kod55555555", 10, 8, 10);
+        CouponDto menuDao = new CouponDto("kod55555555", 10, "8", 10);
         menuDao.setCoupon_uuid(coupon_uuid);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                 post("/coupon/add")
@@ -92,7 +92,7 @@ public class CouponControllerTest {
     @Test
     public void getMenuByIDTest() throws Exception {
         var coupons = couponRepository.findAll();
-        var id = coupons.stream().filter(r->r.getRestaurant_id()==2).findFirst().get().getId();
+        var id = coupons.stream().filter(r-> r.getRestaurant_uuid().equals("2")).findFirst().get().getId();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                 .get("/coupon/{id}",id))
                 .andExpect(status().is2xxSuccessful())
@@ -117,7 +117,7 @@ public class CouponControllerTest {
     @Test
     public void addNewMenuInvalid() throws Exception {
         var coupon_uuid = "123";
-        CouponDto couponDto = new CouponDto("kod66666666", 10, 28, 10);
+        CouponDto couponDto = new CouponDto("kod66666666", 10, "28", 10);
         couponDto.setCoupon_uuid(coupon_uuid);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                 post("/coupon/add")

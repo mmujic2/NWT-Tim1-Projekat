@@ -91,4 +91,16 @@ public class CouponController {
         return new ResponseEntity<>(couponService.deleteCoupon(id), HttpStatus.OK);
     }
 
+    @Operation(description = "Filter restaurants with coupons")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found filtered restaurants",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Coupon.class)) })}
+    )
+    @GetMapping(path="/filter")
+    public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
+        var filteredRestaurants = couponService.filterRestaurants(restaurants);
+        return new ResponseEntity<>(filteredRestaurants, HttpStatus.OK);
+    }
+
 }
