@@ -62,11 +62,11 @@ public class OrderControllerTest {
 
         List<Order> orderItemList = new ArrayList<>();
         try {
-            orderItemList.add(new Order(1L, 1L, 30, LocalDateTime.now(), 1L, "Fresh", 25.5, null, 3.5, "somecode",
+            orderItemList.add(new Order(1L, "1", 30, LocalDateTime.now(), 1L, "Fresh", 25.5, null, 3.5, "somecode",
                     new ArrayList<>(List.of(menuItemList.get(0).getId(), menuItemList.get(2).getId()))));
-            orderItemList.add(new Order(2L, 1L, 25, LocalDateTime.now(), null, "In delivery", 25.5, 1L, 3.5, null,
+            orderItemList.add(new Order(2L, "1", 25, LocalDateTime.now(), null, "In delivery", 25.5, 1L, 3.5, null,
                     new ArrayList<>(List.of(menuItemList.get(1).getId()))));
-            orderItemList.add(new Order(3L, 2L, 10, LocalDateTime.now(), null, "Delivered", 25.5, null, 3.5, null,
+            orderItemList.add(new Order(3L, "2", 10, LocalDateTime.now(), null, "Delivered", 25.5, null, 3.5, null,
                     new ArrayList<>(List.of(menuItemList.get(0).getId(), menuItemList.get(1).getId(), menuItemList.get(2).getId()))));
 
         } catch (MenuItemNotFoundException e) {
