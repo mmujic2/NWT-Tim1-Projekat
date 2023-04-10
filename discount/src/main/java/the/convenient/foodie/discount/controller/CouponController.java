@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.discount.dto.CouponDto;
 import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.service.CouponService;
@@ -22,6 +23,8 @@ import java.util.List;
 @Validated
 @RequestMapping(path="/coupon") // This means URL's start with /demo (after Application path)
 public class CouponController {
+    @Autowired
+    public RestTemplate restTemplate;
     @Autowired
     private CouponService couponService;
 
@@ -34,6 +37,9 @@ public class CouponController {
     @GetMapping(path="/all")
     public @ResponseBody ResponseEntity<List<Coupon>> getAllCoupons() {
         var coupons = couponService.getAllCoupons();
+        //dont make a loop by accident like I did
+        //String response = restTemplate.getForObject("http://order-service/order/get", String.class);
+        //System.out.println(response);
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 

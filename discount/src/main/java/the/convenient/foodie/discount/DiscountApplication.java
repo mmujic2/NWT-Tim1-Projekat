@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.dao.RequiredScoreRepository;
 import the.convenient.foodie.discount.dao.ScoreRepository;
@@ -14,7 +15,7 @@ import the.convenient.foodie.discount.entity.Score;
 import the.convenient.foodie.discount.util.UUIDGenerator;
 
 //@EnableJpaRepositories("the.convenient.foodie.discount.dao")
-//@EnableDiscoveryClient
+@EnableDiscoveryClient(autoRegister = true)
 @EntityScan(basePackages = "the.convenient.foodie.discount.entity")
 @SpringBootApplication
 public class DiscountApplication implements CommandLineRunner {
