@@ -19,7 +19,7 @@ public class CouponDto implements Serializable {
     private Integer     quantity;
 
     @NotNull(message = "Restaurant ID should not be null")
-    private Integer     restaurant_id;
+    private String     restaurant_uuid;
 
     @NotNull(message = "Discount percentage should not be null")
     @Positive(message = "Discount percentage can not be negative")
@@ -33,15 +33,15 @@ public class CouponDto implements Serializable {
     public CouponDto() {
         this.code = "";
         this.quantity = 0;
-        this.restaurant_id = null;
+        this.restaurant_uuid = null;
         this.discount_percentage = 0;
         this.coupon_uuid = UUIDGenerator.generateType1UUID().toString();
     }
 
-    public CouponDto(String code, Integer quantity, Integer restaurant_id, Integer discount_percentage) {
+    public CouponDto(String code, Integer quantity, String restaurant_uuid, Integer discount_percentage) {
         this.code = code;
         this.quantity = quantity;
-        this.restaurant_id = restaurant_id;
+        this.restaurant_uuid = restaurant_uuid;
         this.discount_percentage = discount_percentage;
         this.coupon_uuid = UUIDGenerator.generateType1UUID().toString();
     }
@@ -62,12 +62,12 @@ public class CouponDto implements Serializable {
         this.quantity = quantity;
     }
 
-    public Integer getRestaurant_id() {
-        return restaurant_id;
+    public String getRestaurant_uuid() {
+        return restaurant_uuid;
     }
 
-    public void setRestaurant_id(Integer restaurant_id) {
-        this.restaurant_id = restaurant_id;
+    public void setRestaurant_uuid(String restaurant_uuid) {
+        this.restaurant_uuid = restaurant_uuid;
     }
 
     public Integer getDiscount_percentage() {

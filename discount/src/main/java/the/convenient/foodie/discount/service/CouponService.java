@@ -7,6 +7,7 @@ import the.convenient.foodie.discount.dto.CouponDto;
 import the.convenient.foodie.discount.dao.CouponRepository;
 import the.convenient.foodie.discount.entity.Coupon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -17,7 +18,7 @@ public class CouponService {
     private CouponRepository couponRepository;
 
     public List<Coupon> getAllCoupons() {
-        return StreamSupport.stream(couponRepository.findAll().spliterator(), false).collect(Collectors.toList());
+        return new ArrayList<>(couponRepository.findAll());
     }
 
     public Coupon getCoupon(Integer id) {
@@ -45,9 +46,14 @@ public class CouponService {
         coupon.setCoupon_uuid(couponDto.getCoupon_uuid());
         coupon.setQuantity(couponDto.getQuantity());
         coupon.setDiscount_percentage(couponDto.getDiscount_percentage());
-        coupon.setRestaurant_id(couponDto.getRestaurant_id());
+        coupon.setRestaurant_uuid(couponDto.getRestaurant_uuid());
         couponRepository.save(coupon);
         return coupon;
+    }
+
+    public List<String> filterRestaurants(List<String> restaurants) {
+        List<String> reList = couponRepository.findAll().stream().map(Coupon::getRestaurant_uuid).collect(Collectors.toList());
+        return (List<String>) restaurants.stream().filter(reList::contains);
     }
 
 
