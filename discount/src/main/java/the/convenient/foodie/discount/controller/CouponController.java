@@ -103,7 +103,7 @@ public class CouponController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Coupon.class)) })}
     )
-    @GetMapping(path="/filter")
+    @PostMapping(path="/filter")
     public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
         var filteredRestaurants = couponService.filterRestaurants(restaurants);
         return new ResponseEntity<>(filteredRestaurants, HttpStatus.OK);
