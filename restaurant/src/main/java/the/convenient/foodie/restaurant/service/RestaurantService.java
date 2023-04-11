@@ -2,12 +2,13 @@ package the.convenient.foodie.restaurant.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.dto.*;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
-import the.convenient.foodie.restaurant.dto.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
 import the.convenient.foodie.restaurant.model.OpeningHours;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
@@ -58,6 +59,11 @@ public class RestaurantService {
     public List<Restaurant> getAllRestaurants() {
 
         return StreamSupport.stream(restaurantRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    public Page<RestaurantWithRating> searchForRestaurants(FilterRestaurantRequest filterRestaurantRequest, Pageable pageable) {
+
+        return restaurantRepository.getRestaurants(filterRestaurantRequest,pageable);
     }
 
     public Restaurant getRestaurant(Long id) {

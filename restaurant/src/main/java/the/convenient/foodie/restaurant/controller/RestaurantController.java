@@ -7,12 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dto.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dto.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dto.RestaurantUpdateRequest;
+import the.convenient.foodie.restaurant.dto.*;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.CategoryService;
@@ -84,6 +86,35 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<List<Restaurant>> getAllRestaurants() {
 
         var restaurants = restaurantService.getAllRestaurants();
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
+
+    @Operation(description = "Search for restaurants based on filter and sorting criteria")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found all restaurants fulfilling the provided criteria",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page[].class)) })}
+    )
+    @GetMapping(path="/search")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<Page<RestaurantWithRating>> searchForRestaurants(@RequestParam(required = false)  String name,
+                                                                                         @RequestParam(required = false)  List<Long> categoryIds,
+                                                                                         @RequestParam(required = false)  Boolean isOfferingDiscount,
+                                                                                         @RequestParam Integer page,
+                                                                                         @RequestParam Integer pageSize,
+                                                                                         @RequestParam(required = false) String sortBy,
+                                                                                         @RequestParam(required = false) Boolean ascending) {
+        FilterRestaurantRequest filterRequest = null;
+        if(name!=null || isOfferingDiscount!=null || categoryIds!=null)
+            filterRequest = new FilterRestaurantRequest(name,categoryIds,isOfferingDiscount);
+        Pageable pageable=PageRequest.of(page,pageSize);
+        if(sortBy!=null) {
+            if(ascending)
+                 pageable = PageRequest.of(page, pageSize, Sort.by(sortBy).ascending());
+            else
+                 pageable = PageRequest.of(page, pageSize, Sort.by(sortBy).descending());
+        }
+        var restaurants = restaurantService.searchForRestaurants(filterRequest,pageable);
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
 

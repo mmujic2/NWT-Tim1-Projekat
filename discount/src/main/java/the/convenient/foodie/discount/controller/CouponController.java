@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.discount.dto.CouponDto;
 import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.service.CouponService;
@@ -22,6 +23,8 @@ import java.util.List;
 @Validated
 @RequestMapping(path="/coupon") // This means URL's start with /demo (after Application path)
 public class CouponController {
+    @Autowired
+    public RestTemplate restTemplate;
     @Autowired
     private CouponService couponService;
 
@@ -34,6 +37,9 @@ public class CouponController {
     @GetMapping(path="/all")
     public @ResponseBody ResponseEntity<List<Coupon>> getAllCoupons() {
         var coupons = couponService.getAllCoupons();
+        //dont make a loop by accident like I did
+        //String response = restTemplate.getForObject("http://order-service/order/get", String.class);
+        //System.out.println(response);
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 
@@ -93,14 +99,42 @@ public class CouponController {
 
     @Operation(description = "Filter restaurants with coupons")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully found filtered restaurants",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Coupon.class)) })}
-    )
-    @GetMapping(path="/filter")
+        @ApiResponse(responseCode = "200", description = "Successfully found filtered restaurants",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = Coupon.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                content = @Content)})
+    @PostMapping(path="/filter")
     public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
         var filteredRestaurants = couponService.filterRestaurants(restaurants);
         return new ResponseEntity<>(filteredRestaurants, HttpStatus.OK);
+    }
+
+    @Operation(description = "Use one coupon")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully used coupon",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Coupon.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                    content = @Content)})
+    @PostMapping(path="/apply/{id}")
+    public @ResponseBody ResponseEntity<Integer> useCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id) {
+        Integer quantity = couponService.applyCoupon(id);
+        return new ResponseEntity<>(quantity, HttpStatus.OK);
+    }
+
+    @Operation(description = "Get coupons by restaurant UUID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the coupons with provided restaurant UUID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Coupon.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Coupons with provided restaurant UUID not found",
+                    content = @Content)})
+    @GetMapping(path = "/res/{uuid}")
+    public  @ResponseBody ResponseEntity<List<Coupon>> getCouponForRestaurant(@Parameter(description = "Restaurant UUID", required = true) @PathVariable  String uuid) {
+        var coupon = couponService.getAllCouponsForRestaurant(uuid);
+        return new ResponseEntity<>(coupon, HttpStatus.OK);
     }
 
 }

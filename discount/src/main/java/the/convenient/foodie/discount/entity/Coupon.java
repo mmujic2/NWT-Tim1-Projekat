@@ -25,8 +25,8 @@ public class Coupon {
     @Column(name = "quantity", columnDefinition = "integer")
     private Integer     quantity;
 
-    @NotNull(message = "Restaurant ID should not be null")
-    @Column(name = "restaurant_uuid", unique = true, columnDefinition = "VARCHAR(60)")
+    @NotNull(message = "Restaurant UUID should not be null")
+    @Column(name = "restaurant_uuid", columnDefinition = "VARCHAR(60)")
     private String     restaurant_uuid;
 
     @NotNull(message = "Discount percentage should not be null")
