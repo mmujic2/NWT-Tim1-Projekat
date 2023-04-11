@@ -50,9 +50,12 @@ public class DiscountApplication implements CommandLineRunner {
 		c2.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 		Coupon c3 = new Coupon("kol121314156",4,"333",10);
 		c2.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
+		Coupon c4 = new Coupon("fol121314156",52,"154",20);
+		c4.setCoupon_uuid(UUIDGenerator.generateType1UUID().toString());
 		couponRepository.save(c);
 		couponRepository.save(c2);
 		couponRepository.save(c3);
+		couponRepository.save(c4);
 		Score s = new Score(341,10,3150);
 		scoreRepository.save(s);
 		RequiredScore r = new RequiredScore(31,500);

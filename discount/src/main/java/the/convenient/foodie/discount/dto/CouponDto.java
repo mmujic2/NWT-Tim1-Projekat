@@ -18,7 +18,7 @@ public class CouponDto implements Serializable {
     @Positive(message = "Quantity can not be negative")
     private Integer     quantity;
 
-    @NotNull(message = "Restaurant ID should not be null")
+    @NotNull(message = "Restaurant UUID should not be null")
     private String     restaurant_uuid;
 
     @NotNull(message = "Discount percentage should not be null")
