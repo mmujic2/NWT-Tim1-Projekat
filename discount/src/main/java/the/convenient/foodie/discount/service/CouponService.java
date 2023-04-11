@@ -53,7 +53,9 @@ public class CouponService {
 
     public List<String> filterRestaurants(List<String> restaurants) {
         List<String> reList = couponRepository.findAll().stream().map(Coupon::getRestaurant_uuid).collect(Collectors.toList());
-        return (List<String>) restaurants.stream().filter(reList::contains);
+        //System.out.println(reList);
+        //return new ArrayList<>();
+        return restaurants.stream().filter(reList::contains).collect(Collectors.toList());
     }
 
 

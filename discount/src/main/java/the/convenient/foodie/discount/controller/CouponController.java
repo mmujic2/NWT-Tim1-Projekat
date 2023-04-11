@@ -99,10 +99,11 @@ public class CouponController {
 
     @Operation(description = "Filter restaurants with coupons")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully found filtered restaurants",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Coupon.class)) })}
-    )
+        @ApiResponse(responseCode = "200", description = "Successfully found filtered restaurants",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = Coupon.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                content = @Content)})
     @PostMapping(path="/filter")
     public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
         var filteredRestaurants = couponService.filterRestaurants(restaurants);
