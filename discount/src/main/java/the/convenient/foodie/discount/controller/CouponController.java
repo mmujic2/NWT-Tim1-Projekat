@@ -1,5 +1,9 @@
 package the.convenient.foodie.discount.controller;
 
+import com.example.demo.EventRequest;
+import com.example.demo.EventServiceGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,6 +44,11 @@ public class CouponController {
         //dont make a loop by accident like I did
         //String response = restTemplate.getForObject("http://order-service/order/get", String.class);
         //System.out.println(response);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(EventRequest.newBuilder().setEvent("Test message for server").build());
+        System.out.println(response.getResponse());
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 

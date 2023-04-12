@@ -10,4 +10,6 @@ import the.convenient.foodie.restaurant.model.Restaurant;
 public interface RestaurantRepositoryCustom {
 
     Page<RestaurantWithRating> getRestaurants(FilterRestaurantRequest filters, Pageable pageable);
+
+    String getRestaurantUUID(Long id);
 }

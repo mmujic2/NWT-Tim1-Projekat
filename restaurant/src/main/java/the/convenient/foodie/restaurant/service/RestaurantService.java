@@ -132,4 +132,12 @@ public class RestaurantService {
         restaurantRepository.findById(restaurantId).orElseThrow(()->exception);
         return reviewRepository.calculateAverageRatingForRestaurant(restaurantId);
     }
+
+    public String getRestaurantUUID(Long id) {
+        var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
+        var uuid = restaurantRepository.getRestaurantUUID(id);
+        if(uuid==null)
+            throw exception;
+        return uuid;
+    }
 }
