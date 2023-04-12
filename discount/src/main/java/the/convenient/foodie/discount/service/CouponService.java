@@ -53,8 +53,25 @@ public class CouponService {
 
     public List<String> filterRestaurants(List<String> restaurants) {
         List<String> reList = couponRepository.findAll().stream().map(Coupon::getRestaurant_uuid).collect(Collectors.toList());
-        return (List<String>) restaurants.stream().filter(reList::contains);
+        //System.out.println(reList);
+        //return new ArrayList<>();
+        return restaurants.stream().filter(reList::contains).collect(Collectors.toList());
     }
 
+    public Integer applyCoupon(Integer id) {
+        var exception = new EntityNotFoundException("Coupon with id " + id + " does not exist!");
+        var coupon = couponRepository.findById(id);
+        if (coupon.isPresent()) {
+            coupon.get().setQuantity(coupon.get().getQuantity() - 1);
+            couponRepository.save(coupon.get());
+            return coupon.get().getQuantity();
+        }
+        else
+           throw exception;
+    }
 
+    public List<Coupon> getAllCouponsForRestaurant(String restaurant_uuid) {
+        //System.out.println(couponRepository.findAll().stream().filter(coupon -> coupon.getRestaurant_uuid().equals(restaurant_uuid)).toList());
+        return new ArrayList<>(couponRepository.findAll().stream().filter(coupon -> coupon.getRestaurant_uuid().equals(restaurant_uuid)).toList());
+    }
 }

@@ -37,7 +37,7 @@ public class Order {
     private LocalDateTime createdTime;
 
     @Nullable
-    private Long couponId;
+    private String couponId;
 
     @NotNull(message = "Order must have status!")
     private String orderStatus;
@@ -79,7 +79,7 @@ public class Order {
     }
 
     @JsonCreator
-    public Order(Long userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, Long couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
+    public Order(Long userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -142,11 +142,11 @@ public class Order {
         this.createdTime = createdTime;
     }
 
-    public Long getCouponId() {
+    public String getCouponId() {
         return couponId;
     }
 
-    public void setCouponId(Long couponId) {
+    public void setCouponId(String couponId) {
         this.couponId = couponId;
     }
 

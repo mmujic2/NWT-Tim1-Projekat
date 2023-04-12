@@ -1,9 +1,10 @@
-package the.convenient.foodie.order.config;
+/*package the.convenient.foodie.order.config;
 
 import com.example.demo.EventServiceGrpc;
 import io.swagger.v3.oas.models.OpenAPI;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.client.inject.GrpcClientBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,22 +17,10 @@ import org.springframework.web.client.RestTemplate;
         beanName = "blockingStub",
         client = @GrpcClient("test")
 )
-public class OpenAPIConfig {
+public class rpcConfig {
 
     @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    EventLogger EventLoggerService(@Autowired EventServiceGrpc.EventServiceBlockingStub blockingStub) {
+        return new EventLogger(blockingStub);
     }
-
-    @Bean
-    public OpenAPI myOpenAPI() {
-
-        Info info = new Info()
-                .title("The Convenient Foodie - Order API")
-                .version("0.1")
-                .description("This API exposes endpoints of the Order microservice.");
-
-        return new OpenAPI().info(info);
-    }
-}
+}*/
