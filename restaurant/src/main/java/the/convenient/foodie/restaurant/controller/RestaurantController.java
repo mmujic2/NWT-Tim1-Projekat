@@ -280,5 +280,13 @@ public class RestaurantController {
         return new ResponseEntity<>("Successfully removed restaurant with id " + id + " from favorites!",HttpStatus.OK);
     }
 
+    @Operation(description = "Get restaurant UUID by restaurant ID")
+    @GetMapping(path="/uuid/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> getRestaurantUUIDByRestaurantId(
+            @Parameter(description = "Restaurant ID",required = true)
+            @PathVariable Long id) {
+        return new ResponseEntity<>(restaurantService.getRestaurantUUID(id),HttpStatus.OK);
+    }
 }
 

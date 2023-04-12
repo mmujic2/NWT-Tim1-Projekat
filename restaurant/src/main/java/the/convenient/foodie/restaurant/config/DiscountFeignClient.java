@@ -9,5 +9,5 @@ import java.util.List;
 @FeignClient("discount-service")
 public interface DiscountFeignClient {
 
-    @PostMapping("/coupon/filter") public String filterDiscountedRestaurants(@RequestBody List<String> restaurants);
+    @PostMapping("/coupon/filter") public List<String> filterDiscountedRestaurants(@RequestBody List<String> restaurants);
 }

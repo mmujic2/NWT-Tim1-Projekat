@@ -132,4 +132,8 @@ public class RestaurantService {
         restaurantRepository.findById(restaurantId).orElseThrow(()->exception);
         return reviewRepository.calculateAverageRatingForRestaurant(restaurantId);
     }
+
+    public String getRestaurantUUID(Long id) {
+        return restaurantRepository.getRestaurantUUID(id);
+    }
 }
