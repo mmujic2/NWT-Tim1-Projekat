@@ -120,6 +120,9 @@ public class OrderController {
     @GetMapping(path = "/get")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Order> GetAllOrders() {
+        var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        System.out.println(x);
+
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest.newBuilder().setEvent("Test message for server").build());
