@@ -134,6 +134,10 @@ public class RestaurantService {
     }
 
     public String getRestaurantUUID(Long id) {
-        return restaurantRepository.getRestaurantUUID(id);
+        var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
+        var uuid = restaurantRepository.getRestaurantUUID(id);
+        if(uuid==null)
+            throw exception;
+        return uuid;
     }
 }
