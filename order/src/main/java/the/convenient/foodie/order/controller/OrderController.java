@@ -158,7 +158,7 @@ public class OrderController {
     }
 
 
-    @GetMapping(path = "/count/{sorttype}")
+    @PostMapping(path = "/count/{sorttype}")
     public @ResponseBody Map<String, Long> GetRestaurantOrderCounts(@RequestBody List<String> restaurantUids, @PathVariable String sorttype) {
         var orders = orderRepository.findAll();
 
