@@ -281,6 +281,13 @@ public class RestaurantController {
     }
 
     @Operation(description = "Get restaurant UUID by restaurant ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found restaurant UUID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided ID not found",
+                    content = @Content)}
+    )
     @GetMapping(path="/uuid/{id}")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> getRestaurantUUIDByRestaurantId(

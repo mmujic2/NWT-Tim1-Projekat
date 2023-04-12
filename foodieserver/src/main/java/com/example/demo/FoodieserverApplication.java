@@ -5,6 +5,7 @@ import com.netflix.eureka.EurekaServerContextHolder;
 import com.netflix.eureka.registry.PeerAwareInstanceRegistry;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,6 +34,9 @@ public class FoodieserverApplication {
 	class ServiceInstanceRestController {
 
 		@Autowired
+		private FoodieEventRepository foodieEventRepository;
+
+		@Autowired
 		private FoodieserverApplication discoveryClient;
 
 		@GetMapping("/api/discovery/instance/info")
@@ -52,8 +56,10 @@ public class FoodieserverApplication {
 			});
 		}
 
-
-
+		@PostConstruct
+		public void init() {
+			RepositoryContainer.foodieEventRepository = this.foodieEventRepository;
+		}
 
 	}
 
