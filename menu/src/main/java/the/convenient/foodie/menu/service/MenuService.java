@@ -85,4 +85,7 @@ public class MenuService {
         return menu;
     }
 
+    public List<Menu> getRestaurantMenus(String restaurantUUID) {
+        return menuRepository.getMenusForRestaurant(restaurantUUID);
+    }
 }

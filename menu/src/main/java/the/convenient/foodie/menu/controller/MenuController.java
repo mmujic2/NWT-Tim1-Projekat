@@ -33,29 +33,29 @@ public class MenuController {
     @Operation(description = "Get all menus")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found all menus",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Menu.class)) })}
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Menu.class))})}
     )
     @GetMapping(path = "/all")
     public @ResponseBody ResponseEntity<List<Menu>> getAllMenus() {
         var menus = menuService.getAllMenus();
-       // String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        // String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(response);
         return new ResponseEntity<>(menus, HttpStatus.OK);
     }
 
     @Operation(description = "Get a menu by menu ID")
-    @ApiResponses ( value = {
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the menu with provided ID",
-                    content = { @Content(mediaType = "application/json",
+                    content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Menu.class)),
                     }),
             @ApiResponse(responseCode = "404", description = "Menu with provided ID not found",
                     content = @Content)})
     @GetMapping(path = "/{id}")
-    public  @ResponseBody ResponseEntity<Menu> getMenu(
+    public @ResponseBody ResponseEntity<Menu> getMenu(
             @Parameter(description = "Menu ID", required = true)
-            @PathVariable  Long id) {
+            @PathVariable Long id) {
         var menu = menuService.getMenu(id);
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
@@ -63,8 +63,8 @@ public class MenuController {
     @Operation(description = "Create a new menu")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new menu",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Menu.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Menu.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content)})
     @PostMapping(path = "/add")
@@ -73,14 +73,14 @@ public class MenuController {
             @Parameter(description = "Information required for menu creation", required = true)
             @Valid @RequestBody MenuDto menuDto) {
         var menu = menuService.addNewMenu(menuDto);
-        return  new ResponseEntity<>(menu, HttpStatus.CREATED);
+        return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 
     @Operation(description = "Update menu informations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated menu information",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Menu.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Menu.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Menu with provided ID not found",
@@ -91,13 +91,13 @@ public class MenuController {
             @Parameter(description = "Menu ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Menu information to be updated", required = true)
-            @Valid @RequestBody MenuDto menuDto){
+            @Valid @RequestBody MenuDto menuDto) {
         var menu = menuService.updateMenu(menuDto, id);
-        return  new ResponseEntity<>(menu, HttpStatus.CREATED);
+        return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 
     @Operation(description = "Delete a menu")
-    @ApiResponses ( value = {
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the menu with provided ID"),
             @ApiResponse(responseCode = "404", description = "Menu with provided ID not found",
                     content = @Content)})
@@ -112,14 +112,14 @@ public class MenuController {
     @Operation(description = "Set menu items for menu")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated menu items",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Menu.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Menu.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Menu with provided ID not found",
                     content = @Content)}
     )
-    @PutMapping(path="/{id}/set-menu-items")
+    @PutMapping(path = "/{id}/set-menu-items")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<Menu> setMenuItemsForMenu(
             @Parameter(description = "Menu ID", required = true)
@@ -127,6 +127,25 @@ public class MenuController {
             @Parameter(description = "Values of menu items", required = true)
             @RequestBody List<@Valid MenuItemDto> menuItemDtos) {
         var menu = menuService.addMenuItemsToMenu(id, menuItemDtos);
-        return  new ResponseEntity<>(menu,HttpStatus.OK);
+        return new ResponseEntity<>(menu, HttpStatus.OK);
     }
+
+    @PostMapping(path = "/add-menu/{restaurantid}")
+    public @ResponseBody ResponseEntity<Menu> addNewMenuForRestaurant(
+            @PathVariable Long restaurantid,
+            @Parameter(description = "Information required for menu creation", required = true)
+            @Valid @RequestBody MenuDto menuDto) {
+        String restaurantUUID = restTemplate.getForObject("http://restaurant-service/restaurant/uuid/" + restaurantid, String.class);
+        menuDto.setRestaurant_uuid(restaurantUUID);
+        var menu = menuService.addNewMenu(menuDto);
+        return new ResponseEntity<>(menu, HttpStatus.CREATED);
+    }
+
+    @GetMapping(path = "/restaurant-menus/{restaurantid}")
+    public  List<Menu> getRestaurantMenus (@PathVariable Long restaurantid) {
+        String restaurantUUID = restTemplate.getForObject("http://restaurant-service/restaurant/uuid/" + restaurantid, String.class);
+        var menus = menuService.getRestaurantMenus(restaurantUUID);
+        return menus;
+    }
+
 }
