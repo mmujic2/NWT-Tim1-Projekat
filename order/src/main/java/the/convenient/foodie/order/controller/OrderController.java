@@ -18,15 +18,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
-import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import the.convenient.foodie.order.config.EventLogger;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
 import the.convenient.foodie.order.model.Order;
@@ -34,8 +30,8 @@ import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -120,12 +116,18 @@ public class OrderController {
     @GetMapping(path = "/get")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Iterable<Order> GetAllOrders() {
-        var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
-        System.out.println(x);
+        //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        //System.out.println(x);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
-        var response = stub.logevent(EventRequest.newBuilder().setEvent("Test message for server").build());
+        var response = stub.logevent(EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Fetched all orders").setServiceName("order-service")
+                .setUser("zustiuhsjkgzu")
+                .build());
         System.out.println(response.getResponse());
 
         return orderRepository.findAll();

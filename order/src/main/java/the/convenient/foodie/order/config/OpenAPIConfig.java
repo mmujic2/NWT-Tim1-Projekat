@@ -11,11 +11,6 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@GrpcClientBean(
-        clazz = EventServiceGrpc.EventServiceBlockingStub.class,
-        beanName = "blockingStub",
-        client = @GrpcClient("test")
-)
 public class OpenAPIConfig {
 
     @Bean
