@@ -19,12 +19,12 @@ import the.convenient.foodie.restaurant.dto.FilterRestaurantRequest;
 import the.convenient.foodie.restaurant.dto.RestaurantWithRating;
 import the.convenient.foodie.restaurant.model.Category;
 import the.convenient.foodie.restaurant.model.Restaurant;
+import the.convenient.foodie.restaurant.repository.CategoryRepository;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
 import the.convenient.foodie.restaurant.repository.custom.RestaurantRepositoryCustom;
+import the.convenient.foodie.restaurant.repository.metamodel.Restaurant_;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -40,12 +40,145 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
     @Autowired
     private DiscountFeignClient discountFeignClient;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Override
     public Page<RestaurantWithRating> getRestaurants(FilterRestaurantRequest filters, Pageable pageable) {
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.RestaurantWithRating(r,avg(rev.rating))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id";
+
+        var results = new ArrayList<RestaurantWithRating>();
+
+        Map<String,String> whereClauseMap = new HashMap<>();
+
+
+        if(filters!=null) {
+            if (filters.getName()!=null && !filters.getName().isBlank()) {
+                whereClauseMap.put("name"," LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%')) ");
+            }
+
+            if (filters.getCategoryIds()!=null && !filters.getCategoryIds().isEmpty()) {
+                whereClauseMap.put("category"," EXISTS(SELECT c FROM Category c " +
+                        "WHERE c.id IN (:categoryIds) AND c MEMBER OF r.categories)");
+            }
+
+        }
+
+        if(!whereClauseMap.isEmpty()) {
+            hql += " WHERE " + whereClauseMap.values().stream().collect(Collectors.joining(" AND "));
+        }
+
+
+
+        if (filters!=null && filters.getIsOfferingDiscount()!=null && Boolean.valueOf(filters.getIsOfferingDiscount())) {
+            var query = entityManager.createQuery(hql,RestaurantWithRating.class);
+
+            if(whereClauseMap.containsKey("name"))
+                query.setParameter("name",filters.getName());
+
+            if(whereClauseMap.containsKey("category"))
+                query.setParameter("categoryIds",filters.getCategoryIds());
+
+            Integer offset = (pageable.getPageNumber() - 1) * pageable.getPageSize();
+
+
+            results = (ArrayList<RestaurantWithRating>) query.setFirstResult(offset).setMaxResults(pageable.getPageSize()).getResultList();
+            //Handle filtering parallel query for count
+            //Call Discount MS
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            var jsonObject = "{restaurants: [" + results.stream().map(r-> "\""+r.getUuid()+"\"").collect(Collectors.joining(",")) +"]}";
+            System.out.println(jsonObject);
+            HttpEntity<String> request =
+                    new HttpEntity<String>(jsonObject.toString(), headers);
+
+            //var res = restTemplate.postForObject("http://discount-service/coupon/filter",request, String.class);
+            List<String> uuids = results.stream().map(r-> r.getUuid()).collect(Collectors.toList());
+            //var res = discountFeignClient.filterDiscountedRestaurants(uuids);
+            var res = restTemplate.getForObject("http://discount-service/coupon/all",String.class);
+            System.out.println(res);
+        }
+
+        hql += " GROUP BY r";
+
+
+
+        if(pageable.getSort()!=null && !pageable.getSort().isEmpty()) {
+            var order = pageable.getSort().stream().collect(Collectors.toList()).get(0);
+            if(order.getDirection().isAscending()) {
+                if (order.getDirection().isAscending()) {
+                    switch (order.getProperty()) {
+                        case "NAME":
+                            hql += " ORDER BY r.name ASC";
+                            break;
+
+                        case "DATE":
+                            hql += " ORDER BY r.created ASC";
+                            break;
+                        case "RATING":
+                            hql += " ORDER BY avg(rev.rating) ASC";
+                            break;
+
+                    }
+
+                    if(results.isEmpty()) {
+                        results.addAll(getResults(hql,pageable,whereClauseMap.containsKey("name")? filters.getName():null,whereClauseMap.containsKey("category")?filters.getCategoryIds():null));
+                    }
+
+                    if (order.getProperty().equals("POPULARITY")) {
+                        var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
+                        //Call Order Microservice
+                    }
+
+
+                } else {
+                    switch (order.getProperty()) {
+                        case "NAME":
+                            hql += " ORDER BY r.name DESC";
+                            break;
+
+                        case "DATE":
+                            hql += " ORDER BY r.created DESC";
+                            break;
+                        case "RATING":
+                            hql += " ORDER BY avg(rev.rating) DESC";
+                            break;
+
+
+                    }
+
+                    if(results.isEmpty()) {
+                        results.addAll(getResults(hql,pageable,whereClauseMap.containsKey("name")? filters.getName():null,whereClauseMap.containsKey("category")?filters.getCategoryIds():null));
+                    }
+
+                    if (order.getProperty().equals("POPULARITY")) {
+                        var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
+                        //Call Order Microservice
+                    }
+                }
+
+            }
+        }
+
+        if(results.isEmpty()) {
+            results.addAll(getResults(hql,pageable,whereClauseMap.containsKey("name")? filters.getName():null,whereClauseMap.containsKey("category")?filters.getCategoryIds():null));
+        }
+
+
+
+        return new PageImpl<>(results, pageable, 10L);
+
+    }
+
+
+    public Page<RestaurantWithRating> getRestaurants2(FilterRestaurantRequest filters, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Restaurant> cq = cb.createQuery(Restaurant.class);
-        Metamodel m = entityManager.getMetamodel();
-        EntityType<Restaurant> Restaurant_ = m.entity(Restaurant.class);
+
 
         Root<Restaurant> restaurant = cq.from(Restaurant.class);
         List<Predicate> listOfPredicates = new ArrayList<>();
@@ -56,9 +189,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
         List<Restaurant> results = new ArrayList<>();
         List<RestaurantWithRating> restaurantsWithRating = new ArrayList<>();
-
-        System.out.println("FILTERI");
-        System.out.println(filters);
         if(filters!=null) {
             if (filters.getName()!=null && !filters.getName().isBlank()) {
                 listOfPredicates.add(cb.like(restaurant.get("name"), "%" + filters.getName() + "%"));
@@ -66,16 +196,30 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
             }
 
             if (filters.getCategoryIds()!=null && !filters.getCategoryIds().isEmpty()) {
-                System.out.println(filters.getCategoryIds());
+                /*var restaurants = categoryRepository.getRestaurantsWithCategories(filters.getCategoryIds());
+                cq.select(restaurant);
+                results.clear();
+                var queryResult = getResults(cq,pageable);
+                results.addAll(queryResult.stream().filter(r -> restaurants.stream().map(r1->r1.getId()).collect(Collectors.toList()).contains(r.getId())).collect(Collectors.toList()));*/
                 Join<Restaurant, Category> categories = restaurant.join("categories");
                 Join<Restaurant, Category> parallelCategories = parallelRoot.join("categories");
+                Predicate[] subqueryPredicates = new Predicate[2];
+                List<Predicate> listOfSubqueryPredicates = new ArrayList<>();
                 filters.getCategoryIds().stream().forEach(
                         categoryId -> {
-                            listOfPredicates.add( cb.equal(cb.literal(categoryId),categories.get("id")));
+                            Subquery<Category> subquery = cq.subquery(Category.class);
+                            Root<Category> category = subquery.from(Category.class);
+                            subqueryPredicates[0] = cb.equal(cb.literal(categoryId), category.get("id"));
+                            subqueryPredicates[1] = category.in(categories);
+                            subquery.select(category).where(subqueryPredicates);
+                            if(!listOfSubqueryPredicates.isEmpty())
+                                listOfSubqueryPredicates.set(0,cb.or(listOfSubqueryPredicates.get(0),cb.exists(subquery)));
                             parallelListOfPredicates.add(cb.equal(cb.literal(categoryId), parallelCategories.get("id")));
                         }
                 );
-                System.out.println(listOfPredicates);
+                if(!listOfSubqueryPredicates.isEmpty())
+                    listOfPredicates.add(listOfSubqueryPredicates.get(0));
+
             }
 
 
@@ -200,6 +344,25 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
         Integer offset = (pageable.getPageNumber() - 1) * pageable.getPageSize();
         return entityManager.createQuery(cq).setFirstResult(offset).setMaxResults(pageable.getPageSize()).getResultList();
     }
+
+    private List<RestaurantWithRating> getResults(String hql, Pageable pageable,String name, List<Long> categoryIds) {
+        System.out.println(hql);
+        System.out.println(name);
+        System.out.println(categoryIds);
+        var query = entityManager.createQuery(hql,RestaurantWithRating.class);
+
+        if(name!=null)
+            query.setParameter("name",name);
+
+        if(categoryIds!=null)
+            query.setParameter("categoryIds",categoryIds);
+
+        Integer offset = (pageable.getPageNumber() - 1) * pageable.getPageSize();
+
+        return query.setFirstResult(offset).setMaxResults(pageable.getPageSize()).getResultList();
+    }
+
+
 
 
 }
