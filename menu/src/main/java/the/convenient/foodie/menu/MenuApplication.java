@@ -15,7 +15,7 @@ import the.convenient.foodie.menu.util.UUIDGenerator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@EnableDiscoveryClient
+@EnableDiscoveryClient(autoRegister = true)
 @EntityScan(basePackages = "the.convenient.foodie.menu.model")
 @SpringBootApplication
 public class MenuApplication implements CommandLineRunner {

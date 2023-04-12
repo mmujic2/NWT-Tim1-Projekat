@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.menu.dto.MenuDto;
 import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.Menu;
@@ -23,6 +24,9 @@ import java.util.List;
 @Validated
 @RequestMapping(path = "menu")
 public class MenuController {
+
+    @Autowired
+    public RestTemplate restTemplate;
     @Autowired
     private MenuService menuService;
 
@@ -35,6 +39,8 @@ public class MenuController {
     @GetMapping(path = "/all")
     public @ResponseBody ResponseEntity<List<Menu>> getAllMenus() {
         var menus = menuService.getAllMenus();
+       // String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        //System.out.println(response);
         return new ResponseEntity<>(menus, HttpStatus.OK);
     }
 
