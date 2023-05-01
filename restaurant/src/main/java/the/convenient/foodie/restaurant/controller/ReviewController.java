@@ -1,5 +1,7 @@
 package the.convenient.foodie.restaurant.controller;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +17,7 @@ import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.service.ReviewService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -71,6 +74,17 @@ public class ReviewController {
             @Valid @RequestBody ReviewCreateRequest request) {
 
         var review = reviewService.addNewReview(request);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Added a review").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
+
         return new ResponseEntity<>(review,HttpStatus.CREATED);
     }
 
@@ -84,6 +98,16 @@ public class ReviewController {
     public @ResponseBody ResponseEntity<String> deleteReview(
             @Parameter(description = "Review ID", required = true)
             @PathVariable Long id) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Deleted a review").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>(reviewService.deleteReview(id),HttpStatus.OK);
     }
 
