@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.config;
+package the.convenient.foodie.restaurant.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,5 +11,7 @@ import java.util.Map;
 @FeignClient("order-service")
 public interface OrderFeignClient {
     @PostMapping("/order/count/{sort}") public Map<String,Long> getNumberOfOrdersPerRestaurant(@RequestBody List<String> restaurants, @PathVariable String sort);
+
+
 
 }

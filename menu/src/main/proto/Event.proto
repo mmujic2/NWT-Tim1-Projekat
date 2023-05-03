@@ -4,10 +4,10 @@ package com.example.demo;
 
 message EventRequest {
   string timestamp = 1;
-    string action = 2;
-    string event = 3;
-    string serviceName = 4;
-    string user = 5;
+  string action = 2;
+  string event = 3;
+  string serviceName = 4;
+  string user = 5;
 }
 
 message EventResponse {

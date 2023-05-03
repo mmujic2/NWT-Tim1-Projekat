@@ -1,5 +1,8 @@
 package the.convenient.foodie.restaurant.controller;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import com.example.demo.EventServiceGrpc;
 import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,6 +24,7 @@ import the.convenient.foodie.restaurant.service.CategoryService;
 import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
 import the.convenient.foodie.restaurant.service.RestaurantService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -48,6 +52,18 @@ public class RestaurantController {
             @Valid @RequestBody RestaurantCreateRequest request) {
 
         var restaurant = restaurantService.addNewRestaurant(request);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Created restaurant " + request.getName()).setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
+
         return new ResponseEntity<>(restaurant,HttpStatus.CREATED);
     }
 
@@ -71,6 +87,16 @@ public class RestaurantController {
 
         Restaurant restaurant = null;
         restaurant = restaurantService.updateRestaurant(request,id);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Updated restaurant " + request.getName()).setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
 
         return new ResponseEntity<>(restaurant,HttpStatus.OK);
     }
@@ -194,6 +220,17 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<String> deleteRestaurant(
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id) {
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Deleted restaurant with id " + id).setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>(restaurantService.deleteRestaurant(id),HttpStatus.OK);
     }
 
@@ -215,6 +252,18 @@ public class RestaurantController {
             @Parameter(description = "List of category IDs", required = true)
             @RequestBody List<Long> categoryIds) {
         var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Changed restaurant categories").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
+
         return  new ResponseEntity<>(restaurant,HttpStatus.OK);
     }
 
@@ -236,6 +285,18 @@ public class RestaurantController {
             @Parameter(description = "Values of daily opening and closing hours", required = true)
             @Valid @RequestBody OpeningHoursCreateRequest request) {
         var restaurant = restaurantService.setRestaurantOpeningHours(id,request);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Updated restaurant opening hours").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
+
         return  new ResponseEntity<>(restaurant,HttpStatus.OK);
     }
 
@@ -257,6 +318,16 @@ public class RestaurantController {
     ) {
 
         var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,user);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Added restaurant with id " + id + " to favorites").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>(favoriteRestaurant,HttpStatus.CREATED);
     }
 
@@ -277,6 +348,17 @@ public class RestaurantController {
             @RequestParam String user) {
 
         favoriteRestaurantService.removeRestaurantFromFavorites(id,user);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Removed restaurant with id " + id+ " from favorites").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>("Successfully removed restaurant with id " + id + " from favorites!",HttpStatus.OK);
     }
 

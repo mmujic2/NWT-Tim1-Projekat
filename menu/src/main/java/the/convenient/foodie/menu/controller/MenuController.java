@@ -1,5 +1,9 @@
 package the.convenient.foodie.menu.controller;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import com.example.demo.EventRequest;
+import com.example.demo.EventServiceGrpc;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +22,7 @@ import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.service.MenuService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -73,6 +78,15 @@ public class MenuController {
             @Parameter(description = "Information required for menu creation", required = true)
             @Valid @RequestBody MenuDto menuDto) {
         var menu = menuService.addNewMenu(menuDto);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Created a menu for restaurnat " + menuDto.getRestaurant_uuid()).setServiceName("menu-service")
+                .setUser("Test")
+                .build());
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 

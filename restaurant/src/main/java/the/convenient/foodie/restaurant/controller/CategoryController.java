@@ -1,5 +1,7 @@
 package the.convenient.foodie.restaurant.controller;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +18,7 @@ import the.convenient.foodie.restaurant.model.Category;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.CategoryService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,6 +41,16 @@ public class CategoryController {
             @Valid @RequestBody CategoryCreateRequest request) {
 
         var category = categoryService.addNewCategory(request.getName());
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Created a category " + request.getName()).setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>(category,HttpStatus.CREATED);
     }
 
@@ -61,6 +74,16 @@ public class CategoryController {
 
         Category category = null;
         category = categoryService.updateCategory(request.getName(),id);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Updated category " + request.getName()).setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
 
         return new ResponseEntity<>(category,HttpStatus.OK);
     }
@@ -108,6 +131,16 @@ public class CategoryController {
     public @ResponseBody ResponseEntity<String> deleteCategory(
             @Parameter(description = "Category ID", required = true)
             @PathVariable Long id) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Deleted a category").setServiceName("restaurant-service")
+                .setUser("Test")
+                .build());
+
         return new ResponseEntity<>(categoryService.deleteCategory(id),HttpStatus.OK);
     }
 }

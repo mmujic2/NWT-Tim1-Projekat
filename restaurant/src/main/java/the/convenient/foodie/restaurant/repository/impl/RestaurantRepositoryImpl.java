@@ -9,8 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import the.convenient.foodie.restaurant.config.DiscountFeignClient;
-import the.convenient.foodie.restaurant.config.OrderFeignClient;
+import the.convenient.foodie.restaurant.feign.DiscountFeignClient;
+import the.convenient.foodie.restaurant.feign.OrderFeignClient;
 import the.convenient.foodie.restaurant.dto.FilterRestaurantRequest;
 import the.convenient.foodie.restaurant.dto.RestaurantWithRating;
 import the.convenient.foodie.restaurant.repository.custom.RestaurantRepositoryCustom;
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Repository
 public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantRepositoryImpl.class);
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -29,8 +30,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
     @Autowired
     private OrderFeignClient orderFeignClient;
-
-    private Logger logger = LoggerFactory.getLogger(RestaurantRepositoryImpl.class);
 
 
     @Override
@@ -68,9 +67,13 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
             //Call Discount MS
 
             List<String> uuids = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
-            List<String> res = discountFeignClient.filterDiscountedRestaurants(uuids);
+            try {
+                List<String> res = discountFeignClient.filterDiscountedRestaurants(uuids);
 
-            results = (ArrayList<RestaurantWithRating>) results.stream().filter(r -> res.contains(r.getUuid())).collect(Collectors.toList());
+                results = (ArrayList<RestaurantWithRating>) results.stream().filter(r -> res.contains(r.getUuid())).collect(Collectors.toList());
+            }  catch(Exception e) {
+            logger.error(e.getMessage());
+            }
         }
 
 
@@ -98,8 +101,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
                 if (order.getProperty().equals("POPULARITY")) {
                     var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
                     //Call Order Microservice
+                    try {
                     var orderMap = orderFeignClient.getNumberOfOrdersPerRestaurant(resultUUIDs, "asc");
                     results.stream().sorted(Comparator.comparing(r -> orderMap.get(r.getUuid())));
+                    } catch(Exception e) {
+                        logger.error(e.getMessage());
+                    }
 
                 }
 
@@ -127,8 +134,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
                 if (order.getProperty().equals("POPULARITY")) {
                     var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
                     //Call Order Microservice
-                    var orderMap = orderFeignClient.getNumberOfOrdersPerRestaurant(resultUUIDs, "desc");
-                    results.stream().sorted((r1, r2) -> orderMap.get(r2.getUuid()).compareTo(orderMap.get(r1.getUuid())));
+                    try {
+                        var orderMap = orderFeignClient.getNumberOfOrdersPerRestaurant(resultUUIDs, "desc");
+                        results.stream().sorted((r1, r2) -> orderMap.get(r2.getUuid()).compareTo(orderMap.get(r1.getUuid())));
+                    } catch(Exception e) {
+                        logger.error(e.getMessage());
+                    }
                 }
             }
 

@@ -26,4 +26,6 @@ public class OpenAPIConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+
 }
