@@ -39,6 +39,9 @@ public class FoodieGatewayApplication {
 				.route("order-service-get-one", p -> p
 						.path("/order/**")
 						.uri("lb://order-service"))
+				.route("discountservice", p -> p
+						.path("/coupon/**")
+						.uri("lb://discount-service"))
 				.build();
 
 	}
