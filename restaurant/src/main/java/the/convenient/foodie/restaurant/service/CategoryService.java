@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.dto.CategoryCreateRequest;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
 import the.convenient.foodie.restaurant.model.Category;
@@ -22,24 +23,22 @@ public class CategoryService {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
-    public Category addNewCategory(String name) {
+    public Category addNewCategory(CategoryCreateRequest request) {
         Category category = new Category();
-        category.setName(name);
+        category.setName(request.getName());
         category.setCreated(LocalDateTime.now());
-        //Update with userID/name
-        category.setCreatedBy("test");
+        category.setCreatedBy(request.getUserUUID());
         categoryRepository.save(category);
 
         return category;
     }
 
-    public Category updateCategory(String name, Long id) {
+    public Category updateCategory(CategoryCreateRequest request, Long id) {
         var exception = new EntityNotFoundException("Category with id " + id + " does not exist!");
         var category = categoryRepository.findById(id).orElseThrow(()-> exception);
-        category.setName(name);
+        category.setName(request.getName());
         category.setModified(LocalDateTime.now());
-        //Update with userID/name
-        category.setModifiedBy("test");
+        category.setModifiedBy(request.getUserUUID());
         categoryRepository.save(category);
         return category;
     }

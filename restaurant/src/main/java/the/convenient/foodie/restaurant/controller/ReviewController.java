@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
@@ -60,6 +61,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new review")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new review",
@@ -71,8 +73,11 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Review> addNewReview (
             @Parameter(description = "Information required for review creation", required = true)
-            @Valid @RequestBody ReviewCreateRequest request) {
+            @Valid @RequestBody ReviewCreateRequest request,
+            @RequestHeader("uuid") String userUuid,
+            @RequestHeader("username") String username) {
 
+        request.setUserUUID(userUuid);
         var review = reviewService.addNewReview(request);
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
@@ -81,13 +86,14 @@ public class ReviewController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Added a review").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
         return new ResponseEntity<>(review,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Delete a review")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the review with provided ID"),
@@ -97,7 +103,8 @@ public class ReviewController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteReview(
             @Parameter(description = "Review ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
@@ -105,7 +112,7 @@ public class ReviewController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("DELETE")
                 .setEvent("Deleted a review").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(reviewService.deleteReview(id),HttpStatus.OK);

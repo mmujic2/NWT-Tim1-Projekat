@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.*;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
@@ -26,6 +27,8 @@ import the.convenient.foodie.restaurant.service.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasRole;
 
 @RestController
 @RequestMapping(path="/restaurant")
@@ -38,6 +41,7 @@ public class RestaurantController {
 
 
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Create a new restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new restaurant",
@@ -49,8 +53,9 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Restaurant> addNewRestaurant (
             @Parameter(description = "Information required for restaurant creation", required = true)
-            @Valid @RequestBody RestaurantCreateRequest request) {
+            @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid,@RequestHeader("username") String username) {
 
+        request.setManagerUUID(uuid);
         var restaurant = restaurantService.addNewRestaurant(request);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
@@ -60,13 +65,14 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Created restaurant " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
         return new ResponseEntity<>(restaurant,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Update restaurant information")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated restaurant information",
@@ -83,8 +89,11 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Restaurant information to be updated", required = true)
-            @RequestBody @Valid RestaurantUpdateRequest request) {
+            @RequestBody @Valid RestaurantUpdateRequest request,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
 
+        request.setUpdatedBy(userUUID);
         Restaurant restaurant = null;
         restaurant = restaurantService.updateRestaurant(request,id);
 
@@ -95,7 +104,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated restaurant " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(restaurant,HttpStatus.OK);
@@ -210,6 +219,7 @@ public class RestaurantController {
 
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Delete a restaurant")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the restaurant with provided ID"),
@@ -219,7 +229,8 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteRestaurant(
             @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -228,12 +239,13 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("DELETE")
                 .setEvent("Deleted restaurant with id " + id).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(restaurantService.deleteRestaurant(id),HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Set restaurant categories")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated restaurant categories",
@@ -250,8 +262,10 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "List of category IDs", required = true)
-            @RequestBody List<Long> categoryIds) {
-        var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds);
+            @RequestBody List<Long> categoryIds,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
+        var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -260,13 +274,14 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Changed restaurant categories").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
         return  new ResponseEntity<>(restaurant,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Set restaurant opening hours")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated restaurant opening hours",
@@ -283,8 +298,10 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Values of daily opening and closing hours", required = true)
-            @Valid @RequestBody OpeningHoursCreateRequest request) {
-        var restaurant = restaurantService.setRestaurantOpeningHours(id,request);
+            @Valid @RequestBody OpeningHoursCreateRequest request,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
+        var restaurant = restaurantService.setRestaurantOpeningHours(id,request,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -293,13 +310,14 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated restaurant opening hours").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
         return  new ResponseEntity<>(restaurant,HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Add restaurant to user's favorite restaurants")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully added restaurant to favorites",
@@ -313,8 +331,8 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<FavoriteRestaurant> addRestaurantToFavorites(
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
-            @Parameter(description = "UUID of the user", required = true)
-            @RequestParam String user
+            @RequestHeader("uuid") String user,
+            @RequestHeader("username") String username
     ) {
 
         var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,user);
@@ -325,12 +343,13 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Added restaurant with id " + id + " to favorites").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(favoriteRestaurant,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Remove restaurant from user's favorite restaurants")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully removed restaurant from favorites",
@@ -344,8 +363,8 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<String> removeRestaurantFromFavorites(
             @Parameter(description = "Restaurant ID",required = true)
             @PathVariable Long id,
-            @Parameter(description = "UUID of the user",required = true)
-            @RequestParam String user) {
+            @RequestHeader("uuid") String user,
+            @RequestHeader("username") String username) {
 
         favoriteRestaurantService.removeRestaurantFromFavorites(id,user);
 
@@ -356,7 +375,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Removed restaurant with id " + id+ " from favorites").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>("Successfully removed restaurant with id " + id + " from favorites!",HttpStatus.OK);

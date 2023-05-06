@@ -29,7 +29,6 @@ public class FavoriteRestaurantService {
         favoriteRestaurant.setRestaurant(restaurant);
         favoriteRestaurant.setUserUUID(userUUID);
         favoriteRestaurant.setCreated(LocalDateTime.now());
-        //Update with userID/name
         favoriteRestaurant.setCreatedBy(userUUID);
         favoriteRestaurantRepository.save(favoriteRestaurant);
 

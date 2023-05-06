@@ -128,7 +128,7 @@ public class CategoryControllerTest {
 
     @Test
     public void addShouldCreateNewCategoryWhenInformationValid() throws Exception {
-        CategoryCreateRequest request = new CategoryCreateRequest("New category");
+        CategoryCreateRequest request = new CategoryCreateRequest("New category",null);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         post("/category/add")
                         .content(asJsonString(request))
@@ -145,7 +145,7 @@ public class CategoryControllerTest {
 
     @Test
     public void addShouldNotCreateNewCategoryWhenInformationInvalid() throws Exception {
-        CategoryCreateRequest request = new CategoryCreateRequest("");
+        CategoryCreateRequest request = new CategoryCreateRequest("",null);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         post("/category/add")
                         .content(asJsonString(request))
@@ -163,7 +163,7 @@ public class CategoryControllerTest {
     public void updateShouldUpdateCategoryWhenInformationValid() throws Exception {
         var allCategories = categoryRepository.findAll();
         var id = allCategories.stream().filter(c->c.getName()=="Category 1").findFirst().get().getId();
-        CategoryCreateRequest request = new CategoryCreateRequest("Update category");
+        CategoryCreateRequest request = new CategoryCreateRequest("Update category",null);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         put("/category/update/{id}",id)
                         .content(asJsonString(request))
@@ -182,7 +182,7 @@ public class CategoryControllerTest {
     public void updateShouldNotUpdateCategoryWhenInformationInvalid() throws Exception {
         var allCategories = categoryRepository.findAll();
         var id = allCategories.stream().filter(c->c.getName()=="Category 1").findFirst().get().getId();
-        CategoryCreateRequest request = new CategoryCreateRequest("");
+        CategoryCreateRequest request = new CategoryCreateRequest("",null);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         put("/category/update/{id}",id)
                         .content(asJsonString(request))

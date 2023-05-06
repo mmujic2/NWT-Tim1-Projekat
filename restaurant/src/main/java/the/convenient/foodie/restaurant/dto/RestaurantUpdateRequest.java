@@ -1,7 +1,5 @@
 package the.convenient.foodie.restaurant.dto;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -20,15 +18,13 @@ public class RestaurantUpdateRequest implements Serializable {
     private String mapCoordinates;
 
 
-    @NotNull(message="Restaurant manager must be specified!")
-    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
-    private String managerUUID;
+    private String updatedBy;
 
-    public RestaurantUpdateRequest(String name, String address, String mapCoordinates, String managerUUID) {
+    public RestaurantUpdateRequest(String name, String address, String mapCoordinates, String updatedBy) {
         this.name = name;
         this.address = address;
         this.mapCoordinates = mapCoordinates;
-        this.managerUUID = managerUUID;
+        this.updatedBy = updatedBy;
     }
 
     public RestaurantUpdateRequest() {
@@ -58,11 +54,11 @@ public class RestaurantUpdateRequest implements Serializable {
         this.mapCoordinates = mapCoordinates;
     }
 
-    public String getManagerUUID() {
-        return managerUUID;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setManagerUUID(String managerUUID) {
-        this.managerUUID = managerUUID;
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

@@ -34,8 +34,7 @@ public class RestaurantService {
         restaurant.setName(request.getName());
         restaurant.setManagerUUID(request.getManagerUUID());
         restaurant.setCreated(LocalDateTime.now());
-        //Update with userID/name
-        restaurant.setCreatedBy("test");
+        restaurant.setCreatedBy(request.getManagerUUID());
         restaurantRepository.save(restaurant);
 
         return restaurant;
@@ -45,12 +44,10 @@ public class RestaurantService {
             var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
                 var restaurant = restaurantRepository.findById(id).orElseThrow(()-> exception);
                 restaurant.setName(request.getName());
-                restaurant.setManagerUUID(request.getManagerUUID());
                 restaurant.setMapCoordinates(request.getMapCoordinates());
                 restaurant.setAddress(request.getAddress());
                 restaurant.setModified(LocalDateTime.now());
-                //Update with userID/name
-                restaurant.setModifiedBy("test");
+                restaurant.setModifiedBy(request.getUpdatedBy());
                 restaurantRepository.save(restaurant);
                 return restaurant;
 
@@ -84,24 +81,23 @@ public class RestaurantService {
         return "Restaurant with id " + id + " successfully deleted!";
     }
 
-    public Restaurant addCategoriesToRestaurant(Long id, List<Long> categoryIds) {
+    public Restaurant addCategoriesToRestaurant(Long id, List<Long> categoryIds,String userUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->exception);
         var categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
         restaurant.setCategories(categories);
         restaurant.setModified(LocalDateTime.now());
-        //Update with userID/name
-        restaurant.setModifiedBy("test");
+        restaurant.setModifiedBy(userUUID);
         restaurantRepository.save(restaurant);
         return restaurant;
     }
 
-    public Restaurant setRestaurantOpeningHours(Long id, OpeningHoursCreateRequest request) {
+    public Restaurant setRestaurantOpeningHours(Long id, OpeningHoursCreateRequest request,String userUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->exception);
 
-        //Update with user id/name
-        var created = "test";
+
+        var created = userUUID;
         var openingHours = new OpeningHours(request.getMondayOpen(),
                 request.getMondayClose(),
                 request.getTuesdayOpen(),
@@ -121,8 +117,7 @@ public class RestaurantService {
 
         restaurant.setOpeningHours(openingHours);
         restaurant.setModified(LocalDateTime.now());
-        //Update with userID/name
-        restaurant.setModifiedBy("test");
+        restaurant.setModifiedBy(created);
         restaurantRepository.save(restaurant);
         return restaurant;
     }
@@ -135,7 +130,7 @@ public class RestaurantService {
 
     public String getRestaurantUUID(Long id) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
-        var uuid = restaurantRepository.getRestaurantUUID(id);
+        var uuid= restaurantRepository.getRestaurantUUID(id);
         if(uuid==null)
             throw exception;
         return uuid;
