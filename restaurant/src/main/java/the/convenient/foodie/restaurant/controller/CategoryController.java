@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.CategoryCreateRequest;
 import the.convenient.foodie.restaurant.model.Category;
@@ -27,6 +28,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Create a new category")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new category",
@@ -54,6 +56,7 @@ public class CategoryController {
         return new ResponseEntity<>(category,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Update category name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated category name",
@@ -102,6 +105,7 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+
     @Operation(description = "Get a category by ID")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the category with provided ID",
@@ -121,6 +125,7 @@ public class CategoryController {
 
 
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Delete a category")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the category with provided ID"),

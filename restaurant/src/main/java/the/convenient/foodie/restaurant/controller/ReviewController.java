@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
@@ -60,6 +61,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new review")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new review",
@@ -88,6 +90,7 @@ public class ReviewController {
         return new ResponseEntity<>(review,HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Delete a review")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the review with provided ID"),
