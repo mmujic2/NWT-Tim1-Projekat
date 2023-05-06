@@ -40,9 +40,12 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Category> addNewCategory (
             @Parameter(description = "Category name", required = true)
-            @Valid @RequestBody CategoryCreateRequest request) {
+            @Valid @RequestBody CategoryCreateRequest request,
+            @RequestHeader("uuid") String user,
+            @RequestHeader("username") String username) {
 
-        var category = categoryService.addNewCategory(request.getName());
+        request.setUserUUID(user);
+        var category = categoryService.addNewCategory(request);
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
@@ -50,7 +53,7 @@ public class CategoryController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Created a category " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(category,HttpStatus.CREATED);
@@ -73,10 +76,13 @@ public class CategoryController {
             @Parameter(description = "Category ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Category name", required = true)
-            @RequestBody @Valid CategoryCreateRequest request) {
+            @RequestBody @Valid CategoryCreateRequest request,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
 
+        request.setUserUUID(userUUID);
         Category category = null;
-        category = categoryService.updateCategory(request.getName(),id);
+        category = categoryService.updateCategory(request,id);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
@@ -85,7 +91,7 @@ public class CategoryController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated category " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(category,HttpStatus.OK);
@@ -135,7 +141,8 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteCategory(
             @Parameter(description = "Category ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         com.example.demo.EventServiceGrpc.EventServiceBlockingStub stub = com.example.demo.EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
@@ -143,7 +150,7 @@ public class CategoryController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("DELETE")
                 .setEvent("Deleted a category").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(categoryService.deleteCategory(id),HttpStatus.OK);

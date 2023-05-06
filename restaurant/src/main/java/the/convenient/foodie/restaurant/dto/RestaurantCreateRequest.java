@@ -12,8 +12,6 @@ public class RestaurantCreateRequest implements Serializable {
     private String name;
 
 
-    @NotNull(message="Restaurant manager must be specified!")
-    @Size(min=36,max=36,message = "UUID must be 36 characters long!")
     private String managerUUID;
 
     public RestaurantCreateRequest(String name, String managerUUID) {

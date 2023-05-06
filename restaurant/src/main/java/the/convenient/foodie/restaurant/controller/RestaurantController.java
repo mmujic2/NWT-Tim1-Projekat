@@ -53,8 +53,9 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Restaurant> addNewRestaurant (
             @Parameter(description = "Information required for restaurant creation", required = true)
-            @Valid @RequestBody RestaurantCreateRequest request) {
+            @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid,@RequestHeader("username") String username) {
 
+        request.setManagerUUID(uuid);
         var restaurant = restaurantService.addNewRestaurant(request);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
@@ -64,7 +65,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Created restaurant " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
@@ -88,8 +89,11 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Restaurant information to be updated", required = true)
-            @RequestBody @Valid RestaurantUpdateRequest request) {
+            @RequestBody @Valid RestaurantUpdateRequest request,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
 
+        request.setUpdatedBy(userUUID);
         Restaurant restaurant = null;
         restaurant = restaurantService.updateRestaurant(request,id);
 
@@ -100,7 +104,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated restaurant " + request.getName()).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(restaurant,HttpStatus.OK);
@@ -225,7 +229,8 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteRestaurant(
             @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -234,7 +239,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("DELETE")
                 .setEvent("Deleted restaurant with id " + id).setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(restaurantService.deleteRestaurant(id),HttpStatus.OK);
@@ -257,8 +262,10 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "List of category IDs", required = true)
-            @RequestBody List<Long> categoryIds) {
-        var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds);
+            @RequestBody List<Long> categoryIds,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
+        var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -267,7 +274,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Changed restaurant categories").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
@@ -291,8 +298,10 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Values of daily opening and closing hours", required = true)
-            @Valid @RequestBody OpeningHoursCreateRequest request) {
-        var restaurant = restaurantService.setRestaurantOpeningHours(id,request);
+            @Valid @RequestBody OpeningHoursCreateRequest request,
+            @RequestHeader("uuid") String userUUID,
+            @RequestHeader("username") String username) {
+        var restaurant = restaurantService.setRestaurantOpeningHours(id,request,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -301,7 +310,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated restaurant opening hours").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
 
@@ -322,8 +331,8 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<FavoriteRestaurant> addRestaurantToFavorites(
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable Long id,
-            @Parameter(description = "UUID of the user", required = true)
-            @RequestParam String user
+            @RequestHeader("uuid") String user,
+            @RequestHeader("username") String username
     ) {
 
         var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,user);
@@ -334,7 +343,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Added restaurant with id " + id + " to favorites").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>(favoriteRestaurant,HttpStatus.CREATED);
@@ -354,8 +363,8 @@ public class RestaurantController {
     public @ResponseBody ResponseEntity<String> removeRestaurantFromFavorites(
             @Parameter(description = "Restaurant ID",required = true)
             @PathVariable Long id,
-            @Parameter(description = "UUID of the user",required = true)
-            @RequestParam String user) {
+            @RequestHeader("uuid") String user,
+            @RequestHeader("username") String username) {
 
         favoriteRestaurantService.removeRestaurantFromFavorites(id,user);
 
@@ -366,7 +375,7 @@ public class RestaurantController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Removed restaurant with id " + id+ " from favorites").setServiceName("restaurant-service")
-                .setUser("Test")
+                .setUser(username)
                 .build());
 
         return new ResponseEntity<>("Successfully removed restaurant with id " + id + " from favorites!",HttpStatus.OK);

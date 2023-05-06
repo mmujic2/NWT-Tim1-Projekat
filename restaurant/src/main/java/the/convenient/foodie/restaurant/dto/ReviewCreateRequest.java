@@ -12,7 +12,7 @@ public class ReviewCreateRequest implements Serializable {
     @Max(value=5,message="User rating must be an integer value between 1 and 5!")
     private Integer rating;
 
-    @NotEmpty(message = "User must be specified!")
+
     private String userUUID;
 
     @NotNull(message = "Restaurant ID must be specified!")
