@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path="/order")
 public class OrderController {
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     @Autowired
     public RestTemplate restTemplate;
@@ -118,19 +123,23 @@ public class OrderController {
     public @ResponseBody Iterable<Order> GetAllOrders() {
         //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(x);
-
+        rabbitTemplate.convertAndSend("testQueue", "this is a message");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
-        var response = stub.logevent(EventRequest
+        stub.logevent(EventRequest
                 .newBuilder()
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched all orders").setServiceName("order-service")
                 .setUser("zustiuhsjkgzu")
                 .build());
-        System.out.println(response.getResponse());
 
         return orderRepository.findAll();
+    }
+
+    @RabbitListener(queues = "testQueue")
+    public void listen(String str) {
+        System.out.println(str);
     }
 
     @Operation(description = "Get all orders")
