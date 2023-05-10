@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +34,7 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
+    //@PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Get all coupons")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found all coupons",
@@ -63,6 +65,7 @@ public class CouponController {
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 
+
     @Operation(description = "Get a coupon by coupon ID")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the coupon with provided ID",
@@ -87,6 +90,7 @@ public class CouponController {
         return new ResponseEntity<>(coupon, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Create a new coupon")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new coupon",
@@ -111,6 +115,7 @@ public class CouponController {
         return  new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Update coupon information")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated coupon information",
@@ -137,6 +142,7 @@ public class CouponController {
         return  new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Delete a coupon")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the coupon with provided ID"),
@@ -180,6 +186,7 @@ public class CouponController {
         return new ResponseEntity<>(filteredRestaurants, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Use one coupon")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully used coupon",
@@ -203,6 +210,7 @@ public class CouponController {
         return new ResponseEntity<>(quantity, HttpStatus.OK);
     }
 
+    //@PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Get coupons by restaurant UUID")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the coupons with provided restaurant UUID",
