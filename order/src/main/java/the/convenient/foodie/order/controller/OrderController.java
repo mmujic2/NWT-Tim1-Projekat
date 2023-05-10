@@ -23,6 +23,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
@@ -55,6 +56,7 @@ public class OrderController {
         this.menuItemRepository = menuItemRepository;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new order")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "201", description = "Successfully created a new order",
