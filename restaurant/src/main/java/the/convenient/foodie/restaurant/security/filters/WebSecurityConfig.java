@@ -34,6 +34,9 @@ public class WebSecurityConfig{
                 .authorizeHttpRequests()
                 .anyRequest()
                 .permitAll()
+                .and().exceptionHandling()
+                // setting custom access denied handler for not authorized request
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .addFilterBefore(jwtFilter, AuthorizationFilter.class)
                 .sessionManagement()

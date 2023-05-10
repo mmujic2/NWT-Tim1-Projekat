@@ -33,8 +33,8 @@ public class DiscountApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		cleanup();
-		startingData();
+		//cleanup();
+		//startingData();
 	}
 
 	private void cleanup() {

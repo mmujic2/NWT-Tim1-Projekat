@@ -1,6 +1,7 @@
 package foodie.gateway.foodieGateway.filter;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import foodie.gateway.foodieGateway.util.ValidationResponse;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -85,19 +89,21 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
     public Predicate<ServerHttpRequest> isSecured = request -> excludedUrls.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
     private Mono<Void> onError(ServerWebExchange exchange, String errCode, String err, String errDetails, HttpStatusCode httpStatus) {
         DataBufferFactory dataBufferFactory = exchange.getResponse().bufferFactory();
-//        ObjectMapper objMapper = new ObjectMapper();
+
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-        /*try {
+        try {
             response.getHeaders().add("Content-Type", "application/json");
-            ExceptionResponseModel data = new ExceptionResponseModel(errCode, err, errDetails, null, new Date());
-            byte[] byteData = objectMapper.writeValueAsBytes(data);
-            return response.writeWith(Mono.just(byteData).map(t -> dataBufferFactory.wrap(t)));
+            //ExceptionResponseModel data = new ExceptionResponseModel(errCode, err, errDetails, null, new Date());
+            //byte[] byteData = objectMapper.writeValueAsBytes(data);
+            byte[] bytes = "Amila trying some stuff".getBytes(StandardCharsets.UTF_8);
+            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
+            return response.writeWith(Flux.just(buffer));
 
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
-        }*/
+        }
 
 
         return response.setComplete();

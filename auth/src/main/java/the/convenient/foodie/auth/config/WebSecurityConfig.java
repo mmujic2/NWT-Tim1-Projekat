@@ -39,6 +39,11 @@ public class WebSecurityConfig{
                 .permitAll()
                 .anyRequest()
                 .authenticated()
+                .and().exceptionHandling()
+                // setting custom access denied handler for not authorized request
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                // setting custom entry point for unauthenticated request
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
