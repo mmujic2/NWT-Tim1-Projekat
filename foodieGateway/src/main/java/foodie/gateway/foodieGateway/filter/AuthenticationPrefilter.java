@@ -50,7 +50,9 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            String bearerToken = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            String bearerToken = "";
+            if(request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) && !request.getHeaders().get(HttpHeaders.AUTHORIZATION).isEmpty())
+                bearerToken = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             logger.info("Bearer Token: "+ bearerToken);
 
             if(isSecured.test(request)) {
@@ -64,21 +66,23 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
                             exchange.getRequest().mutate().header("uuid", response.getUuid());
 
                             return exchange;
-                        }).flatMap(chain::filter).onErrorResume(error -> {
-                            logger.info("Error Happened");
+                        })
+                        .flatMap(chain::filter)
+                        .onErrorResume(error -> {
+
                             HttpStatusCode errorCode = null;
                             String errorMsg = "";
                             if (error instanceof WebClientResponseException) {
                                 WebClientResponseException webCLientException = (WebClientResponseException) error;
                                 errorCode = webCLientException.getStatusCode();
-                                errorMsg = webCLientException.getStatusText();
+                                errorMsg =  webCLientException.getResponseBodyAsString();
 
                             } else {
                                 errorCode = HttpStatusCode.valueOf(502);
                                 errorMsg = HttpStatus.BAD_GATEWAY.getReasonPhrase();
                             }
 //                            AuthorizationFilter.AUTH_FAILED_CODE
-                            return onError(exchange, String.valueOf(errorCode.value()) ,errorMsg, "JWT Authentication Failed", errorCode);
+                            return onError(exchange,errorMsg,  errorCode);
                         });
             }
 
@@ -87,26 +91,18 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
     }
 
     public Predicate<ServerHttpRequest> isSecured = request -> excludedUrls.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
-    private Mono<Void> onError(ServerWebExchange exchange, String errCode, String err, String errDetails, HttpStatusCode httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange,  String err, HttpStatusCode httpStatus) {
         DataBufferFactory dataBufferFactory = exchange.getResponse().bufferFactory();
 
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-        try {
+
             response.getHeaders().add("Content-Type", "application/json");
-            //ExceptionResponseModel data = new ExceptionResponseModel(errCode, err, errDetails, null, new Date());
-            //byte[] byteData = objectMapper.writeValueAsBytes(data);
-            byte[] bytes = "Amila trying some stuff".getBytes(StandardCharsets.UTF_8);
+            byte[] bytes = err.getBytes(StandardCharsets.UTF_8);
             DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
-            return response.writeWith(Flux.just(buffer));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
 
 
-        return response.setComplete();
+        return response.writeWith(Flux.just(buffer));
     }
 
     public static class Config {

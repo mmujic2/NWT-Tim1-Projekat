@@ -17,7 +17,7 @@ class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("\"error\": \"Unathourized action!\"");
+        response.getWriter().write("{\"error\": \"Unauthorized action!\"}");
         response.getWriter().flush();
     }
 

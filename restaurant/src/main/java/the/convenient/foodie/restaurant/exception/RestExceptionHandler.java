@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -48,6 +49,14 @@ public class RestExceptionHandler {
     @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private ResponseEntity<Map<String, List<String>>> handleEmptyResultDataAccessNotFound(EmptyResultDataAccessException ex){
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getMessage().toString());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private ResponseEntity<Map<String, List<String>>> handleMissingServletRequestParameter(MissingServletRequestParameterException ex){
         List<String> errors = new ArrayList<>();
         errors.add(ex.getMessage().toString());
         return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.NOT_FOUND);
