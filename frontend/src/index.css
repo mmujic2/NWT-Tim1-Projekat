@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #272d2f;
 }
 
 code {
@@ -12,6 +13,3 @@ code {
     monospace;
 }
 
-:root {
-  --bs-body-bg: #fff;
-}
