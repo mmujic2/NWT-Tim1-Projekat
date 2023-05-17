@@ -42,16 +42,12 @@ public class CouponController {
                             schema = @Schema(implementation = Coupon.class)) })}
     )
     @GetMapping(path="/all")
-    public @ResponseBody ResponseEntity<List<Coupon>> getAllCoupons() {
+    public @ResponseBody ResponseEntity<List<Coupon>> getAllCoupons(@RequestHeader("username") String username) {
         var coupons = couponService.getAllCoupons();
         //dont make a loop by accident like I did
         //String response = restTemplate.getForObject("http://order-service/order/get", String.class);
         //System.out.println(response);
 
-        /*ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
-        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
-        var response = stub.logevent(EventRequest.newBuilder().setEvent("Test message for server").build());
-        System.out.println(response.getResponse());*/
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -59,7 +55,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched all coupons").setServiceName("discount-service")
-                .setUser("Novica Nosovic")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         return new ResponseEntity<>(coupons, HttpStatus.OK);
@@ -75,7 +71,7 @@ public class CouponController {
             @ApiResponse(responseCode = "404", description = "Coupon with provided ID not found",
                     content = @Content)})
     @GetMapping(path = "/{id}")
-    public  @ResponseBody ResponseEntity<Coupon> getCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable  Integer id) {
+    public  @ResponseBody ResponseEntity<Coupon> getCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable  Integer id, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -83,7 +79,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched coupon with ID: " + id).setServiceName("discount-service")
-                .setUser("Vedran Ljubovic")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         var coupon = couponService.getCoupon(id);
@@ -100,7 +96,7 @@ public class CouponController {
                     content = @Content)})
     @PostMapping(path = "/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ResponseEntity<Coupon> addNewCoupon(@Parameter(description = "Information required for coupon creation", required = true) @Valid @RequestBody CouponDto couponDto) {
+    public @ResponseBody ResponseEntity<Coupon> addNewCoupon(@Parameter(description = "Information required for coupon creation", required = true) @Valid @RequestBody CouponDto couponDto, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -108,7 +104,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Created a coupon").setServiceName("discount-service")
-                .setUser("Moja malenkost")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         var coupon = couponService.addNewCoupon(couponDto);
@@ -127,7 +123,7 @@ public class CouponController {
                     content = @Content)}
     )
     @PutMapping(path = "/update/{id}")
-    public @ResponseBody ResponseEntity<Coupon> updateCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @Parameter(description = "Coupon information to be updated", required = true) @Valid @RequestBody CouponDto couponDto){
+    public @ResponseBody ResponseEntity<Coupon> updateCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @Parameter(description = "Coupon information to be updated", required = true) @Valid @RequestBody CouponDto couponDto,@RequestHeader("username") String username){
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -135,7 +131,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("PUT")
                 .setEvent("Updated a coupon").setServiceName("discount-service")
-                .setUser("Meho Mehić")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         var coupon = couponService.updateCoupon(couponDto, id);
@@ -149,7 +145,7 @@ public class CouponController {
             @ApiResponse(responseCode = "404", description = "Coupon with provided ID not found",
                     content = @Content)})
     @DeleteMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<String> deleteCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<String> deleteCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -157,7 +153,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("DELETE")
                 .setEvent("Deleted a coupon").setServiceName("discount-service")
-                .setUser("Irvin Catic")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         return new ResponseEntity<>(couponService.deleteCoupon(id), HttpStatus.OK);
@@ -171,7 +167,7 @@ public class CouponController {
         @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                 content = @Content)})
     @PostMapping(path="/filter")
-    public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
+    public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -179,7 +175,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Filtered restaurants with coupons").setServiceName("discount-service")
-                .setUser("Hamo,Pipa i ostala ekipa")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         var filteredRestaurants = couponService.filterRestaurants(restaurants);
@@ -195,7 +191,7 @@ public class CouponController {
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content)})
     @PostMapping(path="/apply/{id}")
-    public @ResponseBody ResponseEntity<Integer> useCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<Integer> useCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -203,7 +199,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Used a coupon").setServiceName("discount-service")
-                .setUser("Neko Nekić")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         Integer quantity = couponService.applyCoupon(id);
@@ -220,7 +216,7 @@ public class CouponController {
             @ApiResponse(responseCode = "404", description = "Coupons with provided restaurant UUID not found",
                     content = @Content)})
     @GetMapping(path = "/res/{uuid}")
-    public  @ResponseBody ResponseEntity<List<Coupon>> getCouponForRestaurant(@Parameter(description = "Restaurant UUID", required = true) @PathVariable  String uuid) {
+    public  @ResponseBody ResponseEntity<List<Coupon>> getCouponForRestaurant(@Parameter(description = "Restaurant UUID", required = true) @PathVariable  String uuid, @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
@@ -228,7 +224,7 @@ public class CouponController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched coupons for restaurant " + uuid).setServiceName("discount-service")
-                .setUser("Keba Kraba")
+                .setUser(username)
                 .build());
         System.out.println(response.getResponse());
         var coupon = couponService.getAllCouponsForRestaurant(uuid);
