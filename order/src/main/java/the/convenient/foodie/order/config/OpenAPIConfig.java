@@ -33,7 +33,12 @@ public class OpenAPIConfig {
     }
 
     @Bean
-    public Queue testQueue() {
-        return new Queue("testQueue", false);
+    public Queue menuItemCreateQueue() {
+        return new Queue("menuItemCreate", false);
+    }
+
+    @Bean
+    public Queue menuItemCreateErrorQueue() {
+        return new Queue("menuItemCreateError", false);
     }
 }

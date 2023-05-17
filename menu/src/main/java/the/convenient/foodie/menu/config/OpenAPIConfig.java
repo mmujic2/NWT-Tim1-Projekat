@@ -6,6 +6,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.amqp.core.Queue;
 
 @Configuration
 public class OpenAPIConfig {
@@ -25,5 +26,15 @@ public class OpenAPIConfig {
                 .description("This API exposes endpoints of the Menu microservice.");
 
         return new OpenAPI().info(info);
+    }
+
+    @Bean
+    public Queue menuItemCreateQueue() {
+        return new Queue("menuItemCreate", false);
+    }
+
+    @Bean
+    public Queue menuItemCreateErrorQueue() {
+        return new Queue("menuItemCreateError", false);
     }
 }

@@ -1,5 +1,10 @@
 package the.convenient.foodie.menu.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +23,17 @@ import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.model.MenuItem;
 import the.convenient.foodie.menu.service.MenuItemService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "menu-item")
 public class MenuItemController {
 
     @Autowired
     private MenuItemService menuItemService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Operation(description = "Delete a menu item")
     @ApiResponses( value = {
@@ -70,5 +82,21 @@ public class MenuItemController {
             @PathVariable  Long id) {
         var menuItem = menuItemService.getMenuItem(id);
         return new ResponseEntity<>(menuItem, HttpStatus.OK);
+    }
+
+    // If error occured in order-service, remove previously added items
+    @RabbitListener(queues = "menuItemCreateError")
+    public void listen(String menuItemsJson) {
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new ParameterNamesModule());
+
+        try {
+            objectMapper.readValue(menuItemsJson, MenuItem[].class);
+            List<MenuItem> menuItemsList = objectMapper.readValue(menuItemsJson, new TypeReference<>() {});
+            for(var menuItem : menuItemsList) menuItemService.deleteMenuItem(menuItem.getId());
+        } catch (Exception e) {
+            System.out.println("Something went wrong");
+        }
     }
 }

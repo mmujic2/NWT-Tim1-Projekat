@@ -1,6 +1,11 @@
 package the.convenient.foodie.menu.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.menu.repository.MenuItemRepository;
@@ -23,6 +28,9 @@ public class MenuService {
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public List<Menu> getAllMenus() {
         return StreamSupport.stream(menuRepository.findAll().spliterator(), false).collect(Collectors.toList());
@@ -67,6 +75,7 @@ public class MenuService {
             menu.setMenuItems(new ArrayList<>());
 
         var items = menu.getMenuItems();
+        var newItems = new ArrayList<MenuItem>();
 
         for (var menuItemDao: menuItemsDao) {
             MenuItem menuItem = new MenuItem();
@@ -78,10 +87,25 @@ public class MenuService {
             //menuItem.setUuid(UUIDGenerator.generateType1UUID().toString());
             menuItem.setDate_created(LocalDateTime.now());
             items.add(menuItem);
+            newItems.add(menuItem);
         }
         menu.setMenuItems(items);
         menu.setDate_modified(LocalDateTime.now());
         menuRepository.save(menu);
+
+        try {
+            List<Long> idList = new ArrayList<>();
+            for(var item : newItems) idList.add(item.getId());
+
+            var newItemsWithUUID = menuItemRepository.findAllById(idList);
+            var objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.registerModule(new ParameterNamesModule());
+
+            rabbitTemplate.convertAndSend("menuItemCreate", objectMapper.writeValueAsString(newItemsWithUUID));
+        } catch (Exception e) {
+            System.out.println("Something went wrong when fetching items");
+        }
         return menu;
     }
 

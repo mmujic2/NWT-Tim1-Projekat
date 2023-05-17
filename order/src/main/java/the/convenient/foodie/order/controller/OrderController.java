@@ -3,6 +3,7 @@ package the.convenient.foodie.order.controller;
 import com.example.demo.EventRequest;
 import com.example.demo.EventServiceGrpc;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
+import the.convenient.foodie.order.model.MenuItem;
+import the.convenient.foodie.order.model.MenuItemDTO;
 import the.convenient.foodie.order.model.Order;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
@@ -125,7 +128,7 @@ public class OrderController {
     public @ResponseBody Iterable<Order> GetAllOrders() {
         //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(x);
-        rabbitTemplate.convertAndSend("testQueue", "this is a message");
+        // rabbitTemplate.convertAndSend("", "this is a message");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         stub.logevent(EventRequest
@@ -139,9 +142,20 @@ public class OrderController {
         return orderRepository.findAll();
     }
 
-    @RabbitListener(queues = "testQueue")
-    public void listen(String str) {
-        System.out.println(str);
+    @RabbitListener(queues = "menuItemCreate")
+    public void listen(String menuItemsJson) {
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new ParameterNamesModule());
+
+        try {
+            objectMapper.readValue(menuItemsJson, MenuItem[].class);
+            List<MenuItem> menuItemsList = objectMapper.readValue(menuItemsJson, new TypeReference<>() {});
+            menuItemRepository.saveAll(menuItemsList);
+            System.out.println("Done");
+        } catch (Exception e) {
+            rabbitTemplate.convertAndSend("menuItemCreateError", menuItemsJson);
+        }
     }
 
     @Operation(description = "Get all orders")
