@@ -1,14 +1,13 @@
 import React from "react";
-import { useLocalState } from "../../util/useLocalState";
 import {Navigate,Outlet} from "react-router-dom";
-import { Buffer } from "buffer";
-import AuthService from "../../util/auth.service";
+import AuthService from "../../service/auth.service";
+import Header from "../util/Header";
 
 const PrivateRoute = (props)=> {
    var user = AuthService.getCurrentUser();
 
     return (
-        user ? <Outlet props={props}/>: <Navigate to='/register'></Navigate>
+        user ? <><Header></Header><Outlet props={props}/></>: <Navigate to='/register'></Navigate>
     )
 
    

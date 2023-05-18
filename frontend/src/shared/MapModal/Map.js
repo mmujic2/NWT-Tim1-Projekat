@@ -30,7 +30,7 @@ export default function Map({setAddress}) {
           });
           gc.addEventListener("pick", (e) => {
             if(e.detail!=null) {
-            setAddress(e.detail.place_name,e.detail.center[1] + " , " + e.detail.center[0])
+            setAddress(e.detail.place_name,e.detail.center[1] + ", " + e.detail.center[0])
             
             } else {
                 setAddress("","")

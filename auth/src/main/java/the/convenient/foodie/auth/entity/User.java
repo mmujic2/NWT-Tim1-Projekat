@@ -40,7 +40,7 @@ public class User implements UserDetails {
     private String email;
 
 
-    @Column(name = "address", columnDefinition = "VARCHAR(60)",nullable = true)
+    @Column(name = "address",nullable = true)
     private String address;
 
 

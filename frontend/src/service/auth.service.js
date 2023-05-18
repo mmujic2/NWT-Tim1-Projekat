@@ -23,7 +23,7 @@ class AuthService {
     return api
         .post("/auth/register",req)
         .then(response=> {
-            if(response.status == 200) {
+            if(response.status == 201) {
                 TokenService.setUser(response.data);
 
             } 
@@ -36,13 +36,28 @@ class AuthService {
   }
 
   logout() {
-    TokenService.removeUser();
+    try {
+      return api
+          .post("/auth/logout")
+          .then(response=> {
+            if(response.status==200)
+              TokenService.removeUser();
+  
+              return response;
+          })
+      } catch(e) {
+        console.log(e)
+      }
+    
   }
 
 
 
   getCurrentUser() {
-    return TokenService.getUser();
+    let user = TokenService.getUser();
+    if(user!=null)
+      return user.user
+    return null
   }
 }
 

@@ -35,12 +35,10 @@ function SignUp({setPage}) {
     
   }
 
-  useEffect(()=> {console.log(formData)},[formData])
 
   
 
   const handleSubmit = (event) => {
-    console.log(formData)
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
@@ -51,9 +49,22 @@ function SignUp({setPage}) {
 
     setValidated(true);
 
+    if(formData.address!=null && formData.address.length ==0 ) {
+      var req = {firstname: formData.firstname, 
+            lastname: formData.lastname,
+            email: formData.email,
+            username: formData.username,
+            password: formData.password
+            }
+      if(formData.phoneNumber!=null) {
+        req.phoneNumber = formData.phoneNumber;
+      }
+    } else {
+      var req=formData
+    }
     try {
       document.body.style.cursor = "wait";
-      auth.register(formData).then(res => {
+      auth.register(req).then(res => {
         if (res.status == 201) {
           setAlert({ ...alert, msg: ["You have successfully created a new account!"], type: "success" })
           setShowAlert(true)
