@@ -1,70 +1,62 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Row from 'react-bootstrap/Row';
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox,
-} from "mdb-react-ui-kit";
+import React, { useEffect } from "react";
+import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import styles from "./login.css";
+import LocationOn from "@mui/icons-material/LocationOn";
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
+import { Link, useNavigate } from "react-router-dom";
+import auth from "../../../service/auth.service";
+import CustomAlert from "../../util/Alert";
+import MapModal from "../../MapModal/MapModal";
+import { Col, Row } from "react-bootstrap";
 
-import "./login.css";
-
-import logo from "../../logo.png";
-
-function Login({setPage}) {
+function Login({ setPage }) {
   return (
     <>
-    
-    <MDBContainer fluid className="p-3 my-5 d-flex flex-column w-50">
-      <MDBRow className="d-flex justify-content-center align-items-center h-100">
-        <MDBCol col="12">
-          <MDBCard
-            className="bg-white my-5 mx-auto"
-            style={{ borderRadius: "1rem", maxWidth: "1000px" }}
-          >
-            <MDBCardBody className="p-5 w-100 d-flex flex-column">
-              <p className="text-white-50 mb-3">
-                Please enter your username and password!
-              </p>
+      <Container className={styles.container}>
+        <Form>
+          <h1>Login</h1>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                label="Email address"
-                id="formControlLg"
-                type="email"
-                size="lg"
-              />
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                label="Password"
-                id="formControlLg"
-                type="password"
-                size="lg"
-              />
+          <Form.Group className="mb-3" controlId="formGroupUsername">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              name="username"
+              //   value={formData.username}
+              //  onChange={handleChange}
+            />
+          </Form.Group>
 
-              <MDBCheckbox
-                name="flexCheck"
-                id="flexCheckDefault"
-                className="mb-4"
-                label="Remember password"
-              />
+          <Form.Group className="mb-3" controlId="formGroupPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              required
+              type="password"
+              name="password"
+              //  value={formData.password}
+              // onChange={handleChange}
+            />
+          </Form.Group>
 
-              <MDBBtn size="lg">Login</MDBBtn>
-
-              <hr className="my-4" />
-              <Link onClick={()=>{setPage("signUp")}}>Create a new account</Link>
-
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </MDBRow>
-    </MDBContainer>
+          <Button className={styles.btn} type="submit">
+            Login
+          </Button>
+          <hr></hr>
+          <div style={{ textAlign: "center" }}>
+            Don't have an account yet?
+            <Link
+              className="px-3 lnk"
+              onClick={() => {
+                setPage("signup");
+              }}
+            >
+              Sign up.
+            </Link>
+          </div>
+        </Form>
+      </Container>
     </>
   );
 }
