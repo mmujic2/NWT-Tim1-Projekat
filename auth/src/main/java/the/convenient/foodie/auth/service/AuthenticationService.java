@@ -20,6 +20,7 @@ import the.convenient.foodie.auth.enums.Role;
 import the.convenient.foodie.auth.enums.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import the.convenient.foodie.auth.util.DuplicateEntryException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ public class AuthenticationService {
 
         var role = Role.valueOf(roleName);
         var user = new User(registerRequest);
+        checkIfUserUnique(registerRequest.getUsername(),registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setRole(role);
         var savedUser = userRepository.save(user);
@@ -154,5 +156,12 @@ public class AuthenticationService {
         response.setUuid(jwtService.extractUuid(token));
 
         return  response;
+    }
+
+    private void checkIfUserUnique(String username, String email) {
+        userRepository.findByUsername(username)
+                .ifPresent(u-> {throw new DuplicateEntryException("Username " + username + " is already taken.");});
+        userRepository.findByEmail(email)
+                .ifPresent(u-> {throw new DuplicateEntryException("An account using that email address already exists.");});
     }
 }

@@ -54,6 +54,14 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DuplicateEntryException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private ResponseEntity<Map<String, List<String>>> handleDuplicateEntry(DuplicateEntryException ex){
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getMessage().toString());
+        return new ResponseEntity<>(getErrorsMap(errors), HttpStatus.BAD_REQUEST);
+    }
+
 
 
 }

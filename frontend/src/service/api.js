@@ -29,9 +29,11 @@ instance.interceptors.response.use(
     return res;
   },
   async (err) => {
+    
     const originalConfig = err.config;
 
-    if (originalConfig.url !== "/auth/login" && err.response) {
+    if (originalConfig.url !== "/auth/login" && originalConfig.url !== "/auth/register"  ) {
+    
       // Access Token was expired
       if (err.response.status === 403  && !originalConfig._retry) {
         originalConfig._retry = true;
@@ -58,11 +60,12 @@ instance.interceptors.response.use(
           return Promise.reject(_error);
         }
       } else {
+      
         return err.response
       }
     }
 
-    return Promise.reject(err);
+    return err.response;
   }
 );
 

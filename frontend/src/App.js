@@ -1,11 +1,20 @@
-import logo from "./logo.svg";
 import "./App.css";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import Login from "./shared/Login";
+import { Route,Routes } from "react-router-dom";
+import RegisterPage from "./shared/RegisterPage/RegisterPage";
 
 function App() {
-  return <Login></Login>;
+ 
+  return(
+    <>
+    
+      <Routes>
+        <Route path="/register" element={<RegisterPage></RegisterPage>} />
+        <Route path="/" element={<>hELLO</>} />
+      </Routes>
+      </>
+  )
 }
 
 export default App;

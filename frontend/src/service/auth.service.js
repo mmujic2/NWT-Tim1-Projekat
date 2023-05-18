@@ -3,6 +3,7 @@ import TokenService from "./token.service";
 
 class AuthService {
   login(username, password) {
+    
     return api
       .post("/auth/login", {
         username,
@@ -13,20 +14,25 @@ class AuthService {
           TokenService.setUser(response.data);
         }
 
-        return response.data;
+        return response;
       });
   }
 
   register(req) {
+    try {
     return api
-        .post("/auth/register",body)
+        .post("/auth/register",req)
         .then(response=> {
             if(response.status == 200) {
                 TokenService.setUser(response.data);
 
-                return response.data;
-            }
+            } 
+
+            return response;
         })
+    } catch(e) {
+      console.log(e)
+    }
   }
 
   logout() {

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Row from 'react-bootstrap/Row';
 import {
   MDBBtn,
@@ -14,23 +15,13 @@ import {
 
 import "./login.css";
 
-import logo from "./logo.png";
+import logo from "../../logo.png";
 
-function Login() {
+function Login({setPage}) {
   return (
     <>
-    <Row>
-    <img src={logo} alt="..." />
-        <h2 className="fw-bold mb-2 text-center" >The Convenient Foodie</h2>
-    </Row>
-    <div className="row">
-        <img src={logo} alt="..." />
-        <h2 className="fw-bold mb-2 text-center" >The Convenient Foodie</h2>
-      </div>
+    
     <MDBContainer fluid className="p-3 my-5 d-flex flex-column w-50">
-
-      
-
       <MDBRow className="d-flex justify-content-center align-items-center h-100">
         <MDBCol col="12">
           <MDBCard
@@ -67,7 +58,7 @@ function Login() {
               <MDBBtn size="lg">Login</MDBBtn>
 
               <hr className="my-4" />
-
+              <Link onClick={()=>{setPage("signUp")}}>Create a new account</Link>
 
             </MDBCardBody>
           </MDBCard>
