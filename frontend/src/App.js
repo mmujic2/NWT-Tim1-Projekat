@@ -7,6 +7,7 @@ import PrivateRoute from "./shared/PrivateRoute/PrivateRoute"
 import Sidebar from "./shared/util/Sidebar/Sidebar";
 import Header from "./shared/util/Header";
 import NotFound from "./shared/util/NotFound";
+import Home from "./shared/Home/Home";
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
         <Route path="/register" element={<RegisterPage></RegisterPage>} />
         <Route path="*" element={<NotFound></NotFound>}/>
         <Route path="/" element={<PrivateRoute />}>
-          <Route path="/" element={<> <Sidebar optionsMap={options} iconsMap={icons}/><div style={{height:"1000px"}}></div></>}></Route>
+          <Route path="/" element={<Home></Home>}></Route>
         </Route>
         
       </Routes>

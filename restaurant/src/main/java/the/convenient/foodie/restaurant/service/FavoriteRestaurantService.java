@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
@@ -18,7 +19,7 @@ public class FavoriteRestaurantService {
     @Autowired
     private FavoriteRestaurantRepository favoriteRestaurantRepository;
 
-    public List<Restaurant> getFavoriteRestaurants(String userUUID) {
+    public List<RestaurantShortResponse> getFavoriteRestaurants(String userUUID) {
 
         return favoriteRestaurantRepository.getFavoriteRestaurants(userUUID);
     }

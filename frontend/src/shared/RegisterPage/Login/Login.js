@@ -2,16 +2,25 @@ import React, { useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import styles from "./login.css";
-import LocationOn from "@mui/icons-material/LocationOn";
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../../service/auth.service";
 import CustomAlert from "../../util/Alert";
-import MapModal from "../../MapModal/MapModal";
 import { Col, Row } from "react-bootstrap";
 
 function Login({ setPage }) {
+  const [username,setUsername] = useState()
+  const [password,setPassword] = useState()
+  const navigate = useNavigate();
+
+  const submit = (e)=> {
+    e.preventDefault();
+    auth.login(username,password).then(res=>
+      {if(res.status==200)
+        navigate("/")}
+    )
+  }
   return (
     <>
       <Container className={styles.container}>
@@ -24,8 +33,8 @@ function Login({ setPage }) {
               required
               type="text"
               name="username"
-              //   value={formData.username}
-              //  onChange={handleChange}
+              value={username}
+              onChange={(e)=>setUsername(e.target.value)}
             />
           </Form.Group>
 
@@ -35,12 +44,12 @@ function Login({ setPage }) {
               required
               type="password"
               name="password"
-              //  value={formData.password}
-              // onChange={handleChange}
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
             />
           </Form.Group>
 
-          <Button className={styles.btn} type="submit">
+          <Button className={styles.btn} type="submit" onClick={submit}>
             Login
           </Button>
           <hr></hr>
