@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.repository.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.custom.FavoriteRestaurantRepositoryCustom;
 
@@ -14,10 +15,11 @@ public class FavoriteRestaurantRepositoryImpl implements FavoriteRestaurantRepos
     private EntityManager entityManager;
 
     @Override
-    public List<Restaurant> getFavoriteRestaurants(String userUUID) {
-        var hql = "SELECT r from FavoriteRestaurant  fr,Restaurant r where fr.restaurant.id=r.id"
-                + " and fr.userUUID=:userUUID";
-        var query = entityManager.createQuery(hql, Restaurant.class).setParameter("userUUID",userUUID);
+    public List<RestaurantShortResponse> getFavoriteRestaurants(String userUUID) {
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.id),count(fr.id))  " +
+                "from Restaurant r LEFT JOIN FavoriteRestaurant fr ON r.id = fr.restaurant.id LEFT JOIN Review"
+                + " rev ON r.id=rev.restaurant.id WHERE fr.userUUID=:userUUID GROUP BY r";
+        var query = entityManager.createQuery(hql, RestaurantShortResponse.class).setParameter("userUUID",userUUID);
         return query.getResultList();
     }
 

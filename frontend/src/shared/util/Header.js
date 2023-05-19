@@ -161,16 +161,16 @@ function Header() {
 
     return (
         <>
-            <Navbar bg="dark" variant="dark" className='p-2'>
+            <Navbar bg="dark" variant="dark" className='p-2' sticky='top' style={{zIndex:1000}}>
                 <Nav className="container-fluid">
                     <Nav.Item>
-                        <Navbar.Brand href="#">
+                        <Navbar.Brand href="#" onClick={navigate('/')}>
                             <Restaurant></Restaurant>{' '}
                             The Convenient Foodie
                         </Navbar.Brand>
                     </Nav.Item>
 
-                    {user.role == "CUSTOMER" ? customerOptions() 
+                    {user==null? <></> : user.role == "CUSTOMER" ? customerOptions() 
                     : user.role == "ADMINISTRATOR" ? administratorOptions() 
                     : user.role == "RESTAURANT_MANAGER" ? restaurantOptions() 
                     : courierOptions()}

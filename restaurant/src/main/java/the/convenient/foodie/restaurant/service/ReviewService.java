@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
-import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
 
 import java.time.LocalDateTime;

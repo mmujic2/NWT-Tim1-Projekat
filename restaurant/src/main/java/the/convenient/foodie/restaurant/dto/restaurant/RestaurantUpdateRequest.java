@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.dto;
+package the.convenient.foodie.restaurant.dto.restaurant;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.service.ReviewService;
 
