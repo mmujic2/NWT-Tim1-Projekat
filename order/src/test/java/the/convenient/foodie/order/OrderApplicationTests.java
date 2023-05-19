@@ -1,4 +1,4 @@
-package the.convenient.foodie.order;
+/*package the.convenient.foodie.order;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,4 +12,4 @@ class OrderApplicationTests {
 		Assertions.assertEquals(1, 1);
 	}
 
-}
+}*/

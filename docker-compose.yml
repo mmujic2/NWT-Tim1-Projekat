@@ -1,0 +1,67 @@
+version: '3'
+services:
+  discovery:
+    image: discoveryserver
+    ports:
+      - 8761:8761
+  configserver:
+    image: configserver
+    ports:
+      - 8888:8888
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - RABBITMQ=rabbitmq
+    depends_on:
+      discovery:
+        condition: service_healthy
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  orderservice:
+    image: orderservice
+    ports:
+      - 8070:8070
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - CONFIG_SERVER=http://configserver:8888
+      - GRPC_SERVICE=static://discovery:9090
+      - RABBITMQ=rabbitmq
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+  authservice:
+    image: authservice
+    ports:
+      - 8100:8100
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - CONFIG_SERVER=http://configserver:8888
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+  gateway:
+    image: gateway
+    ports:
+      - 8000:8000
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - CONFIG_SERVER=http://configserver:8888
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      

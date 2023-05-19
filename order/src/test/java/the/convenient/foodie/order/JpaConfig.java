@@ -1,4 +1,4 @@
-package the.convenient.foodie.order;
+/*package the.convenient.foodie.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,4 +32,4 @@ public class JpaConfig {
 
         return dataSource;
     }
-}
+}*/

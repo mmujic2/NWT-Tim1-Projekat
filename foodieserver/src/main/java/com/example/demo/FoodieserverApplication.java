@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -22,8 +25,8 @@ import java.io.IOException;
 public class FoodieserverApplication {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		Server server = ServerBuilder.forPort(9090).addService(new EventService()).build();
-		server.start();
+		// Server server = ServerBuilder.forPort(9090).addService(new EventService()).build();
+		// server.start();
 		// server.awaitTermination();
 
 		SpringApplication.run(FoodieserverApplication.class, args);
@@ -61,6 +64,16 @@ public class FoodieserverApplication {
 			RepositoryContainer.foodieEventRepository = this.foodieEventRepository;
 		}
 
+	}
+
+	@RestController
+	@RequestMapping(path="/health")
+	public class HealthCheck {
+		@GetMapping("/check")
+		@ResponseStatus(HttpStatus.OK)
+		public ResponseEntity<String> healthCheck() {
+			return new ResponseEntity<>("ok", HttpStatus.OK);
+		}
 	}
 
 
