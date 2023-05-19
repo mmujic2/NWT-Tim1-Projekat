@@ -161,7 +161,7 @@ function Header() {
 
     return (
         <>
-            <Navbar bg="dark" variant="dark" className='p-2'>
+            <Navbar bg="dark" variant="dark" className='p-2' sticky='top' style={{zIndex:1000}}>
                 <Nav className="container-fluid">
                     <Nav.Item>
                         <Navbar.Brand href="#">
