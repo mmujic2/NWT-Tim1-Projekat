@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import the.convenient.foodie.restaurant.config.JPAConfig;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
-import the.convenient.foodie.restaurant.dto.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.util.UUIDGenerator;

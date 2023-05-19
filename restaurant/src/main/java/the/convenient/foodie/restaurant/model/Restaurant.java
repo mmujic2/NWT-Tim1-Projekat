@@ -43,7 +43,7 @@ public class Restaurant implements Serializable {
 
     @Column(name = "logo")
     @Lob
-    private byte[] logo;
+    private String logo;
 
     @Column(name="created")
     @NotNull(message = "Creation date must be specified!")
@@ -75,7 +75,7 @@ public class Restaurant implements Serializable {
     }
 
     public Restaurant(Long id, String uuid, String name, String address,
-                      String mapCoordinates, String managerUUID, byte[] logo,
+                      String mapCoordinates, String managerUUID, String logo,
                       OpeningHours openingHours, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy, Set<Category> categories) {
         this.id = id;
         this.uuid = uuid;
@@ -92,7 +92,7 @@ public class Restaurant implements Serializable {
         this.categories = categories;
     }
 
-    public Restaurant(String name, String address, String mapCoordinates, String managerUUID, byte[] logo, OpeningHours openingHours, LocalDateTime created, String createdBy) {
+    public Restaurant(String name, String address, String mapCoordinates, String managerUUID, String logo, OpeningHours openingHours, LocalDateTime created, String createdBy) {
         this.name = name;
         this.address = address;
         this.mapCoordinates = mapCoordinates;
@@ -154,11 +154,11 @@ public class Restaurant implements Serializable {
         this.managerUUID = managerUUID;
     }
 
-    public byte[] getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(byte[] logo) {
+    public void setLogo(String logo) {
         this.logo = logo;
     }
 

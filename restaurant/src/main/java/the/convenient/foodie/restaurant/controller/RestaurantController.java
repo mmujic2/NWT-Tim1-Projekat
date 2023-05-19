@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Content;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,17 +18,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dto.*;
+import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantCreateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantUpdateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 import the.convenient.foodie.restaurant.model.Restaurant;
-import the.convenient.foodie.restaurant.service.CategoryService;
 import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
 import the.convenient.foodie.restaurant.service.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasRole;
 
 @RestController
 @RequestMapping(path="/restaurant")
@@ -54,7 +54,7 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Restaurant> addNewRestaurant (
             @Parameter(description = "Information required for restaurant creation", required = true)
-            @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid,@RequestHeader("username") String username) {
+            @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
 
         request.setManagerUUID(uuid);
         var restaurant = restaurantService.addNewRestaurant(request);
@@ -119,9 +119,9 @@ public class RestaurantController {
     )
     @GetMapping(path="/all")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<List<Restaurant>> getAllRestaurants() {
+    public @ResponseBody ResponseEntity<List<RestaurantShortResponse>> getAllRestaurants() {
 
-        var restaurants = restaurantService.getAllRestaurants();
+        var restaurants = restaurantService.searchForRestaurants(null,null,false);
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
 
@@ -129,30 +129,24 @@ public class RestaurantController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found all restaurants fulfilling the provided criteria",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Page[].class)) })}
+                            schema = @Schema(implementation = RestaurantShortResponse[].class)) })}
     )
     @GetMapping(path="/search")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<Page<RestaurantWithRating>> searchForRestaurants(@RequestParam(required = false)  String name,
-                                                                                         @RequestParam(required = false)  List<Long> categoryIds,
-                                                                                         @RequestParam(required = false)  Boolean isOfferingDiscount,
-                                                                                         @RequestParam Integer page,
-                                                                                         @RequestParam Integer pageSize,
-                                                                                         @RequestParam(required = false) String sortBy,
-                                                                                         @RequestParam(required = false) Boolean ascending) {
+    public @ResponseBody ResponseEntity<List<RestaurantShortResponse>> searchForRestaurants(@RequestParam(required = false)  String name,
+                                                                                            @RequestParam(required = false)  List<Long> categoryIds,
+                                                                                            @RequestParam(required = false)  Boolean isOfferingDiscount,
+                                                                                            @RequestParam(required = false) String sortBy,
+                                                                                            @RequestParam(required = false) Boolean ascending) {
         FilterRestaurantRequest filterRequest = null;
         if(name!=null || isOfferingDiscount!=null || categoryIds!=null)
             filterRequest = new FilterRestaurantRequest(name,categoryIds,isOfferingDiscount);
-        Pageable pageable=PageRequest.of(page,pageSize);
-        if(sortBy!=null) {
-            if(ascending)
-                 pageable = PageRequest.of(page, pageSize, Sort.by(sortBy).ascending());
-            else
-                 pageable = PageRequest.of(page, pageSize, Sort.by(sortBy).descending());
-        }
-        var restaurants = restaurantService.searchForRestaurants(filterRequest,pageable);
+
+        var restaurants = restaurantService.searchForRestaurants(filterRequest,sortBy,ascending);
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
+
+
 
     @Operation(description = "Get a restaurant by restaurant ID")
     @ApiResponses ( value = {
@@ -213,10 +207,9 @@ public class RestaurantController {
     })
     @GetMapping(path="/favorites")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<List<Restaurant>> getFavoriteRestaurants(
-            @Parameter(description = "UUID of the user",required = true)
-            @RequestParam String user) {
-        return new ResponseEntity<>(favoriteRestaurantService.getFavoriteRestaurants(user),HttpStatus.OK);
+    public @ResponseBody ResponseEntity<List<RestaurantShortResponse>> getFavoriteRestaurants(
+            @RequestHeader("uuid") String userUUID) {
+        return new ResponseEntity<>(favoriteRestaurantService.getFavoriteRestaurants(userUUID),HttpStatus.OK);
 
     }
 

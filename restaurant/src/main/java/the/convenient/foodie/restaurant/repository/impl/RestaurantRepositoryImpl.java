@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import the.convenient.foodie.restaurant.feign.DiscountFeignClient;
 import the.convenient.foodie.restaurant.feign.OrderFeignClient;
-import the.convenient.foodie.restaurant.dto.FilterRestaurantRequest;
-import the.convenient.foodie.restaurant.dto.RestaurantWithRating;
+import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
 import the.convenient.foodie.restaurant.repository.custom.RestaurantRepositoryCustom;
 
 import java.util.*;
@@ -32,12 +32,14 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
     private OrderFeignClient orderFeignClient;
 
 
-    @Override
-    public Page<RestaurantWithRating> getRestaurants(FilterRestaurantRequest filters, Pageable pageable) {
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.RestaurantWithRating(r,avg(rev.rating))"
-                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id";
 
-        var results = new ArrayList<RestaurantWithRating>();
+
+    @Override
+    public List<RestaurantShortResponse> getRestaurants(FilterRestaurantRequest filters,String sortBy, Boolean ascending) {
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,COALESCE(avg(rev.rating),0),count(rev.rating),count(fr.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id";
+
+        var results = new ArrayList<RestaurantShortResponse>();
 
         Map<String, String> whereClauseMap = new HashMap<>();
 
@@ -62,7 +64,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
         if (filters != null && filters.getIsOfferingDiscount() != null && Boolean.valueOf(filters.getIsOfferingDiscount())) {
 
-            results = (ArrayList<RestaurantWithRating>) getResults(hql, pageable, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null);
+            results = (ArrayList<RestaurantShortResponse>) getResults(hql, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null);
 
             //Call Discount MS
 
@@ -70,17 +72,17 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
             try {
                 List<String> res = discountFeignClient.filterDiscountedRestaurants(uuids);
 
-                results = (ArrayList<RestaurantWithRating>) results.stream().filter(r -> res.contains(r.getUuid())).collect(Collectors.toList());
+                results = (ArrayList<RestaurantShortResponse>) results.stream().filter(r -> res.contains(r.getUuid())).collect(Collectors.toList());
             }  catch(Exception e) {
             logger.error(e.getMessage());
             }
         }
 
 
-        if (pageable.getSort() != null && !pageable.getSort().isEmpty()) {
-            var order = pageable.getSort().stream().collect(Collectors.toList()).get(0);
-            if (order.getDirection().isAscending()) {
-                switch (order.getProperty()) {
+        if (sortBy!=null && !sortBy.isEmpty()) {
+
+            if (ascending) {
+                switch (sortBy) {
                     case "NAME":
                         hql += " ORDER BY r.name ASC";
                         break;
@@ -95,10 +97,10 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
                 }
 
                 if (results.isEmpty()) {
-                    results.addAll(getResults(hql, pageable, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
+                    results.addAll(getResults(hql, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
                 }
 
-                if (order.getProperty().equals("POPULARITY")) {
+                if (sortBy.equals("POPULARITY")) {
                     var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
                     //Call Order Microservice
                     try {
@@ -112,7 +114,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
 
             } else {
-                switch (order.getProperty()) {
+                switch (sortBy) {
                     case "NAME":
                         hql += " ORDER BY r.name DESC";
                         break;
@@ -128,10 +130,10 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
                 }
 
                 if (results.isEmpty()) {
-                    results.addAll(getResults(hql, pageable, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
+                    results.addAll(getResults(hql,whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
                 }
 
-                if (order.getProperty().equals("POPULARITY")) {
+                if (sortBy.equals("POPULARITY")) {
                     var resultUUIDs = results.stream().map(r -> r.getUuid()).collect(Collectors.toList());
                     //Call Order Microservice
                     try {
@@ -144,14 +146,16 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
             }
 
 
+        } else {
+            hql += " ORDER BY avg(rev.rating) DESC";
         }
 
         if (results.isEmpty()) {
-            results.addAll(getResults(hql, pageable, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
+            results.addAll(getResults(hql, whereClauseMap.containsKey("name") ? filters.getName() : null, whereClauseMap.containsKey("category") ? filters.getCategoryIds() : null));
         }
 
 
-        return new PageImpl<>(results, pageable, 10L);
+        return results;
 
     }
 
@@ -165,9 +169,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
         }
     }
 
-    private List<RestaurantWithRating> getResults(String hql, Pageable pageable, String name, List<Long> categoryIds) {
+    private List<RestaurantShortResponse> getResults(String hql,String name, List<Long> categoryIds) {
         logger.info("HQL: {}",hql);
-        var query = entityManager.createQuery(hql, RestaurantWithRating.class);
+        var query = entityManager.createQuery(hql, RestaurantShortResponse.class);
 
         if (name != null)
             query.setParameter("name", name);
@@ -175,9 +179,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
         if (categoryIds != null)
             query.setParameter("categoryIds", categoryIds);
 
-        Integer offset = (pageable.getPageNumber() - 1) * pageable.getPageSize();
 
-        return query.setFirstResult(offset).setMaxResults(pageable.getPageSize()).getResultList();
+
+        return query.getResultList();
     }
 
 

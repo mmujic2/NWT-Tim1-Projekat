@@ -14,9 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.restaurant.dto.CategoryCreateRequest;
+import the.convenient.foodie.restaurant.dto.category.CategoryCreateRequest;
 import the.convenient.foodie.restaurant.model.Category;
-import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.CategoryService;
 
 import java.time.LocalDateTime;

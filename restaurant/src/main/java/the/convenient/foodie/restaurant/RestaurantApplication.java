@@ -62,6 +62,10 @@ public class RestaurantApplication implements CommandLineRunner {
         categories.add(new Category("Traditional food",creationDate,createdBy));
         categories.add(new Category("Pizzeria",creationDate,createdBy));
         categories.add(new Category("Sweets",creationDate,createdBy));
+        categories.add(new Category("Fast Food",creationDate,createdBy));
+        categories.add(new Category("Asian cuisine",creationDate,createdBy));
+        categories.add(new Category("International cuisine",creationDate,createdBy));
+        categories.add(new Category("BBQ",creationDate,createdBy));
 
         categoryRepository.saveAll(categories);
         var manager1 = UUIDGenerator.generateType1UUID().toString();
@@ -85,6 +89,27 @@ public class RestaurantApplication implements CommandLineRunner {
                 timeOpen,timeClose,
                 timeOpen,timeClose2,
                 null,null, creationDate, createdBy);
+        var openingHours3 = new OpeningHours(timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose2,
+                null,null, creationDate, createdBy);
+        var openingHours4 = new OpeningHours(timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose2,
+                null,null, creationDate, createdBy);
+        var openingHours5 = new OpeningHours(timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                timeOpen,timeClose,
+                null,null,
+                null,null,
+                null,null, creationDate, createdBy);
 
         var restaurant1 = new Restaurant();
         restaurant1.setName("Ćevabdžinica Željo");
@@ -93,6 +118,7 @@ public class RestaurantApplication implements CommandLineRunner {
         restaurant1.setManagerUUID(manager1);
         List<Category> categories1 = new ArrayList<>();
         categories1.add(categories.get(0));
+        categories1.add(categories.get(6));
         restaurant1.setCategories(new HashSet<>(categories1));
         restaurant1.setOpeningHours(openingHours1);
         restaurant1.setCreated(creationDate);
@@ -106,14 +132,58 @@ public class RestaurantApplication implements CommandLineRunner {
         List<Category> categories2 = new ArrayList<>();
         categories2.add(categories.get(1));
         categories2.add(categories.get(2));
+        categories2.add(categories.get(3));
         restaurant2.setCategories(new HashSet<>(categories2));
         restaurant2.setOpeningHours(openingHours2);
         restaurant2.setCreated(creationDate);
         restaurant2.setCreatedBy(createdBy);
 
+        var restaurant3 = new Restaurant();
+        restaurant3.setName("Mrkva");
+        restaurant3.setAddress("Bravadžiluk 13, Sarajevo 71000");
+        restaurant3.setMapCoordinates("43.86181889198141, 18.431939562390067");
+        restaurant3.setManagerUUID(manager2);
+        List<Category> categories3 = new ArrayList<>();
+        categories3.add(categories.get(0));
+        categories2.add(categories.get(6));
+        categories2.add(categories.get(3));
+        restaurant3.setCategories(new HashSet<>(categories2));
+        restaurant3.setOpeningHours(openingHours3);
+        restaurant3.setCreated(creationDate);
+        restaurant3.setCreatedBy(createdBy);
+
+        var restaurant4 = new Restaurant();
+        restaurant4.setName("KFC");
+        restaurant4.setAddress("Vrbanja 1, Sarajevo");
+        restaurant4.setMapCoordinates("43.855821908760205, 18.407506895506145");
+        restaurant4.setManagerUUID(manager2);
+        List<Category> categories4 = new ArrayList<>();
+        categories4.add(categories.get(3));
+        categories4.add(categories.get(2));
+        restaurant4.setCategories(new HashSet<>(categories4));
+        restaurant4.setOpeningHours(openingHours4);
+        restaurant4.setCreated(creationDate);
+        restaurant4.setCreatedBy(createdBy);
+
+        var restaurant5 = new Restaurant();
+        restaurant5.setName("Kimono");
+        restaurant5.setAddress("Vrbanja 1, Sarajevo");
+        restaurant5.setMapCoordinates("43.855821908760205, 18.407506895506145");
+        restaurant5.setManagerUUID(manager2);
+        List<Category> categories5 = new ArrayList<>();
+        categories5.add(categories.get(4));
+        categories5.add(categories.get(5));
+        restaurant5.setCategories(new HashSet<>(categories5));
+        restaurant5.setOpeningHours(openingHours5);
+        restaurant5.setCreated(creationDate);
+        restaurant5.setCreatedBy(createdBy);
+
         List<Restaurant> restaurants = new ArrayList<>();
         restaurants.add(restaurant1);
         restaurants.add(restaurant2);
+        restaurants.add(restaurant3);
+        restaurants.add(restaurant4);
+        restaurants.add(restaurant5);
         restaurantRepository.saveAll(restaurants);
 
         var review = new Review();

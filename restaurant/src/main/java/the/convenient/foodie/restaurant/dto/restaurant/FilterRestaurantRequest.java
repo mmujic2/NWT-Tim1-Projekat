@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant.dto;
+package the.convenient.foodie.restaurant.dto.restaurant;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ public class FilterRestaurantRequest {
     private String name;
     private List<Long> categoryIds;
     private Boolean isOfferingDiscount;
+
 
     public FilterRestaurantRequest() {
     }

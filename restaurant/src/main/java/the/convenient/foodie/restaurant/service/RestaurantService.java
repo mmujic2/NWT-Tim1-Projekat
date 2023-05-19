@@ -3,10 +3,13 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import the.convenient.foodie.restaurant.dto.*;
+import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantCreateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantUpdateRequest;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.model.OpeningHours;
@@ -40,7 +43,7 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public Restaurant updateRestaurant(RestaurantUpdateRequest request,Long id) {
+    public Restaurant updateRestaurant(RestaurantUpdateRequest request, Long id) {
             var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
                 var restaurant = restaurantRepository.findById(id).orElseThrow(()-> exception);
                 restaurant.setName(request.getName());
@@ -58,9 +61,9 @@ public class RestaurantService {
         return StreamSupport.stream(restaurantRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 
-    public Page<RestaurantWithRating> searchForRestaurants(FilterRestaurantRequest filterRestaurantRequest, Pageable pageable) {
+    public List<RestaurantShortResponse> searchForRestaurants(FilterRestaurantRequest filterRestaurantRequest,String sortBy, Boolean ascending) {
 
-        return restaurantRepository.getRestaurants(filterRestaurantRequest,pageable);
+        return restaurantRepository.getRestaurants(filterRestaurantRequest,sortBy,ascending);
     }
 
     public Restaurant getRestaurant(Long id) {
@@ -92,7 +95,7 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public Restaurant setRestaurantOpeningHours(Long id, OpeningHoursCreateRequest request,String userUUID) {
+    public Restaurant setRestaurantOpeningHours(Long id, OpeningHoursCreateRequest request, String userUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->exception);
 

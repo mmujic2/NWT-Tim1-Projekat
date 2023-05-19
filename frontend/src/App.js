@@ -5,17 +5,23 @@ import { Route,Routes } from "react-router-dom";
 import RegisterPage from "./shared/RegisterPage/RegisterPage";
 import PrivateRoute from "./shared/PrivateRoute/PrivateRoute"
 import Sidebar from "./shared/util/Sidebar/Sidebar";
+import Header from "./shared/util/Header";
+import NotFound from "./shared/util/NotFound";
+import Home from "./shared/Home/Home";
+
 
 function App() {
-  const options= new Map([['My information',"/customer/details"], ["Favourite restaurants","restaurant/favoriters"], ["Order history","/order-history"]])
+  const options= new Map([['My information',"/customer/details"], ["Favourite restaurants","/restaurant/favorites"], ["Order history","/order-history"]])
+  const icons= new Map([['My information',"user"], ["Favourite restaurants","heart"], ["Order history","receipt"]])
  
   return(
     <>
-      
+     
       <Routes>
         <Route path="/register" element={<RegisterPage></RegisterPage>} />
+        <Route path="*" element={<NotFound></NotFound>}/>
         <Route path="/" element={<PrivateRoute />}>
-          <Route path="/" element={<>Home</>}></Route>
+          <Route path="/" element={<Home></Home>}></Route>
         </Route>
         
       </Routes>
