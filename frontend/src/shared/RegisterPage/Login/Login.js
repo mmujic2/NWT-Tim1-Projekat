@@ -10,8 +10,10 @@ import auth from "../../../service/auth.service";
 import CustomAlert from "../../util/Alert";
 import MapModal from "../../MapModal/MapModal";
 import { Col, Row } from "react-bootstrap";
+import SockJsClient from 'react-stomp';
 
 function Login({ setPage }) {
+
   return (
     <>
       <Container className={styles.container}>
@@ -57,6 +59,10 @@ function Login({ setPage }) {
           </div>
         </Form>
       </Container>
+      <SockJsClient url="http://localhost:7070/websocket" 
+      topics={['/message/test']} 
+      onMessage={(msg) => {console.log(msg)}}></SockJsClient>
+      Test
     </>
   );
 }
