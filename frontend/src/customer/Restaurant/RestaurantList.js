@@ -4,13 +4,12 @@ import RestaurantCard from './RestaurantCard'
 import PaginationControl from '../../shared/util/PaginationControl'
 import { useState } from 'react'
 import Multiselect from 'multiselect-react-dropdown'
-import { Form, Dropdown, DropdownButton } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import './RestaurantList.css'
-import { Api, Search } from '@mui/icons-material'
-import { ArrowDown, ArrowUp } from 'react-bootstrap-icons'
-import { Spinner } from 'react-bootstrap'
+import { Search } from '@mui/icons-material'
 import restaurantService from '../../service/restaurant.service'
 import Loader from '../../shared/util/Loader/Loader'
+import { KeyboardDoubleArrowUpRounded,KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
 
 function RestaurantList({ title, showFilters, restaurants, perPage = 4, categories = null, setRestaurants }) {
     const [page, setPage] = useState()
@@ -53,12 +52,14 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
             setLoading(false)
             if (res.status == 200) {
                 setRestaurants(res.data)
+                console.log(res.data)
             }
         })
     }
 
     const handleCategoryChange = (e) => {
         let ids = e.map(c => c.cat)
+        setSelectedValues(e)
         setFilterData({ ...filterData, categoryIds: ids })
     }
 
@@ -68,7 +69,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
 
         return (
             <div style={{ display: "flex" }}>
-                <div style={{ width: "300px", marginBottom: "10px" }}>
+                <div style={{ width: "25%", marginBottom: "10px" }}>
                     <Multiselect
                         options={options}
                         closeIcon="circle"
@@ -88,13 +89,13 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
                 </div>
 
 
-                <Form.Select aria-label="Sort by" style={{ width: "200px", height: "40px", color: "white", marginLeft: "10px", backgroundColor: "#272D2F" }}
-                    value={filterData.sortBy} onChange={handleChange} name="sortBy">
+                <Form.Select aria-label="Sort by" style={{ width: "18%", height: "40px", color: "white", marginLeft: "10px", backgroundColor: "#272D2F" }}
+                    value={filterData.sortBy} onChange={handleChange} name="sortBy" >
                     <option value="RATING">Rating</option>
                     <option value="POPULARITY">Popularity</option>
                     <option value="DATE">Date</option>
                 </Form.Select>
-                {filterData.ascending ? <ArrowDown className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: false }) }} /> : <ArrowUp className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: true }) }} />}
+                {filterData.ascending ? <KeyboardDoubleArrowDownRounded className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: false }) }} /> : <KeyboardDoubleArrowUpRounded  className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: true }) }} />}
 
                 <Form.Check // prettier-ignore
                     type="checkbox"
@@ -111,7 +112,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
                     name="name"
                     onChange={handleChange}
                     style={{
-                        width: "300px", height: "40px", color: "white", marginLeft: "10px", backgroundColor: "#272D2F"
+                        width: "32%", height: "40px", color: "white", marginLeft: "10px", backgroundColor: "#272D2F"
                     }}
                 />
 
@@ -143,7 +144,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
                             </Col>
                         )
 
-                        : <span style={{ color: "grey", textAlign: "center", top: "50%",position:"absolute" }}>No results to show</span>
+                        : <span style={{ color: "grey", textAlign: "center",left:"25%",top: "30%",position:"relative" }}>No results to show</span>
 
                     }
                 </Row>

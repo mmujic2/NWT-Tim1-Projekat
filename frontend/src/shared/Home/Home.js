@@ -6,7 +6,10 @@ function Home() {
     const user = authService.getCurrentUser();
 
   return (
-    user.role=="CUSTOMER" ? <Restaurants></Restaurants>: <></>
+    <>
+
+    {user.role=="CUSTOMER" ? <Restaurants></Restaurants>: <></>}
+    </>
     
   )
 }

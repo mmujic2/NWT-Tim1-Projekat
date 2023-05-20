@@ -45,9 +45,9 @@
   
 
   .arrow-button {
-    width:30px;
-    height:30px;
-    padding-top:5px;
+    width:40px !important;
+    height:40px !important;
+    
     color: #fe724c;
   }
 
