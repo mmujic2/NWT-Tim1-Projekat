@@ -13,6 +13,7 @@ const user = authService.getCurrentUser();
 
 
 function RestaurantCard({ res, grid = true }) {
+    
     return (
         <>
             {res ?

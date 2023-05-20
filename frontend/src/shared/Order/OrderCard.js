@@ -2,31 +2,54 @@ import React from 'react'
 import Card from 'react-bootstrap/Card';
 import { Col, Row, Button, Container } from 'react-bootstrap';
 import { right, left } from "@popperjs/core";
-import { Diversity1Outlined, Diversity1Rounded } from '@mui/icons-material';
+import './OrderCard.css'
+import { orderStatus } from '../../functions/OrderStatus';
 
 
 function OrderCard({ order}) {
+
+    const toggleMenuItems =(i)=>{
+            var element = document.getElementById("menu-item"+i)
+            element.classList.toggle("expanded");
+           
+            if (element.style.maxHeight){
+              element.style.maxHeight = null;
+            } else {
+              element.style.maxHeight = element.scrollHeight + "px";
+            } 
+          
+    }
+
     return (
         <>
             {order ?
-                <Card style={{ width: '100%', height: "10rem", overflow: 'hidden', backgroundColor: "#D9D9D9" }} >
+                <Card style={{ width: '100%', height: "fit-content", backgroundColor: "#272D2F" }} >
 
-
-                    <Card.Title style={{ fontSize: "16px", fontWeight: "bold", float: left }}>{order.code}</Card.Title>
-
+                    <Card.Header >
+                    <Card.Title style={{ fontSize: "18px",float:"left", fontWeight: "bold", position:"relative",top:5,left:10,color:"#FE724C" }}>{order.orderCode}</Card.Title>
+                    <span style={{float:"right"}}>{orderStatus(order.orderStatus)}</span>
+                    <span style={{clear:"both",color:"white",float:"right",fontSize:"14px"}}>20/05/2023</span>
+                    </Card.Header>
+                    
                     <Card.Body className="p-2" >
-                        <div>
+                        <Row>
+                        <Col className='col-8'>
+                        <div className='menu-items content' id={"menu-item" + order.id} onClick={()=>toggleMenuItems(order.id)}>
                             {order.menuItems.map(i =>
                                 <Card.Text>{i.name} x {i.quantity}</Card.Text>)}
 
                         </div>
-                        <Card.Text>
-                            {order.totalPrice}
+                        </Col>
+                        <Col className="col-4">
+                        <Card.Text style={{color:"#FE724C",position:"absolute",bottom:5}}>
+                            <span style={{fontWeight:"bold"}}>Total price:</span> {order.totalPrice} KM
                         </Card.Text>
+                        </Col>
+                        </Row>
 
                     </Card.Body>
-
-                </Card> : <></>}
+                </Card>
+                 : <></>}
 
         </>
     )
