@@ -3,12 +3,13 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Nav } from 'react-bootstrap';
 import { Restaurant } from '@mui/icons-material';
 import authService from '../../service/auth.service';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Header() {
 
     const user = authService.getCurrentUser();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const customerOptions = () => {
         const logout = () => {
@@ -17,17 +18,21 @@ function Header() {
                 document.body.style.cursor = "default";
                 if(res.status==200) {
                     
-                    navigate("/");
+                    navigate("/register");
                 }
             })
         }
 
         const customerInfoPage = () => {
-            navigate("/customer/details")
+            let path ="/customer/details"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         const restaurants = () => {
-            navigate("/")
+            let path = "/"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         return (
@@ -55,17 +60,21 @@ function Header() {
                 document.body.style.cursor = "default";
                 if(res.status==200) {
                     
-                    navigate("/");
+                    navigate("/register");
                 }
             })
         }
 
         const restaurantInfoPage = () => {
-            navigate("/restaurant/details")
+            let path = "/restaurant/details"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         const orders = () => {
-            navigate("/")
+            let path = "/"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         return (
@@ -91,21 +100,27 @@ function Header() {
                 document.body.style.cursor = "default";
                 if(res.status==200) {
                     
-                    navigate("/");
+                    navigate("/register");
                 }
             })
         }
 
         const restaurants = () => {
-            navigate("/admin/restaurants")
+            let path="/admin/restaurants"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         const scores = () => {
-            navigate("/admin/scores")
+            let path="/admin/scores"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         const couriers = () => {
-            navigate("/admin/couriers")
+            let path="/admin/couriers"
+            if(location.pathname!=path)
+            navigate(path)
         }
 
         return (
@@ -133,13 +148,16 @@ function Header() {
                 document.body.style.cursor = "default";
                 if(res.status==200) {
                     
-                    navigate("/");
+                    navigate("/register")
+            
                 }
             })
         }
 
         const courierInfoPage = () => {
-            navigate("/courier/details")
+            let path="/courier/details"
+            if(location.pathname!=path)
+                navigate(path)
         }
 
        
@@ -164,7 +182,7 @@ function Header() {
             <Navbar bg="dark" variant="dark" className='p-2' sticky='top' style={{zIndex:1000}}>
                 <Nav className="container-fluid">
                     <Nav.Item>
-                        <Navbar.Brand href="#" onClick={navigate('/')}>
+                        <Navbar.Brand href="#" onClick={()=>{if(location.pathname!="/") navigate('/')}}>
                             <Restaurant></Restaurant>{' '}
                             The Convenient Foodie
                         </Navbar.Brand>

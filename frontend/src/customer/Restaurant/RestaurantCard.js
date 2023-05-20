@@ -4,12 +4,13 @@ import { Col, Row } from 'react-bootstrap';
 import defaultImage from "../../images/default.png"
 import StarRatings from 'react-star-ratings';
 import { HeartFill } from 'react-bootstrap-icons';
+import './RestaurantList.css'
 
 function RestaurantCard({ res }) {
     return (
         <>
             {res ?
-                <Card style={{ width: '33rem', height: "10rem", overflow: 'hidden',backgroundColor:"#D9D9D9" }} className="hover-shadow">
+                <Card style={{ width: '33rem', height: "10rem", overflow: 'hidden',backgroundColor:"#D9D9D9" }} className="box">
 
                     <Row >
                         <Col className="col-5 px-2">
@@ -32,14 +33,16 @@ function RestaurantCard({ res }) {
                                     <br/>
                                     <div style={{position:"absolute",bottom:2}}>
                                     <StarRatings
-                                        rating={res.rating}
+                                        rating={res.rating ? res.rating :0}
                                         starRatedColor="#FE724C"
                                         numberOfStars={5}
                                         name='rating'
                                         starDimension="20px"
                                         starSpacing="2px"
+                                        starEmptyColor='white'
+                                
                                     />
-                                    <span style={{color:"#FE724C",verticalAlign:"middle"}}> {res.rating} </span>
+                                    <span style={{color:"#FE724C",verticalAlign:"middle"}}> {res.rating?res.rating:0} </span>
                                     <span style={{color:"grey",verticalAlign:"middle"}}>{"("+res.customersRated+")"}</span>
                                     
                                     </div>
