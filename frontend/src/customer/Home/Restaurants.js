@@ -3,6 +3,7 @@ import restaurantService from '../../service/restaurant.service';
 import RestaurantList from '../Restaurant/RestaurantList';
 import { Spinner,Container } from 'react-bootstrap';
 import Loader from '../../shared/util/Loader/Loader';
+import Map2 from '../../shared/MapModal/Map2';
 
 function Restaurants() {
     var mounted = false;
@@ -49,6 +50,7 @@ function Restaurants() {
     <>
     <Loader isOpen={loading} >
     {searchResults?
+    <>
     <Container style={{backgroundColor:"#D9D9D9",width:"95%",margin:"auto",marginTop:"20px",marginBottom:"20px",maxWidth:"95%"}}>
     {favorites && favorites.length>0? <RestaurantList restaurants={favorites} title={"Favorite restaurants"} showFilters={false} ></RestaurantList>: 
     
@@ -61,7 +63,8 @@ function Restaurants() {
            <Spinner animation="border" style={{color:"white",marginTop:"20%"}}/>
        </div>
      }
-     </Container> : <></>}
+     <Map2 restaurantLocations={searchResults}></Map2>
+     </Container></> : <></>}
      </Loader>
     </> 
   )

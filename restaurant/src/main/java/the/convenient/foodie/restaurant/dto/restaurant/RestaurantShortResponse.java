@@ -24,6 +24,8 @@ public class RestaurantShortResponse {
 
     private boolean open;
 
+    String mapCoordinates;
+
     Set<String> categories;
     Double rating;
 
@@ -35,6 +37,7 @@ public class RestaurantShortResponse {
         this.name=restaurant.getName();
         this.uuid = restaurant.getUuid();
         this.address=restaurant.getAddress();
+        this.mapCoordinates = restaurant.getMapCoordinates();
         this.logo=restaurant.getLogo();
         this.rating=rating;
         this.customersFavorited = customersFavorited.intValue();
@@ -125,13 +128,14 @@ public class RestaurantShortResponse {
     }
 
 
-    public RestaurantShortResponse(Long id, String uuid, String name, String address, String logo, boolean open, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited) {
+    public RestaurantShortResponse(Long id, String uuid, String name, String address, String logo, boolean open,String mapCoordinates, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
         this.address = address;
         this.logo = logo;
         this.open = open;
+        this.mapCoordinates=mapCoordinates;
         this.categories = categories;
         this.rating = rating;
         this.customersRated = customersRated;
@@ -203,6 +207,14 @@ public class RestaurantShortResponse {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public String getMapCoordinates() {
+        return mapCoordinates;
+    }
+
+    public void setMapCoordinates(String mapCoordinates) {
+        this.mapCoordinates = mapCoordinates;
     }
 
     public Integer getCustomersRated() {
