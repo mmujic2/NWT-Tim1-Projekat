@@ -9,12 +9,11 @@ import Header from "./shared/util/Header";
 import NotFound from "./shared/util/NotFound";
 import Home from "./shared/Home/Home";
 import AdminRestaurants from "./admin/Home/Restaurants";
+import CustomerDetails from "./customer/CustomerDetails/CustomerDetails";
 
 
 function App() {
-  const options= new Map([['My information',"/customer/details"], ["Favourite restaurants","/restaurant/favorites"], ["Order history","/order-history"]])
-  const icons= new Map([['My information',"user"], ["Favourite restaurants","heart"], ["Order history","receipt"]])
- 
+  
   return(
     <>
      
@@ -23,6 +22,9 @@ function App() {
         <Route path="*" element={<NotFound></NotFound>}/>
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/" element={<Home></Home>}></Route>
+          <Route path="/customer/details" element={<CustomerDetails></CustomerDetails>}></Route>
+          <Route path="/customer/restaurant/favorites" element={<CustomerDetails></CustomerDetails>}></Route>
+          <Route path="/customer/order/history" element={<CustomerDetails></CustomerDetails>}></Route>
         </Route>
         <Route path="/admin" element={<AdminRestaurants />}>
         </Route>

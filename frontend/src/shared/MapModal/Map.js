@@ -17,7 +17,7 @@ export default function Map({setAddress}) {
         container: mapContainer.current, 
         style: "https://api.maptiler.com/maps/streets/style.json?key=" + 'PX9OLKTez43ZizU6Cyjv',
         center: [ 18.4131,43.8563],
-        zoom: 7,
+        zoom: 11,
         });
 
        

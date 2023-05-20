@@ -11,7 +11,7 @@ import { NavLink,useLocation } from 'react-router-dom';
 import styles from "./Sidebar.css"
 
 
-const Sidebar = ({ optionsMap,iconsMap }) => {
+const Sidebar = ({ optionsMap,iconsMap,collapsed,setCollapsed }) => {
   const location = useLocation();
   
   
@@ -34,10 +34,16 @@ const Sidebar = ({ optionsMap,iconsMap }) => {
       </>
     )
   }
+
+
+  const toggle = () => {
+    setCollapsed(!collapsed)
+  }
+
   return (
     <div style={{position:"fixed",top:0,left:0,zIndex:100, display: 'flex', height: '100vh', overflow: 'scroll initial' }}>
       <CDBSidebar textColor="#333" backgroundColor="#D7D7D7" style={{paddingTop:"50px"}}>
-        <CDBSidebarHeader prefix={<i className="fa fa-bars" />}></CDBSidebarHeader>
+        <CDBSidebarHeader prefix={<i className="fa fa-bars" onClick={toggle}/>}></CDBSidebarHeader>
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
             {options()}
