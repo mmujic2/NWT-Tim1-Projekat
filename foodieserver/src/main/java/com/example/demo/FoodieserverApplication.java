@@ -25,8 +25,8 @@ import java.io.IOException;
 public class FoodieserverApplication {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		// Server server = ServerBuilder.forPort(9090).addService(new EventService()).build();
-		// server.start();
+		Server server = ServerBuilder.forPort(9090).addService(new EventService()).build();
+		server.start();
 		// server.awaitTermination();
 
 		SpringApplication.run(FoodieserverApplication.class, args);

@@ -34,6 +34,7 @@ import the.convenient.foodie.order.model.MenuItemDTO;
 import the.convenient.foodie.order.model.Order;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path="/order")
 public class OrderController {
+    @Value("${grpc_host}") String grpcHost;
 
     @Autowired
     RabbitTemplate rabbitTemplate;
@@ -129,7 +131,8 @@ public class OrderController {
         //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(x);
         // rabbitTemplate.convertAndSend("", "this is a message");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        System.out.println(grpcHost);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         stub.logevent(EventRequest
                 .newBuilder()
