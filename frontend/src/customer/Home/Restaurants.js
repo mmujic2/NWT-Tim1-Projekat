@@ -56,7 +56,7 @@ function Restaurants() {
     
        <></>
      }
-    {searchResults? <RestaurantList restaurants={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults
+    {searchResults? <RestaurantList grid={false} restaurants={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults
     }></RestaurantList>: 
     
        <div style={{display:"flex",justifyContent:"center"}}>

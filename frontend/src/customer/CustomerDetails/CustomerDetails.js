@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import UserInformation from './UserInformation'
 import FavoriteRestaurants from './FavoriteRestaurants'
 import OrderHistory from './OrderHistory'
-import MainContainer from './MainContainer'
+import MainContainer from '../../shared/util/RightSideContainer/MainContainer'
 
 function CustomerDetails() {
     const options = new Map([['My information', "/customer/details"], ["Favorite restaurants", "/customer/restaurant/favorites"], ["Order history", "/customer/order/history"]])

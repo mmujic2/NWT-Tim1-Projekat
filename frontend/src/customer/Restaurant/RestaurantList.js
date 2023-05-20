@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import RestaurantCard from './RestaurantCard'
-import PaginationControl from '../../shared/util/PaginationControl'
+import PaginationControl from '../../shared/util/Pagination/PaginationControl'
 import { useState } from 'react'
 import Multiselect from 'multiselect-react-dropdown'
 import { Form } from 'react-bootstrap'
@@ -16,7 +16,7 @@ import { right, left } from "@popperjs/core";
 import { KeyboardDoubleArrowUpRounded,KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
 
 
-function RestaurantList({ title, showFilters, restaurants, perPage = 4, categories = null, setRestaurants }) {
+function RestaurantList({ title, showFilters, restaurants, perPage = 4, categories = null, setRestaurants,grid=true }) {
     const [page, setPage] = useState()
     const [currentPage, setCurrentPage] = useState([])
     const [filterData, setFilterData] = useState({ sortBy: "RATING", ascending: false })
@@ -148,11 +148,11 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
                 : <></>}
                 <hr style={{ clear: left }}></hr>
                 {showFilters && categories ? filters() : <></>}
-                <Row xs={1} md={2} className="gy-2 gx-2 mw-100" >
+                <Row xs={1} md={grid? 2 : 1} className="gy-2 gx-2 mw-100" >
                     {restaurants.length > 0 && !loading ?
                         currentPage.map((r) =>
                             <Col key={r.id}>
-                                <RestaurantCard res={r} className="box" />
+                                <RestaurantCard grid={grid} style={{width:"100%"}} res={r} className="box" />
                             </Col>
                         )
 

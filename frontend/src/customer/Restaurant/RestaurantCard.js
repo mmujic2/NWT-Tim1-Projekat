@@ -12,14 +12,14 @@ import authService from '../../service/auth.service'
 const user = authService.getCurrentUser();
 
 
-function RestaurantCard({ res }) {
+function RestaurantCard({ res,grid=true }) {
     return (
         <>
             {res ?
-                <Card style={{ width: '33rem', height: "10rem", overflow: 'hidden',backgroundColor:"#D9D9D9" }} className="box">
+                <Card style={{ width: '100%', height: "10rem", overflow: 'hidden',backgroundColor:"#D9D9D9" }} className="box">
 
                     <Row >
-                        <Col className="col-5 px-2">
+                        <Col className={grid? "col-5 px-2" : "col-3 px-2"} >
                             <Card.Img variant="top" src={res.logo? `data:image/jpeg;base64,${res.logo} ` : defaultImage} style={{ objectFit: "cover", height: "10rem", width: "100%" }} />
                         </Col>
                         <Col className="col-7 p-0">
