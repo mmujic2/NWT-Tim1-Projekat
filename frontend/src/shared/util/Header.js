@@ -106,7 +106,7 @@ function Header() {
         }
 
         const restaurants = () => {
-            let path="/admin/restaurants"
+            let path="/"
             if(location.pathname!=path)
             navigate(path)
         }

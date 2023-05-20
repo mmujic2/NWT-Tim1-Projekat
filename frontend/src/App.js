@@ -26,8 +26,7 @@ function App() {
           <Route path="/customer/restaurant/favorites" element={<CustomerDetails></CustomerDetails>}></Route>
           <Route path="/customer/order/history" element={<CustomerDetails></CustomerDetails>}></Route>
         </Route>
-        <Route path="/admin" element={<AdminRestaurants />}>
-        </Route>
+        
         
       </Routes>
       </>

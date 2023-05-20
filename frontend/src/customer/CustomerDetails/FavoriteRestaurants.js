@@ -2,7 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react';
 import restaurantService from '../../service/restaurant.service';
 import Loader from '../../shared/util/Loader/Loader';
-import RestaurantList from '../Restaurant/RestaurantList';
+import ListContainer from '../../shared/util/ListContainer/ListContainer'
 
 function FavoriteRestaurants() {
   var mounted = false;
@@ -35,7 +35,7 @@ function FavoriteRestaurants() {
     <>
     <Loader isOpen={loading} >
       {favorites?
-    <RestaurantList restaurants={favorites} title={"Favorite restaurants"} showFilters={false} grid={false}></RestaurantList>
+    <ListContainer items={favorites} title={"Favorite restaurants"} showFilters={false} grid={false}></ListContainer>
     : <></>}
     </Loader>
     </>

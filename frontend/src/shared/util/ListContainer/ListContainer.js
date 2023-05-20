@@ -1,26 +1,25 @@
 import React, { useEffect } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
-import RestaurantCard from './RestaurantCard'
-import PaginationControl from '../../shared/util/Pagination/PaginationControl'
+import RestaurantCard from '../../../customer/Restaurant/RestaurantCard'
+import PaginationControl from '../Pagination/PaginationControl'
 import { useState } from 'react'
 import Multiselect from 'multiselect-react-dropdown'
 import { Form } from 'react-bootstrap'
-import './RestaurantList.css'
-import { Api, Search, Add } from '@mui/icons-material'
-import { ArrowDown, ArrowUp } from 'react-bootstrap-icons'
-import { Spinner } from 'react-bootstrap'
-import restaurantService from '../../service/restaurant.service'
-import Loader from '../../shared/util/Loader/Loader'
-import authService from '../../service/auth.service'
+import { Search, Add } from '@mui/icons-material'
+import restaurantService from '../../../service/restaurant.service'
+import Loader from '../Loader/Loader'
+import authService from '../../../service/auth.service'
 import { right, left } from "@popperjs/core";
-import { KeyboardDoubleArrowUpRounded,KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
+import { KeyboardDoubleArrowUpRounded, KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
+import OrderCard from '../../Order/OrderCard'
 
 
-function RestaurantList({ title, showFilters, restaurants, perPage = 4, categories = null, setRestaurants,grid=true }) {
+function ListContainer({ title, showFilters, items, type = "restaurant", perPage = 4, categories = null, setItems, grid = true }) {
     const [page, setPage] = useState()
     const [currentPage, setCurrentPage] = useState([])
     const [filterData, setFilterData] = useState({ sortBy: "RATING", ascending: false })
     const [loading, setLoading] = useState(false)
+    const [selectedValues, setSelectedValues] = useState([])
     const user = authService.getCurrentUser();
 
 
@@ -30,7 +29,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
 
     const goToPage = (p) => {
         setCurrentPage(
-            restaurants.slice(
+            items.slice(
                 (p - 1) * perPage,
                 (p - 1) * perPage + perPage
             )
@@ -40,7 +39,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
 
     useEffect(() => {
         goToPage(1);
-    }, [restaurants]);
+    }, [items]);
 
     const handleChange = (e) => {
         if (e.target.name == "offeringDiscount") {
@@ -49,7 +48,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
         }
         setFilterData({ ...filterData, [e.target.name]: e.target.value })
 
-        console.log(e.target)
+
     }
 
     const search = () => {
@@ -57,7 +56,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
         restaurantService.searchRestaurants(filterData).then((res) => {
             setLoading(false)
             if (res.status == 200) {
-                setRestaurants(res.data)
+                setItems(res.data)
                 console.log(res.data)
             }
         })
@@ -101,7 +100,7 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
                     <option value="POPULARITY">Popularity</option>
                     <option value="DATE">Date</option>
                 </Form.Select>
-                {filterData.ascending ? <KeyboardDoubleArrowDownRounded className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: false }) }} /> : <KeyboardDoubleArrowUpRounded  className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: true }) }} />}
+                {filterData.ascending ? <KeyboardDoubleArrowDownRounded className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: false }) }} /> : <KeyboardDoubleArrowUpRounded className='arrow-button' onClick={() => { setFilterData({ ...filterData, ascending: true }) }} />}
 
                 <Form.Check // prettier-ignore
                     type="checkbox"
@@ -129,48 +128,50 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
         )
     }
 
-    const [selectedValues, setSelectedValues] = useState([
 
-    ])
 
-    //user.role=="CUSTOMER" ? <Restaurants></Restaurants>: <></>
-    
+
 
     return (
         <>
             <Loader isOpen={loading} >
-            <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0, }} className="container-fluid">
-                <h2 style={{ textAlign: "start", float: left  }}>{title}</h2>
-                {user.role=="ADMINISTRATOR" ? 
-                <Container style={{display:"flex",justifyContent:"flex-end",alignItems:"flex-end", backgroundColor: "#F5F5F4", height:"50px", marginBottom: 0,marginRight: 0,}}>
-                                <Button style={{ clear: left, textAlign: "center",width: "250px", height: "40px",}} class="rounded">Add restaurant <Add ></Add></Button>
+                <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0, }} className="container-fluid">
+                    <h2 style={{ textAlign: "start", float: left }}>{title}</h2>
+                    {user.role == "ADMINISTRATOR" && type == "restaurant" ?
+                        <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", height: "50px", marginBottom: 0, marginRight: 0, }}>
+                            <Button style={{ clear: left, textAlign: "center", width: "250px", height: "40px", }} class="rounded">Add restaurant <Add ></Add></Button>
+                        </Container>
+                        : <></>}
+                    <hr style={{ clear: left }}></hr>
+                    {showFilters && categories ? filters() : <></>}
+                    <Row xs={1} md={grid ? 2 : 1} className="gy-2 gx-2 mw-100" >
+                        {items.length > 0 && !loading ?
+                            currentPage.map((i) =>
+                                <Col key={i.id}>
+                                    { type=="restaurant" ?
+                                        <RestaurantCard grid={grid} style={{ width: "100%" }} res={i}  />
+                                        : type=="order" ?
+                                        <OrderCard grid={grid} style={{width:"100%"}} order={i} />
+                                        : <></>
+                                    }
+                                </Col>
+                            )
+
+                            : <span style={{ color: "grey", textAlign: "center", left: "25%", top: "30%", position: "relative" }}>No results to show</span>
+
+                        }
+                    </Row>
+
+                    {items.length > perPage ?
+                        <div >
+                            <hr></hr>
+                            <PaginationControl page={page} setPage={setPage} total={items.length} limit={perPage} />
+                        </div> : <></>}
+
                 </Container>
-                : <></>}
-                <hr style={{ clear: left }}></hr>
-                {showFilters && categories ? filters() : <></>}
-                <Row xs={1} md={grid? 2 : 1} className="gy-2 gx-2 mw-100" >
-                    {restaurants.length > 0 && !loading ?
-                        currentPage.map((r) =>
-                            <Col key={r.id}>
-                                <RestaurantCard grid={grid} style={{width:"100%"}} res={r} className="box" />
-                            </Col>
-                        )
-
-                        : <span style={{ color: "grey", textAlign: "center",left:"25%",top: "30%",position:"relative" }}>No results to show</span>
-
-                    }
-                </Row>
-
-                {restaurants.length > perPage ?
-                    <div >
-                        <hr></hr>
-                        <PaginationControl page={page} setPage={setPage} total={restaurants.length} limit={perPage} />
-                    </div> : <></>}
-
-            </Container>
             </Loader>
         </>
     )
 }
 
-export default RestaurantList
+export default ListContainer

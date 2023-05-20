@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import restaurantService from '../../service/restaurant.service';
-import RestaurantList from '../Restaurant/RestaurantList';
+import ListContainer from '../../shared/util/ListContainer/ListContainer';
 import { Spinner,Container } from 'react-bootstrap';
 import Loader from '../../shared/util/Loader/Loader';
 import Map2 from '../../shared/MapModal/Map2';
@@ -52,12 +52,12 @@ function Restaurants() {
     {searchResults?
     <>
     <Container style={{backgroundColor:"#D9D9D9",width:"95%",margin:"auto",marginTop:"20px",marginBottom:"20px",maxWidth:"95%"}}>
-    {favorites && favorites.length>0? <RestaurantList restaurants={favorites} title={"Favorite restaurants"} showFilters={false} ></RestaurantList>: 
+    {favorites && favorites.length>0? <ListContainer items={favorites} title={"Favorite restaurants"} showFilters={false} ></ListContainer>: 
     
        <></>
      }
-    {searchResults? <RestaurantList  restaurants={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults
-    }></RestaurantList>: 
+    {searchResults? <ListContainer  items={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults
+    }></ListContainer>: 
     
        <div style={{display:"flex",justifyContent:"center"}}>
            <Spinner animation="border" style={{color:"white",marginTop:"20%"}}/>
