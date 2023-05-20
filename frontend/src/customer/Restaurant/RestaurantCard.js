@@ -1,10 +1,16 @@
 import React from 'react'
 import Card from 'react-bootstrap/Card';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Row, Button, Container } from 'react-bootstrap';
 import defaultImage from "../../images/default.png"
 import StarRatings from 'react-star-ratings';
 import { HeartFill } from 'react-bootstrap-icons';
+import { Add, Edit, Delete } from '@mui/icons-material'
 import './RestaurantList.css'
+import { right, left } from "@popperjs/core";
+import authService from '../../service/auth.service'
+
+const user = authService.getCurrentUser();
+
 
 function RestaurantCard({ res }) {
     return (
@@ -18,8 +24,17 @@ function RestaurantCard({ res }) {
                         </Col>
                         <Col className="col-7 p-0">
                             <Card.Body className="p-2" >
-                                <Card.Title style={{ fontSize: "16px", fontWeight: "bold" }}>{res.name}</Card.Title>
-                                <Card.Text style={{ fontSize: "14px" }}>
+                                <Card.Title style={{ fontSize: "16px", fontWeight: "bold", float:left }}>{res.name}</Card.Title>
+                                {user.role=="ADMINISTRATOR" ? 
+                <Container style={{display:"flex",justifyContent:"flex-end",alignItems:"flex-end", backgroundColor: "#D9D9D9", height:"40px", marginBottom: 0,marginTop: 0, marginRight: 0,padding:10}}>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                <Button style={{ clear: left, textAlign: "center",width: "45px", height: "30px", margin:2, marginRight:0,padding:0,}} class="rounded"><Edit fontSize="small"></Edit></Button>
+                                <Button style={{ clear: left, textAlign: "center",width: "45px", height: "30px", margin:2, padding:0,marginRight:5,marginLeft:0,backgroundColor:"#fe724c",borderColor: "#fe724c"}} class="rounded"><Delete fontSize="small"></Delete></Button>
+                
+                                </div>
+                                </Container>
+                : <></>}
+                                <Card.Text style={{ clear: left,fontSize: "14px" }}>
                                     {res.address}
                                     <br />
                                     <strong>Categories: </strong>

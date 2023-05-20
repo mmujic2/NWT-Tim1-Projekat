@@ -8,6 +8,7 @@ import Sidebar from "./shared/util/Sidebar/Sidebar";
 import Header from "./shared/util/Header";
 import NotFound from "./shared/util/NotFound";
 import Home from "./shared/Home/Home";
+import AdminRestaurants from "./admin/Home/Restaurants";
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
         <Route path="*" element={<NotFound></NotFound>}/>
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/" element={<Home></Home>}></Route>
+        </Route>
+        <Route path="/admin" element={<AdminRestaurants />}>
         </Route>
         
       </Routes>

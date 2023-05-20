@@ -6,17 +6,20 @@ import { useState } from 'react'
 import Multiselect from 'multiselect-react-dropdown'
 import { Form, Dropdown, DropdownButton } from 'react-bootstrap'
 import './RestaurantList.css'
-import { Api, Search } from '@mui/icons-material'
+import { Api, Search, Add } from '@mui/icons-material'
 import { ArrowDown, ArrowUp } from 'react-bootstrap-icons'
 import { Spinner } from 'react-bootstrap'
 import restaurantService from '../../service/restaurant.service'
 import Loader from '../../shared/util/Loader/Loader'
+import authService from '../../service/auth.service'
+import { right, left } from "@popperjs/core";
 
 function RestaurantList({ title, showFilters, restaurants, perPage = 4, categories = null, setRestaurants }) {
     const [page, setPage] = useState()
     const [currentPage, setCurrentPage] = useState([])
     const [filterData, setFilterData] = useState({ sortBy: "RATING", ascending: false })
     const [loading, setLoading] = useState(false)
+    const user = authService.getCurrentUser();
 
 
     useEffect(() => {
@@ -126,14 +129,20 @@ function RestaurantList({ title, showFilters, restaurants, perPage = 4, categori
 
     ])
 
+    //user.role=="CUSTOMER" ? <Restaurants></Restaurants>: <></>
     
 
     return (
         <>
             <Loader isOpen={loading} >
-            <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0 }} className="container-fluid">
-                <h2 style={{ textAlign: "start" }}>{title}</h2>
-                <hr></hr>
+            <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0, }} className="container-fluid">
+                <h2 style={{ textAlign: "start", float: left  }}>{title}</h2>
+                {user.role=="ADMINISTRATOR" ? 
+                <Container style={{display:"flex",justifyContent:"flex-end",alignItems:"flex-end", backgroundColor: "#F5F5F4", height:"50px", marginBottom: 0,marginRight: 0,}}>
+                                <Button style={{ clear: left, textAlign: "center",width: "250px", height: "40px",}} class="rounded">Add restaurant <Add ></Add></Button>
+                </Container>
+                : <></>}
+                <hr style={{ clear: left }}></hr>
                 {showFilters && categories ? filters() : <></>}
                 <Row xs={1} md={2} className="gy-2 gx-2 mw-100" >
                     {restaurants.length > 0 && !loading ?
