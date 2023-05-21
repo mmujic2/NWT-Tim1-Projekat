@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import the.convenient.foodie.menu.dto.IntegerListDto;
 import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.model.MenuItem;
@@ -82,6 +83,11 @@ public class MenuItemController {
             @PathVariable  Long id) {
         var menuItem = menuItemService.getMenuItem(id);
         return new ResponseEntity<>(menuItem, HttpStatus.OK);
+    }
+
+    @PostMapping("/getlist")
+    public ResponseEntity<List<MenuItem>> getMenuItemsByList(IntegerListDto integerList) {
+        return ResponseEntity.ok(menuItemService.getMenuItemsByList(integerList.getIntegerList()));
     }
 
     // If error occured in order-service, remove previously added items

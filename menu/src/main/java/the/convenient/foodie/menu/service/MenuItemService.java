@@ -8,6 +8,7 @@ import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.MenuItem;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MenuItemService {
@@ -36,6 +37,10 @@ public class MenuItemService {
         var exception = new EntityNotFoundException("Menu Item with id " + id + " does not exist!");
         var menuItem = menuItemRepository.findById(id);
         return menuItem.orElseThrow(() -> exception);
+    }
+
+    public List<MenuItem> getMenuItemsByList(List<Long> integerList) {
+        return menuItemRepository.findAllById(integerList);
     }
 
 }

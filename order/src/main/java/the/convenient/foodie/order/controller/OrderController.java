@@ -27,11 +27,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import the.convenient.foodie.order.dao.OrderCreateRequest;
+import the.convenient.foodie.order.dao.OrderResponse;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
 import the.convenient.foodie.order.model.MenuItem;
 import the.convenient.foodie.order.model.MenuItemDTO;
 import the.convenient.foodie.order.model.Order;
+import the.convenient.foodie.order.model.OrderStatus;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +59,10 @@ public class OrderController {
 
     private final MenuItemRepository menuItemRepository;
 
+    private final List<Character> chars = Arrays.asList('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'W', 'X', 'Y', 'Z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '#', '$', '%', '&', '/', '(', ')', '=', '?', '*');
+
     public OrderController(OrderRepository orderRepository, MenuItemRepository menuItemRepository) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
@@ -71,10 +78,43 @@ public class OrderController {
     })
     @PostMapping(path = "/add")
     @ResponseStatus(HttpStatus.CREATED)
-     public @ResponseBody ResponseEntity<Order> addNewOrder(@Valid @RequestBody Order order) {
-        orderRepository.save(order);
+     public @ResponseBody ResponseEntity<Order> addNewOrder(@RequestBody OrderCreateRequest orderCreateRequest,
+                                                            @RequestHeader("uuid") String userUUID) {
+        Random rand = new Random();
+        StringBuilder code = new StringBuilder();
+        // sansa da se generisu dva ista koda je 1e-19
+        for(int i = 0; i < 10; i++) {
+            code.append(chars.get(rand.nextInt(chars.size())));
+        }
 
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        var menuItemsJSON = restTemplate.postForObject("http://menu-service/getlist", orderCreateRequest.getMenuItemIds(), String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new ParameterNamesModule());
+        try {
+            var menuItems = Arrays.stream(objectMapper.readValue(menuItemsJSON, MenuItem[].class)).toList();
+
+            var order = new Order(userUUID,
+                    orderCreateRequest.getRestaurantId(),
+                    orderCreateRequest.getEstimatedDeliveryTime(),
+                    LocalDateTime.now(),
+                    orderCreateRequest.getCouponId(),
+                    OrderStatus.Processing.toString(),
+                    orderCreateRequest.getTotalPrice(),
+                    null,
+                    orderCreateRequest.getDeliveryFee(),
+                    code.toString(),
+                    menuItems,
+                    orderCreateRequest.getRestaurantName(),
+                    orderCreateRequest.getCustomerPhoneNumber(),
+                    orderCreateRequest.getCustomerAddress());
+
+            orderRepository.save(order);
+
+            return new ResponseEntity<>(order, HttpStatus.CREATED);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     private Order applyPatchToOrder(JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
@@ -208,6 +248,21 @@ public class OrderController {
 
         return orderMap;
     }
+
+    @GetMapping("/getforuser")
+    public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("uuid") String userUuid) {
+        return ResponseEntity.ok(orderRepository.findAll().stream()
+                .filter(x -> x.getUser_id().equals(userUuid))
+                .map(OrderResponse::new)
+                .toList());
+    }
+
+    /*@PutMapping("/status/{id}/{status}")
+    public ResponseEntity<Order> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) {
+        var order = orderRepository.findById(id).orElseThrow();
+        // var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
+        var userToken = restTemplate.getForObject("http://auth-service/auth/uuid-token/" + order.getUser_id(), String.class);
+    }*/
 
     @PostConstruct
     public void init() {
