@@ -1,7 +1,6 @@
 package the.convenient.foodie.order.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -25,7 +24,7 @@ public class Order {
     private Long id;
 
     @NotNull(message = "Order must have a user!")
-    private Long userId;
+    private String userId;
 
     @NotNull(message = "Order must have a restaurant!")
     private String restaurantId;
@@ -69,6 +68,13 @@ public class Order {
     @Size(min = 1, message = "Order must contain at least one menu item!")
     private List<MenuItem> menuItems;
 
+    private String restaurantName;
+
+    private String customerPhoneNumber;
+
+    private String customerAddress;
+
+
     /*@Transient
     @NotNull(message = "Order must contain at least one menu item!")
     @Size(min = 1, message = "Order must contain at least one menu item!")
@@ -79,7 +85,7 @@ public class Order {
     }
 
     @JsonCreator
-    public Order(Long userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
+    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -100,6 +106,25 @@ public class Order {
         }
     }
 
+    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, List<MenuItem> menuItems, String restaurantName, String customerPhoneNumber, String customerAddress) {
+        this.userId = userId;
+        this.restaurantId = restaurantId;
+        this.estimatedDeliveryTime = estimatedDeliveryTime;
+        this.createdTime = createdTime;
+        this.couponId = couponId;
+        this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
+        this.deliveryPersonId = deliveryPersonId;
+        this.deliveryFee = deliveryFee;
+        this.orderCode = orderCode;
+        this.menuItems = menuItems;
+        this.restaurantName = restaurantName;
+        this.customerPhoneNumber = customerPhoneNumber;
+        this.customerAddress = customerAddress;
+    }
+
+
+
 
 
     public Long getId() {
@@ -110,11 +135,11 @@ public class Order {
         this.id = id;
     }
 
-    public Long getUser_id() {
+    public String getUser_id() {
         return userId;
     }
 
-    public void setUser_id(Long user_id) {
+    public void setUser_id(String user_id) {
         this.userId = user_id;
     }
 
@@ -204,5 +229,29 @@ public class Order {
 
     public void setMenuItems(List<MenuItem> menuItems) {
         this.menuItems = menuItems;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getCustomerPhoneNumber() {
+        return customerPhoneNumber;
+    }
+
+    public void setCustomerPhoneNumber(String restaurantPhoneNumber) {
+        this.customerPhoneNumber = restaurantPhoneNumber;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
     }
 }

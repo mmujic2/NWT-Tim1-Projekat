@@ -200,4 +200,10 @@ public class AuthenticationService {
             userRepository.findByEmail(email)
                     .ifPresent(u-> {throw new DuplicateEntryException("An account using that email address already exists.");});
     }
+
+    public String getTokenFromUUID(String UUID) {
+        return tokenRepository.findAll().stream()
+                .filter(x -> !x.isExpired() && !x.isRevoked() && x.getUser().getUuid().equals(UUID))
+                .findFirst().orElseThrow().getToken();
+    }
 }

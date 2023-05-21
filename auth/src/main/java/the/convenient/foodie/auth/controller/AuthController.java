@@ -83,4 +83,9 @@ public class AuthController {
         return ResponseEntity.ok(authenticationService.validateToken(request));
     }
 
+    @GetMapping("/uuid-token/{uuid}")
+    public ResponseEntity<String> getTokenFromUUID(@PathVariable String uuid) {
+        return ResponseEntity.ok(authenticationService.getTokenFromUUID(uuid));
+    }
+
 }
