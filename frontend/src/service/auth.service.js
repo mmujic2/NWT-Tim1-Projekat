@@ -35,6 +35,23 @@ class AuthService {
     }
   }
 
+  updateUserInformation(req) {
+    try {
+    return api
+        .post("/auth/user/update",req)
+        .then(response=> {
+            if(response.status == 200) {
+                TokenService.setUser(response.data);
+
+            } 
+
+            return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
   logout() {
     try {
       return api

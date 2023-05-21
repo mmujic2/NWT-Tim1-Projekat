@@ -158,10 +158,46 @@ public class AuthenticationService {
         return  response;
     }
 
-    private void checkIfUserUnique(String username, String email) {
-        userRepository.findByUsername(username)
-                .ifPresent(u-> {throw new DuplicateEntryException("Username " + username + " is already taken.");});
-        userRepository.findByEmail(email)
-                .ifPresent(u-> {throw new DuplicateEntryException("An account using that email address already exists.");});
+    public AuthResponse updateUser(UserUpdateRequest userUpdateRequest) {
+
+        var user = userRepository.findById(userUpdateRequest.getId()).orElseThrow();
+        if(!user.getEmail().equals(userUpdateRequest.getEmail()))
+            checkIfUserUnique(null,userUpdateRequest.getEmail());
+
+        if(!user.getUsername().equals(userUpdateRequest.getUsername()))
+            checkIfUserUnique(userUpdateRequest.getUsername(),null);
+
+        if(userUpdateRequest.getPassword()!=null && !userUpdateRequest.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        }
+
+
+        user.setFirstname(userUpdateRequest.getFirstname());
+        user.setLastname(userUpdateRequest.getLastname());
+        user.setEmail(userUpdateRequest.getEmail());
+        user.setUsername(userUpdateRequest.getUsername());
+        user.setAddress(userUpdateRequest.getAddress());
+        user.setMapCoordinates(userUpdateRequest.getMapCoordinates());
+        user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+
+        var savedUser = userRepository.save(user);
+        Map<String,Object> claimMap= new HashMap<>();
+        claimMap.put("Role",user.getRole().name());
+        claimMap.put("Uuid",user.getUuid());
+        var jwtToken = jwtService.generateToken(claimMap,user);
+        var refreshToken = jwtService.generateRefreshToken(claimMap, user);
+        revokeAllUserTokens(user);
+        saveToken(savedUser, jwtToken);
+        return  new AuthResponse(jwtToken,refreshToken,new UserResponse(savedUser));
+    }
+
+    private  void checkIfUserUnique(String username, String email) {
+        if(username!=null)
+            userRepository.findByUsername(username)
+                    .ifPresent(u-> {throw new DuplicateEntryException("Username " + username + " is already taken.");});
+
+        if(email!=null)
+            userRepository.findByEmail(email)
+                    .ifPresent(u-> {throw new DuplicateEntryException("An account using that email address already exists.");});
     }
 }

@@ -9,11 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import the.convenient.foodie.auth.dto.AuthResponse;
-import the.convenient.foodie.auth.dto.RegisterRequest;
-import the.convenient.foodie.auth.dto.ValidationResponse;
+import the.convenient.foodie.auth.dto.*;
 import the.convenient.foodie.auth.service.AuthenticationService;
-import the.convenient.foodie.auth.dto.AuthCredentials;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -35,6 +32,12 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
 
         return new ResponseEntity<>(authenticationService.register(registerRequest,"CUSTOMER"), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/user/update")
+    public ResponseEntity<AuthResponse> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+
+        return new ResponseEntity<>(authenticationService.updateUser(userUpdateRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMINISTRATOR')")

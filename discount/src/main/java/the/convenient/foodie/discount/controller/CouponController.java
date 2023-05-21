@@ -167,17 +167,17 @@ public class CouponController {
         @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                 content = @Content)})
     @PostMapping(path="/filter")
-    public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
-        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
-        var response = stub.logevent(EventRequest
+    public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
+        //ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        //EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        /*var response = stub.logevent(EventRequest
                 .newBuilder()
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
                 .setEvent("Filtered restaurants with coupons").setServiceName("discount-service")
                 .setUser(username)
-                .build());
-        System.out.println(response.getResponse());
+                .build());*/
+        //System.out.println(response.getResponse());
         var filteredRestaurants = couponService.filterRestaurants(restaurants);
         return new ResponseEntity<>(filteredRestaurants, HttpStatus.OK);
     }
