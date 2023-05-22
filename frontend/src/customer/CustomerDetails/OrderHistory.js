@@ -1,210 +1,45 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ListContainer from '../../shared/util/ListContainer/ListContainer'
+import orderService from '../../service/order.service'
+import Loader from '../../shared/util/Loader/Loader'
+import CustomAlert from '../../shared/util/Alert'
+
 
 function OrderHistory() {
-  const orders = [{
-    "id": 1,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  },{
-    "id": 2,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  },{
-    "id": 3,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      }
-    ]
-  },{
-    "id": 4,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  },{
-    "id": 5,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  },{
-    "id": 6,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  },{
-    "id": 7,
-    "orderCode": "#O1235",
-    "userId": "nekiuuid",
-    "restaurantId": "nekiuuid",
-    "orderStatus": "Delivered",
-    "totalPrice": "52.5",
-    "menuItems": [
-      {
-        "name": "Hamburger",
-        "quantity": 3
-      },
-      {
-        "name": "Palačinke Nutella",
-        "quantity": 2
-      },
-      {
-        "name": "Coca Cola 0.5",
-        "quantity": 2
-      },
-      {
-        "name": "Pepsi 0.5",
-        "quantity": 1
-      },
-      {
-        "name": "Pomfrit Srednji",
-        "quantity": 3
-      }
-    ]
-  }]
+  const [orders, setOrders] = useState()
+  const [loading, setLoading] = useState(true)
+  const [alert, setAlert] = useState({})
+  const [showAlert, setShowAlert] = useState(false)
+  var mounted = false;
+
+  useEffect(() => {
+    if (!mounted) {
+      mounted = true
+      orderService.getUserOrders().then((res) => {
+        setLoading(false)
+        if (res.status == 200) {
+          setOrders(res.data)
+        } else {
+          setAlert({ ...alert, msg: res.data.errors, type: "error" })
+          setShowAlert(true)
+        }
+      })
+    }
+  }, [])
 
 
 
   return (
-    <ListContainer
-      title={"My orders"}
-      type="order"
-      grid={false}
-      items={orders}
-      perPage={5}
-    />
+    <Loader isOpen={loading}>
+      <CustomAlert setShow={setShowAlert} show={showAlert} type={alert.type} msg={alert.msg}></CustomAlert>
+      {orders ? <ListContainer
+        title={"My orders"}
+        type="order"
+        grid={false}
+        items={orders}
+        perPage={5}
+      /> : <></>}
+    </Loader>
   )
 }
 

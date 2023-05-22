@@ -1,8 +1,10 @@
 
 export function orderStatus(status) {
     switch(status) {
-        case "Accepted":
-            return <span style={{color:"#FE724C",fontWeight:"bold"}}>Accepted</span>
+        case "Pending":
+            return <span style={{fontWeight:"bold"}}  className="text-info">Pending</span>
+        case "In preparation":
+            return <span style={{color:"#FE724C",fontWeight:"bold"}}>In preparation</span>
 
         case "Ready for delivery":
             return <span style={{fontWeight:"bold"}} className="text-warning">Ready for delivery</span>

@@ -46,7 +46,7 @@ public class Order {
     private Double totalPrice;
 
     @Nullable
-    private Long deliveryPersonId;
+    private String deliveryPersonId;
 
     @NotNull(message = "Order must have delivery fee!")
     @Positive(message = "Delivery fee must be positive!")
@@ -85,7 +85,7 @@ public class Order {
     }
 
     @JsonCreator
-    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
+    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, String deliveryPersonId, Double deliveryFee, String orderCode, ArrayList<Long> menuItemIds) throws MenuItemNotFoundException {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -106,7 +106,7 @@ public class Order {
         }
     }
 
-    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, Long deliveryPersonId, Double deliveryFee, String orderCode, List<MenuItem> menuItems, String restaurantName, String customerPhoneNumber, String customerAddress) {
+    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, String deliveryPersonId, Double deliveryFee, String orderCode, List<MenuItem> menuItems, String restaurantName, String customerPhoneNumber, String customerAddress) {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -183,11 +183,11 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public Long getDeliveryPersonId() {
+    public String getDeliveryPersonId() {
         return deliveryPersonId;
     }
 
-    public void setDeliveryPersonId(Long deliveryPersonId) {
+    public void setDeliveryPersonId(String deliveryPersonId) {
         this.deliveryPersonId = deliveryPersonId;
     }
 

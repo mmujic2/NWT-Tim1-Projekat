@@ -3,6 +3,7 @@ package the.convenient.foodie.order.dao;
 import the.convenient.foodie.order.model.MenuItem;
 import the.convenient.foodie.order.model.Order;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,10 @@ public class OrderResponse {
 
     private String customerAddress;
 
+    private LocalDateTime createdTime;
+
+    private Double preparationTime;
+
     public OrderResponse(Order order) {
         this.id = order.getId();
         this.userId = order.getUser_id();
@@ -39,6 +44,7 @@ public class OrderResponse {
         this.restaurantName = order.getRestaurantName();
         this.customerPhoneNumber = order.getCustomerPhoneNumber();
         this.customerAddress = order.getCustomerAddress();
+        this.createdTime = order.getCreatedTime();
     }
 
     public Long getId() {
@@ -119,5 +125,13 @@ public class OrderResponse {
 
     public void setCustomerAddress(String customerAddress) {
         this.customerAddress = customerAddress;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
 }
