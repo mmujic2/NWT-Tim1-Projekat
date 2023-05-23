@@ -2,10 +2,10 @@ import React from 'react'
 import graphic from '../../images/delivery_boy_on_scooter.svg'
 import Header from './Header'
 
-function NotFound() {
+function NotFound({header=true}) {
   return (
     <>
-    <Header></Header>
+    {header ? <Header></Header> : <></>}
     <div style={{display:"flex",justifyContent:"center"}}>
     <img src={graphic} style={{marginTop:"60px"}}/>
     

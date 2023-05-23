@@ -10,6 +10,7 @@ import NotFound from "./shared/util/NotFound";
 import Home from "./shared/Home/Home";
 import AdminRestaurants from "./admin/Home/Restaurants";
 import CustomerDetails from "./customer/CustomerDetails/CustomerDetails";
+import RestaurantOverview from "./customer/Restaurant/RestaurantOverview";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/customer/details" element={<CustomerDetails></CustomerDetails>}></Route>
           <Route path="/customer/restaurant/favorites" element={<CustomerDetails></CustomerDetails>}></Route>
           <Route path="/customer/order/history" element={<CustomerDetails></CustomerDetails>}></Route>
+          <Route path="/customer/restaurant" element={<RestaurantOverview></RestaurantOverview>}></Route>
         </Route>
         
         

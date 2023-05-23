@@ -135,7 +135,7 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
     return (
         <>
             <Loader isOpen={loading} >
-                <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0, }} className="container-fluid">
+                <Container style={{ backgroundColor: "#F5F5F4", borderRadius: "5px", width: "100%", minWidth: "35rem", marginBottom: 0 }} className="container-fluid">
                     <h2 style={{ textAlign: "start", float: left }}>{title}</h2>
                     {user.role == "ADMINISTRATOR" && type == "restaurant" ?
                         <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", height: "50px", marginBottom: 0, marginRight: 0, }}>
@@ -157,7 +157,7 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
                                 </Col>
                             )
 
-                            : <span style={{ color: "grey", textAlign: "center", left: "25%", top: "30%", position: "relative" }}>No results to show</span>
+                            : <span style={{ color: "grey",textAlign:"center",width:"100%",height:"100%",verticalAlign:"middle"}}>No results to show</span>
 
                         }
                     </Row>
