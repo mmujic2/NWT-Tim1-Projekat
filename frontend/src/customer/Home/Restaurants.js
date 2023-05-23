@@ -71,7 +71,7 @@ function Restaurants() {
 
                                 <></>
                             }
-                            {searchResults ? <ListContainer items={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults
+                            {searchResults ? <ListContainer items={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setItems={setSearchResults
                             }></ListContainer> :
 
                                 <div style={{ display: "flex", justifyContent: "center" }}>

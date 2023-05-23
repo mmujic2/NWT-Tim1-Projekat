@@ -8,16 +8,19 @@ import { Add, Edit, Delete } from '@mui/icons-material'
 import './RestaurantCard.css'
 import { right, left } from "@popperjs/core";
 import authService from '../../service/auth.service'
+import { useNavigate } from 'react-router-dom';
 
-const user = authService.getCurrentUser();
+
 
 
 function RestaurantCard({ res, grid = true }) {
-    
+    const user = authService.getCurrentUser();
+    const navigate = useNavigate();
+
     return (
         <>
             {res ?
-                <Card onClick={()=>console.log(res.id)} style={{ width: '100%', height: "10rem", overflow: 'hidden', backgroundColor: "#D9D9D9" }} className="box">
+                <Card onClick={() => navigate("/customer/restaurant?id=" + res.id)} style={{ width: '100%', height: "10rem", overflow: 'hidden', backgroundColor: "#D9D9D9" }} className="box">
 
                     <Row >
                         <Col className={grid ? "col-5 px-2" : "col-3 px-2"} >
@@ -29,8 +32,8 @@ function RestaurantCard({ res, grid = true }) {
                                 {user.role == "ADMINISTRATOR" ?
                                     <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#D9D9D9", height: "40px", marginBottom: 0, marginTop: 0, marginRight: 0, padding: 10 }}>
                                         <div class="btn-group" role="group" aria-label="Basic example">
-                                            <Button onClick={(e)=>{console.log("UREDI"); e.stopPropagation()}} style={{ clear: left, textAlign: "center", width: "45px", height: "30px", margin: 2, marginRight: 0, padding: 0, }} class="rounded"><Edit fontSize="small"></Edit></Button>
-                                            <Button onClick={(e)=>{console.log("BRISI");e.stopPropagation()}} style={{ clear: left, textAlign: "center", width: "45px", height: "30px", margin: 2, padding: 0, marginRight: 5, marginLeft: 0, backgroundColor: "#fe724c", borderColor: "#fe724c" }} class="rounded"><Delete fontSize="small"></Delete></Button>
+                                            <Button onClick={(e) => { console.log("UREDI"); e.stopPropagation() }} style={{ clear: left, textAlign: "center", width: "45px", height: "30px", margin: 2, marginRight: 0, padding: 0, }} class="rounded"><Edit fontSize="small"></Edit></Button>
+                                            <Button onClick={(e) => { console.log("BRISI"); e.stopPropagation() }} style={{ clear: left, textAlign: "center", width: "45px", height: "30px", margin: 2, padding: 0, marginRight: 5, marginLeft: 0, backgroundColor: "#fe724c", borderColor: "#fe724c" }} class="rounded"><Delete fontSize="small"></Delete></Button>
 
                                         </div>
                                     </Container>
