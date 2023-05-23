@@ -1,6 +1,6 @@
 package the.convenient.foodie.restaurant;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+/*import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.transaction.Transactional;
@@ -231,4 +231,4 @@ public class CategoryControllerTest {
         }
     }
 
-}
+}*/

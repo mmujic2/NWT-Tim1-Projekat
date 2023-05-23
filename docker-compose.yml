@@ -41,6 +41,22 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+  restaurantservice:
+    image: restaurantservice
+    ports:
+      - 8050:8050
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - CONFIG_SERVER=http://configserver:8888
+      - GRPC_SERVICE=discovery
+      - RABBITMQ=rabbitmq
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   authservice:
     image: authservice
     ports:

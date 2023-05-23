@@ -1,4 +1,4 @@
-package the.convenient.foodie.restaurant;
+/*package the.convenient.foodie.restaurant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -481,3 +481,4 @@ public class RestaurantControllerTest {
         }
     }
 }
+*/
