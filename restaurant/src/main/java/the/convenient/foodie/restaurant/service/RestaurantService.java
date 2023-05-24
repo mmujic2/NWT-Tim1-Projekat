@@ -6,10 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantUpdateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
+import the.convenient.foodie.restaurant.dto.restaurant.*;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.model.OpeningHours;
@@ -56,20 +53,30 @@ public class RestaurantService {
 
     }
 
-    public List<Restaurant> getAllRestaurants() {
-
-        return StreamSupport.stream(restaurantRepository.findAll().spliterator(),false).collect(Collectors.toList());
-    }
 
     public List<RestaurantShortResponse> searchForRestaurants(FilterRestaurantRequest filterRestaurantRequest,String sortBy, Boolean ascending) {
 
         return restaurantRepository.getRestaurants(filterRestaurantRequest,sortBy,ascending);
     }
 
-    public Restaurant getRestaurant(Long id) {
+    public RestaurantShortResponse getRestaurantById(Long id) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
-        var restaurant = restaurantRepository.findById(id);
-        return restaurant.orElseThrow(()-> exception);
+        try {
+            return restaurantRepository.getRestaurantShortResponseById(id);
+        } catch(Exception e) {
+            throw exception;
+        }
+
+    }
+
+    public RestaurantResponse getRestaurantFullResponseById(Long id) {
+        var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
+        try {
+            return restaurantRepository.getRestaurantFullResponseById(id);
+        } catch(Exception e) {
+            throw exception;
+        }
+
     }
 
     public List<Restaurant> getRestaurantsWithCategories(List<Long> categoryIds) {

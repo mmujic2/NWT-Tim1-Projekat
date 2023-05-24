@@ -18,7 +18,7 @@ public class RestaurantImage implements Serializable {
     @Column(name="image")
     @Lob
     @NotNull(message = "Image data must be defined!")
-    private byte[] image;
+    private String image;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -39,7 +39,7 @@ public class RestaurantImage implements Serializable {
     @Column(name="modified_by")
     private String modifiedBy;
 
-    public RestaurantImage(Long id, byte[] image, Restaurant restaurant, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
+    public RestaurantImage(Long id, String image, Restaurant restaurant, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy) {
         this.id = id;
         this.image = image;
         this.restaurant = restaurant;
@@ -49,7 +49,7 @@ public class RestaurantImage implements Serializable {
         this.modifiedBy = modifiedBy;
     }
 
-    public RestaurantImage(@NotNull(message = "Image data must be defined!") byte[] image, Restaurant restaurant, LocalDateTime created, String createdBy) {
+    public RestaurantImage(@NotNull(message = "Image data must be defined!") String image, Restaurant restaurant, LocalDateTime created, String createdBy) {
         this.image = image;
         this.restaurant = restaurant;
         this.created = created;
@@ -67,11 +67,11 @@ public class RestaurantImage implements Serializable {
         this.id = id;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

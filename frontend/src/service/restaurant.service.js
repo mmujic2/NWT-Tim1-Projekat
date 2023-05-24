@@ -101,6 +101,18 @@ class RestaurantService {
     }
   }
 
+  getRestaurantImages(id) {
+    try {
+      return api
+        .get("/restaurant/image/"+id)
+        .then(response=> {
+          return response;
+        })
+      } catch (e) {
+        console.log(e)
+      }
+  }
+
 }
 
 export default new RestaurantService();

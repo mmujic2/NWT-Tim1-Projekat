@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import the.convenient.foodie.restaurant.dto.restaurant.RestaurantResponse;
 import the.convenient.foodie.restaurant.feign.DiscountFeignClient;
 import the.convenient.foodie.restaurant.feign.OrderFeignClient;
 import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
@@ -32,6 +33,32 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
     private OrderFeignClient orderFeignClient;
 
 
+
+    @Override
+    public RestaurantShortResponse getRestaurantShortResponseById(Long id){
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating),count(fr.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id WHERE r.id=:id GROUP BY r";
+
+        var query = entityManager.createQuery(hql, RestaurantShortResponse.class);
+
+        query.setParameter("id", id);
+
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public RestaurantResponse getRestaurantFullResponseById(Long id){
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating),count(fr.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id WHERE r.id=:id GROUP BY r";
+
+        var query = entityManager.createQuery(hql, RestaurantResponse.class);
+
+        query.setParameter("id", id);
+
+
+        return query.getSingleResult();
+    }
 
 
     @Override
