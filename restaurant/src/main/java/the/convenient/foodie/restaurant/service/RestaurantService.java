@@ -58,6 +58,14 @@ public class RestaurantService {
 
         return restaurantRepository.getRestaurants(filterRestaurantRequest,sortBy,ascending);
     }
+    public List<RestaurantResponse> getFullRestaurants() {
+
+        return restaurantRepository
+                .findAll()
+                .stream()
+                .map(t -> new RestaurantResponse(t,0.,0,0))
+                .collect(Collectors.toList());
+    }
 
     public RestaurantShortResponse getRestaurantById(Long id) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");

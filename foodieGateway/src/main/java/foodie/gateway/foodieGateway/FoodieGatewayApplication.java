@@ -99,6 +99,12 @@ public class FoodieGatewayApplication {
 								new AuthenticationPrefilter.Config())))
 						.uri("lb://menu-service"))
 				.route("auth-service", p -> p
+						.path("/user/**")
+						.filters(f ->
+								f.filter(authFilter.apply(
+										new AuthenticationPrefilter.Config())))
+						.uri("lb://auth-service"))
+				.route("auth-service", p -> p
 						.path("/auth/**")
 						.uri("lb://auth-service"))
 				.build();

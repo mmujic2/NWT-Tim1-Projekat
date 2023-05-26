@@ -20,6 +20,7 @@ public class RestaurantResponse {
 
 
     private String logo;
+    private String managerUuid;
 
     OpeningHoursResponse openingHours;
 
@@ -43,7 +44,7 @@ public class RestaurantResponse {
         this.customersFavorited = customersFavorited.intValue();
         this.customersRated = customersRated.intValue();
         this.categories=restaurant.getCategories().stream().map(c->c.getName()).collect(Collectors.toSet());
-
+        this.managerUuid=restaurant.getManagerUUID();
 
     }
 
@@ -150,5 +151,12 @@ public class RestaurantResponse {
 
     public void setCustomersFavorited(Integer customersFavorited) {
         this.customersFavorited = customersFavorited;
+    }
+
+    public String getManagerUuid() {
+        return managerUuid;
+    }
+    public void setManagerUuid(String managerUuid) {
+        this.managerUuid = managerUuid;
     }
 }

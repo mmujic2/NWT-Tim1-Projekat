@@ -14,6 +14,7 @@ import the.convenient.foodie.restaurant.feign.DiscountFeignClient;
 import the.convenient.foodie.restaurant.feign.OrderFeignClient;
 import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
 import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
+import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.repository.custom.RestaurantRepositoryCustom;
 
 import java.util.*;

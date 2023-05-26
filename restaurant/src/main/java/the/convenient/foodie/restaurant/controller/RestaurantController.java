@@ -123,6 +123,14 @@ public class RestaurantController {
         var restaurants = restaurantService.searchForRestaurants(null,null,false);
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping(path="/all/full")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<RestaurantResponse>> getAllFullRestaurants() {
+
+        var restaurants = restaurantService.getFullRestaurants();
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
     @Operation(description = "Search for restaurants based on filter and sorting criteria")
     @ApiResponses(value = {
