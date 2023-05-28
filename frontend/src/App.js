@@ -32,7 +32,6 @@ function App() {
         </>
       :
       <></>}
-      {console.log(TokenService.getUserUUID())}
       
       <Routes>
         <Route path="/register" element={<RegisterPage></RegisterPage>} />
