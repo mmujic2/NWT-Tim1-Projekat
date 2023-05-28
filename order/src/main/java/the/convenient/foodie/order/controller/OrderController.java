@@ -92,16 +92,23 @@ public class OrderController {
 
         List<MenuItem> menuItems = new ArrayList<>();
         for(var id : orderCreateRequest.getMenuItemIds()) {
-            var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/" + id.toString(), String.class);
+            var newMenuItem = menuItemRepository.findById(id);
+            if(newMenuItem.isPresent()) {
+                menuItems.add(newMenuItem.get());
+            }
+            else {
+                MenuItem temp = null;
+                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/" + id.toString(), String.class);
 
-            MenuItem newMenuItem = null;
-            try {
-                newMenuItem = xmlMapper.readValue(menuItemXml, MenuItem.class);
+                try {
+                    temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
+                }
+                catch(Exception e) {
+                    continue;
+                }
+                menuItems.add(temp);
+                menuItemRepository.save(temp);
             }
-            catch(Exception e) {
-                continue;
-            }
-            menuItems.add(newMenuItem);
         }
 
         System.out.println(menuItems);
@@ -295,6 +302,16 @@ public class OrderController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/get/readyfordelivery")
+    public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrders() {
+        return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrders().stream().map(OrderResponse::new).toList());
+    }
+
+    @GetMapping("/get/deliveryperson")
+    public ResponseEntity<List<OrderResponse>> getOrdersByDeliveryPersonId(@RequestHeader("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getOrdersByDeliveryPersonId(uuid).stream().map(OrderResponse::new).toList());
     }
 
     @PostConstruct
