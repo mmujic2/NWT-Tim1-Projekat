@@ -22,6 +22,7 @@ import the.convenient.foodie.menu.dto.IntegerListDto;
 import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.model.MenuItem;
+import the.convenient.foodie.menu.repository.MenuItemRepository;
 import the.convenient.foodie.menu.service.MenuItemService;
 
 import java.util.List;
@@ -35,6 +36,18 @@ public class MenuItemController {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private MenuItemRepository menuItemRepository;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MenuItem>> getAllMenuItems() {
+        return ResponseEntity.ok(menuItemService.getAllItems());
+    }
+
+    public ResponseEntity<MenuItem> getItemById(@PathVariable Long id) {
+        return ResponseEntity.ok(menuItemRepository.findById(id).orElseThrow());
+    }
 
     @Operation(description = "Delete a menu item")
     @ApiResponses( value = {
@@ -86,7 +99,7 @@ public class MenuItemController {
     }
 
     @PostMapping("/getlist")
-    public ResponseEntity<List<MenuItem>> getMenuItemsByList(IntegerListDto integerList) {
+    public ResponseEntity<List<MenuItem>> getMenuItemsByList(@RequestBody IntegerListDto integerList) {
         return ResponseEntity.ok(menuItemService.getMenuItemsByList(integerList.getIntegerList()));
     }
 

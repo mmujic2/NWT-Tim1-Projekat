@@ -17,11 +17,13 @@ public class OrderCreateRequest {
 
     private String restaurantName;
 
+    private String restaurantAddress;
+
     private String customerPhoneNumber;
 
     private String customerAddress;
 
-    public OrderCreateRequest(String restaurantId, Integer estimatedDeliveryTime, String couponId, Double totalPrice, Double deliveryFee, List<Long> menuItemIds, String restaurantName, String customerPhoneNumber, String customerAddress) {
+    public OrderCreateRequest(String restaurantId, Integer estimatedDeliveryTime, String couponId, Double totalPrice, Double deliveryFee, List<Long> menuItemIds, String restaurantName, String customerPhoneNumber, String customerAddress, String restaurantAddress) {
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
         this.couponId = couponId;
@@ -31,6 +33,15 @@ public class OrderCreateRequest {
         this.restaurantName = restaurantName;
         this.customerPhoneNumber = customerPhoneNumber;
         this.customerAddress = customerAddress;
+        this.restaurantAddress = restaurantAddress;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
     }
 
     public String getRestaurantId() {

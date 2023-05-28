@@ -8,12 +8,18 @@ import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.MenuItem;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class MenuItemService {
     @Autowired
     private MenuItemRepository menuItemRepository;
+
+    public List<MenuItem> getAllItems() {
+        return menuItemRepository.findAll();
+    }
+
     public String deleteMenuItem(Long id) {
         var menu = menuItemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Menu with id " + id + " does not exist!"));
         menuItemRepository.deleteById(id);

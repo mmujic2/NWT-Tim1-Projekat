@@ -8,6 +8,11 @@ class TokenService {
       const user = JSON.parse(localStorage.getItem("user"));
       return user?.accessToken;
     }
+
+    getUserUUID() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      return user?.user.uuid;
+    }
   
     updateLocalAccessToken(token) {
       let user = JSON.parse(localStorage.getItem("user"));

@@ -46,16 +46,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
-
-    @RestController
-    @RequestMapping(path="/websocket")
-    public class test {
-        @Autowired
-        SimpMessagingTemplate simpMessagingTemplate;
-
-        @PostMapping(path = "/message/{token}")
-        public void sendSocketMessage(@PathVariable String token) {
-            simpMessagingTemplate.convertAndSend("/message/" + token, "Please work");
-        }
-    }
 }

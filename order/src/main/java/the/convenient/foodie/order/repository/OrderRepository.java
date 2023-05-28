@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import the.convenient.foodie.order.model.Order;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+import java.util.List;
 
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    @Query("SELECT t FROM Order t WHERE t.userId=:uuid ORDER BY t.createdTime DESC")
+    public List<Order> getOrdersByUserUUID(String uuid);
 }

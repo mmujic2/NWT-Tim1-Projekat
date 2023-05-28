@@ -11,13 +11,29 @@ import Home from "./shared/Home/Home";
 import AdminRestaurants from "./admin/Home/Restaurants";
 import CustomerDetails from "./customer/CustomerDetails/CustomerDetails";
 import RestaurantOverview from "./customer/Restaurant/RestaurantOverview";
-
+import TokenService from "./service/token.service";
+import SockJsClient from 'react-stomp';
+import { useState } from "react";
+import Alert from "./shared/util/Alert";
 
 function App() {
-  
+  const [show, setShow] = useState(false)
+  const [socketMsg, setSocketMsg] = useState([])
+
   return(
     <>
-     
+      {TokenService.getUserUUID() != undefined 
+      ? 
+        <>
+          <Alert type="success" msg={socketMsg} show={show} setShow={setShow}></Alert>
+          <SockJsClient url="http://localhost:7050/websocket" 
+          topics={['/message/' + TokenService.getUserUUID()]} 
+          onMessage={(msg) => {console.log(msg); setSocketMsg([msg.message]); setShow(true)}}></SockJsClient>
+        </>
+      :
+      <></>}
+      {console.log(TokenService.getUserUUID())}
+      
       <Routes>
         <Route path="/register" element={<RegisterPage></RegisterPage>} />
         <Route path="*" element={<NotFound></NotFound>}/>
