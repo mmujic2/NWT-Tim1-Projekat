@@ -1,4 +1,5 @@
 import api from "./api"
+import tokenService from "./token.service";
 
 class OrderService {
 
@@ -55,6 +56,14 @@ class OrderService {
         //promjena statusa u Delivered
         //znaci da je narudzba dostavljena naruciocu
         this.changeOrderStatus(orderId, "Delivered")
+      }
+
+      getReadyForDeliveryOrders() {
+        return api.get("/order/get/readyfordelivery")
+      }
+
+      getDeliveryPersonOrders() {
+        return api.get("/order/get/deliveryperson")
       }
 
 }
