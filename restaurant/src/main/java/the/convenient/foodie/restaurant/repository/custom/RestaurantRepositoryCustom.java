@@ -17,4 +17,6 @@ public interface RestaurantRepositoryCustom {
     RestaurantShortResponse getRestaurantShortResponseById(Long id);
 
     RestaurantResponse getRestaurantFullResponseById(Long id);
+
+    Boolean checkIfRestaurantIsCustomersFavorite(Long restaurantId, String customerUUID);
 }

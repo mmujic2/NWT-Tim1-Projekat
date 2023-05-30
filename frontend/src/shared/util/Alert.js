@@ -3,7 +3,17 @@ import { ToastContainer } from 'react-bootstrap';
 import { CheckCircleFill,XCircleFill,InfoCircleFill } from 'react-bootstrap-icons';
 
 
-function CustomAlert({ type, msg=[], show, setShow }) {
+function CustomAlert({ type, msg={}, show, setShow }) {
+
+    const getMessage = (message) => {
+        console.log(message)
+        if(message.hasOwnProperty("errors")) {
+            return message.errors.map(i => <span>{i}<br></br></span>)
+        } else {
+            return message
+        }
+    }
+
     const variant = type=="error"? 'danger' : type=="success" ? "success" : "info"
     //Possible variants: primary, secondary, success, danger, warning, info, light, dark
     return (
@@ -31,7 +41,7 @@ function CustomAlert({ type, msg=[], show, setShow }) {
 
                     <Toast.Body className='text-white'>
                         <div>
-                       {msg.map(i => <span>{i}<br></br></span>)}
+                       {getMessage(msg)}
                        </div>
                     </Toast.Body>
                 </Toast>

@@ -67,11 +67,15 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-    public RestaurantShortResponse getRestaurantById(Long id) {
+    public RestaurantShortResponse getRestaurantById(Long id,String customerUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         try {
-            return restaurantRepository.getRestaurantShortResponseById(id);
+            var restaurant = restaurantRepository.getRestaurantShortResponseById(id);
+            System.out.println(restaurant);
+            restaurant.setCustomerFavorite(restaurantRepository.checkIfRestaurantIsCustomersFavorite(id,customerUUID));
+            return restaurant;
         } catch(Exception e) {
+            e.printStackTrace();
             throw exception;
         }
 
@@ -153,4 +157,5 @@ public class RestaurantService {
             throw exception;
         return uuid;
     }
+
 }

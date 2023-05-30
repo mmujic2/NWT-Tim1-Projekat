@@ -126,6 +126,30 @@ class RestaurantService {
       }
   }
 
+  addRestaurantToFavorites(id) {
+    try {
+      return api
+        .post("/restaurant/" + id + "/add-to-favorites")
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  removeRestaurantFromFavorites(id) {
+    try {
+      return api
+        .put("/restaurant/" + id + "/remove-from-favorites")
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
 }
 
 export default new RestaurantService();

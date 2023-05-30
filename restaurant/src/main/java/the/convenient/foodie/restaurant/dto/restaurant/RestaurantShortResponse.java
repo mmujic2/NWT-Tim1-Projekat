@@ -32,6 +32,8 @@ public class RestaurantShortResponse {
     Integer customersRated;
     Integer customersFavorited;
 
+    Boolean customerFavorite;
+
     public RestaurantShortResponse(Restaurant restaurant, Double rating,Number customersRated, Number customersFavorited) {
         this.id= restaurant.getId();
         this.name=restaurant.getName();
@@ -128,7 +130,7 @@ public class RestaurantShortResponse {
     }
 
 
-    public RestaurantShortResponse(Long id, String uuid, String name, String address, String logo, boolean open,String mapCoordinates, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited) {
+    public RestaurantShortResponse(Long id, String uuid, String name, String address, String logo, boolean open,String mapCoordinates, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited,Boolean customerFavorite) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
@@ -140,6 +142,7 @@ public class RestaurantShortResponse {
         this.rating = rating;
         this.customersRated = customersRated;
         this.customersFavorited = customersFavorited;
+        this.customerFavorite = customerFavorite;
     }
 
     public RestaurantShortResponse() {
@@ -231,5 +234,13 @@ public class RestaurantShortResponse {
 
     public void setCustomersFavorited(Integer customersFavorited) {
         this.customersFavorited = customersFavorited;
+    }
+
+    public Boolean getCustomerFavorite() {
+        return customerFavorite;
+    }
+
+    public void setCustomerFavorite(Boolean customerFavorite) {
+        this.customerFavorite = customerFavorite;
     }
 }

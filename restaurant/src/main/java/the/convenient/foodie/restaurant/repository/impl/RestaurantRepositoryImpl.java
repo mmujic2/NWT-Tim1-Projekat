@@ -37,8 +37,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
     @Override
     public RestaurantShortResponse getRestaurantShortResponseById(Long id){
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating),count(fr.id))"
-                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id WHERE r.id=:id GROUP BY r";
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.id)," +
+                "(SELECT count(fr.id) FROM FavoriteRestaurant fr WHERE fr.restaurant.id=r.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON rev.restaurant.id=r.id WHERE r.id=:id GROUP BY r";
 
         var query = entityManager.createQuery(hql, RestaurantShortResponse.class);
 
@@ -50,8 +51,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
     @Override
     public RestaurantResponse getRestaurantFullResponseById(Long id){
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating),count(fr.id))"
-                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id WHERE r.id=:id GROUP BY r";
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating)," +
+                "(SELECT count(fr.id) FROM FavoriteRestaurant fr WHERE fr.restaurant.id=r.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id  WHERE r.id=:id GROUP BY r";
 
         var query = entityManager.createQuery(hql, RestaurantResponse.class);
 
@@ -61,11 +63,26 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
         return query.getSingleResult();
     }
 
+    @Override
+    public Boolean checkIfRestaurantIsCustomersFavorite(Long restaurantId, String customerUUID) {
+        var hql = "SELECT CASE WHEN (COUNT(fr) > 0)  THEN TRUE ELSE FALSE END" +
+                " FROM FavoriteRestaurant fr WHERE fr.restaurant.id=:restaurantId AND fr.userUUID=:customerUUID";
+        var query = entityManager.createQuery(hql,Boolean.class);
+
+        query.setParameter("restaurantId",restaurantId);
+        query.setParameter("customerUUID",customerUUID);
+
+        var res = query.getSingleResult();
+        System.out.println(res);
+        return res;
+    }
+
 
     @Override
     public List<RestaurantShortResponse> getRestaurants(FilterRestaurantRequest filters,String sortBy, Boolean ascending) {
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,COALESCE(avg(rev.rating),0),count(rev.rating),count(fr.id))"
-                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id LEFT JOIN FavoriteRestaurant fr ON r.id=fr.restaurant.id";
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,COALESCE(avg(rev.rating),0),count(rev.id)," +
+                "(SELECT count(fr.id) FROM FavoriteRestaurant fr WHERE fr.restaurant.id=r.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id ";
 
         var results = new ArrayList<RestaurantShortResponse>();
         var discountSuccessfullyCalled = false; //To check if discount service was called and returned an OK response
@@ -228,6 +245,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
             return null;
         }
     }
+
+
 
     private List<RestaurantShortResponse> getResults(String hql,String name, List<Long> categoryIds) {
         logger.info("HQL: {}",hql);

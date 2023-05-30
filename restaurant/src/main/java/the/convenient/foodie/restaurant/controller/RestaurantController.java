@@ -167,8 +167,9 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<RestaurantShortResponse> getRestaurantById(
             @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable  Long id) {
-        var restaurant = restaurantService.getRestaurantById(id);
+            @PathVariable  Long id,
+            @RequestHeader("uuid") String userUUID) {
+        var restaurant = restaurantService.getRestaurantById(id,userUUID);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 

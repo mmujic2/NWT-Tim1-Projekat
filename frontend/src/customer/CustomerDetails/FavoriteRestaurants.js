@@ -24,7 +24,7 @@ function FavoriteRestaurants() {
           setFavorites(res.data)
         else {
           console.log(res)
-          setAlert({ ...alert, msg: [res.data], type: "error" })
+          setAlert({ ...alert, msg: res.data, type: "error" })
           setShowAlert(true)
         }
       })
