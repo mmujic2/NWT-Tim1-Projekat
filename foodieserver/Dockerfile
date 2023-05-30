@@ -8,5 +8,5 @@ VOLUME /tmp
 # RUN apk add curl
 COPY target/*.jar app.jar
 EXPOSE 8761
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-Xmx100m","-jar","/app.jar"]
 HEALTHCHECK --interval=12s --timeout=12s --start-period=30s CMD curl --fail http://localhost:8761/health/check

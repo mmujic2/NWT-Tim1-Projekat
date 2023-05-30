@@ -5,4 +5,4 @@ FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
 COPY target/*.jar app.jar
 EXPOSE 8060
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-Xmx100m","-jar","/app.jar"]
