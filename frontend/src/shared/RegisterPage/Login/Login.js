@@ -8,20 +8,21 @@ import { Link, useNavigate } from "react-router-dom";
 import auth from "../../../service/auth.service";
 import CustomAlert from "../../util/Alert";
 import { Col, Row } from "react-bootstrap";
-import SockJsClient from 'react-stomp';
+import SockJsClient from "react-stomp";
 
 function Login({ setPage }) {
-  const [username,setUsername] = useState()
-  const [password,setPassword] = useState()
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
+  const [showError, setShowError] = useState(false);
   const navigate = useNavigate();
 
-  const submit = (e)=> {
+  const submit = (e) => {
     e.preventDefault();
-    auth.login(username,password).then(res=>
-      {if(res.status==200)
-        navigate("/")}
-    )
-  }
+    auth.login(username, password).then((res) => {
+      if (res.status == 200) navigate("/");
+      else if (res.status == 403) setShowError(true);
+    });
+  };
   return (
     <>
       <Container className={styles.container}>
@@ -35,7 +36,7 @@ function Login({ setPage }) {
               type="text"
               name="username"
               value={username}
-              onChange={(e)=>setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </Form.Group>
 
@@ -46,8 +47,19 @@ function Login({ setPage }) {
               type="password"
               name="password"
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
+            <span
+              style={{
+                display: showError ? "block" : "none",
+                color: "#d32f2f",
+                fontFamily: "Yantramanav",
+                marginTop: 10,
+                fontSize: "16px",
+              }}
+            >
+              Invalid access data.
+            </span>
           </Form.Group>
 
           <Button className={styles.btn} type="submit" onClick={submit}>
@@ -67,9 +79,13 @@ function Login({ setPage }) {
           </div>
         </Form>
       </Container>
-      <SockJsClient url="http://localhost:7070/websocket" 
-      topics={['/message/test']} 
-      onMessage={(msg) => {console.log(msg)}}></SockJsClient>
+      <SockJsClient
+        url="http://localhost:7070/websocket"
+        topics={["/message/test"]}
+        onMessage={(msg) => {
+          console.log(msg);
+        }}
+      ></SockJsClient>
       Test
     </>
   );

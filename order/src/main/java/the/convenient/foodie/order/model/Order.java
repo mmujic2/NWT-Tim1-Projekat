@@ -65,7 +65,6 @@ public class Order {
     joinColumns = { @JoinColumn(name = "order_id")},
     inverseJoinColumns = {@JoinColumn(name = "menuItem_id")})
     @NotNull(message = "Order must contain at least one menu item!")
-    @Size(min = 1, message = "Order must contain at least one menu item!")
     private List<MenuItem> menuItems;
 
     private String restaurantName;
@@ -73,6 +72,8 @@ public class Order {
     private String customerPhoneNumber;
 
     private String customerAddress;
+
+    private String restaurantAddress;
 
 
     /*@Transient
@@ -106,7 +107,7 @@ public class Order {
         }
     }
 
-    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, String deliveryPersonId, Double deliveryFee, String orderCode, List<MenuItem> menuItems, String restaurantName, String customerPhoneNumber, String customerAddress) {
+    public Order(String userId, String restaurantId, Integer estimatedDeliveryTime, LocalDateTime createdTime, String couponId, String orderStatus, Double totalPrice, String deliveryPersonId, Double deliveryFee, String orderCode, List<MenuItem> menuItems, String restaurantName, String customerPhoneNumber, String customerAddress, String restaurantAddress) {
         this.userId = userId;
         this.restaurantId = restaurantId;
         this.estimatedDeliveryTime = estimatedDeliveryTime;
@@ -121,11 +122,17 @@ public class Order {
         this.restaurantName = restaurantName;
         this.customerPhoneNumber = customerPhoneNumber;
         this.customerAddress = customerAddress;
+        this.restaurantAddress = restaurantAddress;
     }
 
 
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
 
-
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
+    }
 
     public Long getId() {
         return id;

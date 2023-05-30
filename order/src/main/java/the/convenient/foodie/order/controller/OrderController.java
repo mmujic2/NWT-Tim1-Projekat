@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -22,13 +23,11 @@ import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import the.convenient.foodie.order.dao.OrderCreateRequest;
-import the.convenient.foodie.order.dao.OrderResponse;
+import the.convenient.foodie.order.dao.*;
 import the.convenient.foodie.order.exception.OrderNotFoundException;
 import the.convenient.foodie.order.exception.OrderPatchInvalidException;
 import the.convenient.foodie.order.model.MenuItem;
@@ -39,9 +38,11 @@ import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,7 +69,6 @@ public class OrderController {
         this.menuItemRepository = menuItemRepository;
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new order")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "201", description = "Successfully created a new order",
@@ -79,7 +79,7 @@ public class OrderController {
     @PostMapping(path = "/add")
     @ResponseStatus(HttpStatus.CREATED)
      public @ResponseBody ResponseEntity<Order> addNewOrder(@RequestBody OrderCreateRequest orderCreateRequest,
-                                                            @RequestHeader("uuid") String userUUID) {
+                                                            @RequestHeader("uuid") String userUUID) throws JsonProcessingException {
         Random rand = new Random();
         StringBuilder code = new StringBuilder();
         // sansa da se generisu dva ista koda je 1e-19
@@ -87,34 +87,52 @@ public class OrderController {
             code.append(chars.get(rand.nextInt(chars.size())));
         }
 
-        var menuItemsJSON = restTemplate.postForObject("http://menu-service/getlist", orderCreateRequest.getMenuItemIds(), String.class);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
-        try {
-            var menuItems = Arrays.stream(objectMapper.readValue(menuItemsJSON, MenuItem[].class)).toList();
+        XmlMapper xmlMapper = new XmlMapper();
 
-            var order = new Order(userUUID,
-                    orderCreateRequest.getRestaurantId(),
-                    orderCreateRequest.getEstimatedDeliveryTime(),
-                    LocalDateTime.now(),
-                    orderCreateRequest.getCouponId(),
-                    OrderStatus.Processing.toString(),
-                    orderCreateRequest.getTotalPrice(),
-                    null,
-                    orderCreateRequest.getDeliveryFee(),
-                    code.toString(),
-                    menuItems,
-                    orderCreateRequest.getRestaurantName(),
-                    orderCreateRequest.getCustomerPhoneNumber(),
-                    orderCreateRequest.getCustomerAddress());
+        List<MenuItem> menuItems = new ArrayList<>();
+        for(var id : orderCreateRequest.getMenuItemIds()) {
+            var newMenuItem = menuItemRepository.findById(id);
+            if(newMenuItem.isPresent()) {
+                menuItems.add(newMenuItem.get());
+            }
+            else {
+                MenuItem temp = null;
+                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/" + id.toString(), String.class);
 
-            orderRepository.save(order);
-
-            return new ResponseEntity<>(order, HttpStatus.CREATED);
-        } catch (JsonProcessingException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                try {
+                    temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
+                }
+                catch(Exception e) {
+                    continue;
+                }
+                menuItems.add(temp);
+                menuItemRepository.save(temp);
+            }
         }
+
+        System.out.println(menuItems);
+
+        var order = new Order(userUUID,
+                orderCreateRequest.getRestaurantId(),
+                orderCreateRequest.getEstimatedDeliveryTime(),
+                LocalDateTime.now(),
+                orderCreateRequest.getCouponId(),
+                OrderStatus.Processing.toString(),
+                orderCreateRequest.getTotalPrice(),
+                null,
+                orderCreateRequest.getDeliveryFee(),
+                code.toString(),
+                menuItems,
+                orderCreateRequest.getRestaurantName(),
+                orderCreateRequest.getCustomerPhoneNumber(),
+                orderCreateRequest.getCustomerAddress(),
+                orderCreateRequest.getRestaurantAddress());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     private Order applyPatchToOrder(JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
@@ -251,18 +269,53 @@ public class OrderController {
 
     @GetMapping("/getforuser")
     public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("uuid") String userUuid) {
-        return ResponseEntity.ok(orderRepository.findAll().stream()
+        /*return ResponseEntity.ok(orderRepository.findAll().stream()
                 .filter(x -> x.getUser_id().equals(userUuid))
                 .map(OrderResponse::new)
-                .toList());
+                .toList());*/
+        return ResponseEntity.ok(orderRepository.getOrdersByUserUUID(userUuid).stream().map(OrderResponse::new).toList());
     }
 
-    /*@PutMapping("/status/{id}/{status}")
-    public ResponseEntity<Order> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) {
+    @PutMapping("/status/{id}/{status}")
+    public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
         var order = orderRepository.findById(id).orElseThrow();
-        // var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
-        var userToken = restTemplate.getForObject("http://auth-service/auth/uuid-token/" + order.getUser_id(), String.class);
-    }*/
+        order.setOrderStatus(status);
+        orderRepository.save(order);
+
+        SendWebSocketMessage(order.getUser_id(), "Order status changed to: " + status);
+        return ResponseEntity.ok(new OrderResponse(order));
+    }
+
+    @PutMapping("/adddeliveryperson/{id}")
+    public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid) {
+        var order = orderRepository.findById(id).orElseThrow();
+        order.setDeliveryPersonId(uuid);
+        order.setOrderStatus("In delivery");
+        orderRepository.save(order);
+
+        SendWebSocketMessage(order.getUser_id(), "Order status changed to: In delivery");
+        return ResponseEntity.ok(new OrderResponse(order));
+    }
+
+    public void SendWebSocketMessage(String uuid, String message) {
+        try {
+            System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message)));
+            restTemplate.postForObject("http://websocket-service/websocket/message/" + uuid,
+                    new ObjectMapper().writeValueAsString(new WebSocketMessage(message)), String.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/get/readyfordelivery")
+    public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrders() {
+        return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrders().stream().map(OrderResponse::new).toList());
+    }
+
+    @GetMapping("/get/deliveryperson")
+    public ResponseEntity<List<OrderResponse>> getOrdersByDeliveryPersonId(@RequestHeader("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getOrdersByDeliveryPersonId(uuid).stream().map(OrderResponse::new).toList());
+    }
 
     @PostConstruct
     public void init() {

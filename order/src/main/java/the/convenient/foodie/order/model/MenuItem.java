@@ -3,57 +3,57 @@ package the.convenient.foodie.order.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "MenuItems")
-public class MenuItem {
-
+@Table(name = "menu_item")
+public class MenuItem implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @NotNull(message = "Order must contain a name!")
+    @NotNull(message = "Menu item name should not be null")
+    @Size(min = 2, max = 30, message = "Menu item name must be between 2 and 30 characters!")
+    @Column(name = "name")
     private String name;
 
-    @Nullable
+    @Column(name = "description")
+    @Size(max = 100, message = "Menu item description can contain a maximum of 100 characters!")
     private String description;
 
-    @NotNull(message = "Order must have a price!")
+    @NotNull(message = "Menu item price should not be null")
+    @Min(value = 0, message = "Price can not be negative")
+    @Column(name = "price")
     private Double price;
 
+    @Column(name = "discount_price")
+    @Min(value = 0, message = "Discount price can not be negative")
     private Double discount_price;
+
+    @Column(name = "prep_time")
+    @Min(value = 0,message = "Prep time can not be negative")
+    private Double prep_time;
 
     @Column(name = "uuid", updatable = false,unique = true, nullable = false, columnDefinition = "VARCHAR(60)")
     private String uuid;
 
+    @Column(name = "image")
     @Lob
-    @Nullable
     private byte[] image;
 
     @Column(name="date_created")
+    @NotNull(message = "Creation date must be specified!")
     private LocalDateTime date_created;
 
     @Column(name="date_modified")
     private LocalDateTime date_modified;
 
-    @NotNull(message = "Menu item must have preparation time!")
-    @Positive(message = "Preparation time must be positive number!")
-    private Double prep_time;
-
-    public MenuItem() {
-
-    }
-
-    @JsonCreator
     public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified) {
         this.id = id;
         this.name = name;
@@ -67,15 +67,8 @@ public class MenuItem {
         this.date_modified = date_modified;
     }
 
-    /*@JsonCreator
-    public MenuItem(String name, String description, Double price, Double discountPrice, Byte[] image, Integer preparationTime) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.discount_Price = discountPrice;
-        this.image = image;
-        this.preparationTime = preparationTime;
-    }*/
+    public MenuItem() {
+    }
 
     public Long getId() {
         return id;
@@ -117,6 +110,14 @@ public class MenuItem {
         this.discount_price = discount_price;
     }
 
+    public Double getPrep_time() {
+        return prep_time;
+    }
+
+    public void setPrep_time(Double prep_time) {
+        this.prep_time = prep_time;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -149,11 +150,5 @@ public class MenuItem {
         this.date_modified = date_modified;
     }
 
-    public Double getPrep_time() {
-        return prep_time;
-    }
-
-    public void setPrep_time(Double prep_time) {
-        this.prep_time = prep_time;
-    }
 }
+

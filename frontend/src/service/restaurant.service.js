@@ -14,6 +14,19 @@ class RestaurantService {
 
   }
 
+  getAllFullRestaurants() {
+    try {
+      return api
+        .get("/restaurant/all/full")
+        .then(response => {
+          return response;
+        })
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
+
   getUserFavorites() {
     try {
       return api
@@ -99,6 +112,18 @@ class RestaurantService {
     } catch (e) {
       console.log(e)
     }
+  }
+
+  getRestaurantImages(id) {
+    try {
+      return api
+        .get("/restaurant/image/"+id)
+        .then(response=> {
+          return response;
+        })
+      } catch (e) {
+        console.log(e)
+      }
   }
 
 }

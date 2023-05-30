@@ -10,22 +10,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.FilterRestaurantRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantCreateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantUpdateRequest;
-import the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse;
+import the.convenient.foodie.restaurant.dto.restaurant.*;
+import the.convenient.foodie.restaurant.dto.restaurantimage.RestaurantImageResponse;
+import the.convenient.foodie.restaurant.dto.restaurantimage.RestaurantImageUploadRequest;
 import the.convenient.foodie.restaurant.model.FavoriteRestaurant;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.service.FavoriteRestaurantService;
+import the.convenient.foodie.restaurant.service.RestaurantImageService;
 import the.convenient.foodie.restaurant.service.RestaurantService;
 
 import java.time.LocalDateTime;
@@ -39,6 +35,9 @@ public class RestaurantController {
 
     @Autowired
     private FavoriteRestaurantService favoriteRestaurantService;
+
+    @Autowired
+    private RestaurantImageService restaurantImageService;
 
 
 
@@ -124,6 +123,14 @@ public class RestaurantController {
         var restaurants = restaurantService.searchForRestaurants(null,null,false);
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping(path="/all/full")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<RestaurantResponse>> getAllFullRestaurants() {
+
+        var restaurants = restaurantService.getFullRestaurants();
+        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
 
     @Operation(description = "Search for restaurants based on filter and sorting criteria")
     @ApiResponses(value = {
@@ -158,10 +165,27 @@ public class RestaurantController {
             content = @Content)})
     @GetMapping(path="/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<Restaurant> getRestaurant(
+    public @ResponseBody ResponseEntity<RestaurantShortResponse> getRestaurantById(
             @Parameter(description = "Restaurant ID", required = true)
             @PathVariable  Long id) {
-        var restaurant = restaurantService.getRestaurant(id);
+        var restaurant = restaurantService.getRestaurantById(id);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
+    @Operation(description = "Get a full restaurant response by restaurant ID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the restaurant with provided ID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided ID not found",
+                    content = @Content)})
+    @GetMapping(path="/full/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<RestaurantResponse> getRestaurantFullResponseById(
+            @Parameter(description = "Restaurant ID", required = true)
+            @PathVariable  Long id) {
+        var restaurant = restaurantService.getRestaurantFullResponseById(id);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
@@ -389,6 +413,56 @@ public class RestaurantController {
             @Parameter(description = "Restaurant ID",required = true)
             @PathVariable Long id) {
         return new ResponseEntity<>(restaurantService.getRestaurantUUID(id),HttpStatus.OK);
+    }
+
+    @Operation(description = "Get images by Restaurant id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found all images",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided ID not found",
+                    content = @Content)}
+    )
+    @GetMapping(path="/image/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<RestaurantImageResponse>> getRestaurantImages(
+            @Parameter(description = "Restaurant ID",required = true)
+            @PathVariable Long id) {
+        return new ResponseEntity<>(restaurantImageService.getRestaurantImages(id),HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Upload images to restaurant gallery")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully added restaurant images",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid information supplied",
+                    content = @Content)})
+    @PostMapping(path="/image/add/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody ResponseEntity<String> addRestaurantImages (
+            @Parameter(description = "Image data", required = true)
+            @Valid @RequestBody List<RestaurantImageUploadRequest> request,
+            @Parameter (description = "Restaurant id", required = true)
+            @PathVariable("id") Long restaurantid,
+            @RequestHeader("uuid") String uuid,
+            @RequestHeader("username") String username) {
+
+       restaurantImageService.uploadRestaurantImages(request,uuid,restaurantid);
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Added images to restaurant with id" + restaurantid).setServiceName("restaurant-service")
+                .setUser(username)
+                .build());
+
+
+        return new ResponseEntity<>("Successfully added restaurant images!",HttpStatus.CREATED);
     }
 }
 

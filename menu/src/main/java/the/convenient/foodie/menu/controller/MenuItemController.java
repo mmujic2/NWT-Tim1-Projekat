@@ -1,10 +1,13 @@
 package the.convenient.foodie.menu.controller;
 
+import com.example.demo.EventServiceGrpc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,8 +25,10 @@ import the.convenient.foodie.menu.dto.IntegerListDto;
 import the.convenient.foodie.menu.dto.MenuItemDto;
 import the.convenient.foodie.menu.model.Menu;
 import the.convenient.foodie.menu.model.MenuItem;
+import the.convenient.foodie.menu.repository.MenuItemRepository;
 import the.convenient.foodie.menu.service.MenuItemService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -36,6 +41,18 @@ public class MenuItemController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private MenuItemRepository menuItemRepository;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MenuItem>> getAllMenuItems() {
+        return ResponseEntity.ok(menuItemService.getAllItems());
+    }
+
+    public ResponseEntity<MenuItem> getItemById(@PathVariable Long id) {
+        return ResponseEntity.ok(menuItemRepository.findById(id).orElseThrow());
+    }
+
     @Operation(description = "Delete a menu item")
     @ApiResponses( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the menu item with provided ID"),
@@ -45,7 +62,17 @@ public class MenuItemController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteMenuItem(
             @Parameter(description = "Menu Item ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Delete a menu item with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         return new ResponseEntity<>(menuItemService.deleteMenuItem(id), HttpStatus.OK);
     }
 
@@ -64,7 +91,17 @@ public class MenuItemController {
             @Parameter(description = "MenuItem ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Menu item information to be updated", required = true)
-            @Valid @RequestBody MenuItemDto menuItemDto){
+            @Valid @RequestBody MenuItemDto menuItemDto,
+            @RequestHeader("username") String username){
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Update a menu item with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         var menuItem = menuItemService.updateMenuItem(menuItemDto, id);
         return  new ResponseEntity<>(menuItem, HttpStatus.CREATED);
     }
@@ -80,13 +117,23 @@ public class MenuItemController {
     @GetMapping(path = "/{id}")
     public  @ResponseBody ResponseEntity<MenuItem> getMenuItem(
             @Parameter(description = "Menu Item ID", required = true)
-            @PathVariable  Long id) {
+            @PathVariable  Long id,
+            @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Get a menu item with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         var menuItem = menuItemService.getMenuItem(id);
         return new ResponseEntity<>(menuItem, HttpStatus.OK);
     }
 
     @PostMapping("/getlist")
-    public ResponseEntity<List<MenuItem>> getMenuItemsByList(IntegerListDto integerList) {
+    public ResponseEntity<List<MenuItem>> getMenuItemsByList(@RequestBody IntegerListDto integerList) {
         return ResponseEntity.ok(menuItemService.getMenuItemsByList(integerList.getIntegerList()));
     }
 

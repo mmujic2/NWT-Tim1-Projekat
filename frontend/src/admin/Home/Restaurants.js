@@ -11,6 +11,7 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { Search, Add } from '@mui/icons-material'
 import authService from '../../service/auth.service';
 import { right, left } from "@popperjs/core";
+import userService from '../../service/user.service';
 
 
 function AdminRestaurants() {
@@ -39,7 +40,20 @@ function AdminRestaurants() {
                         //console.log(element.categories)
                     });
                     setSearchResults(res.data)
-                    console.log(res.data)
+                    //console.log(res.data)
+
+                    userService.getAllUsers().then(res => {
+                        //setLoading(false)
+                        if (res.status == 200)
+                            console.log(res.data)
+                    })
+
+                    restaurantService.getAllFullRestaurants().then(res => {
+                        if (res.status == 200)
+                            console.log(res.data)
+                        
+                    })
+
                     restaurantService.getUserFavorites().then(res => {
                         if (res.status == 200)
                             setFavorites(res.data)

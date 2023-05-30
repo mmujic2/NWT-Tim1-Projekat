@@ -29,6 +29,8 @@ public class OrderResponse {
 
     private String customerAddress;
 
+    private String restaurantAddress;
+
     private LocalDateTime createdTime;
 
     private Double preparationTime;
@@ -45,6 +47,23 @@ public class OrderResponse {
         this.customerPhoneNumber = order.getCustomerPhoneNumber();
         this.customerAddress = order.getCustomerAddress();
         this.createdTime = order.getCreatedTime();
+        this.restaurantAddress = order.getRestaurantAddress();
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
+    }
+
+    public Double getPreparationTime() {
+        return preparationTime;
+    }
+
+    public void setPreparationTime(Double preparationTime) {
+        this.preparationTime = preparationTime;
     }
 
     public Long getId() {
