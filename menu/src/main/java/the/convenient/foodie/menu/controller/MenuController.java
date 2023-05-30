@@ -42,10 +42,21 @@ public class MenuController {
                             schema = @Schema(implementation = Menu.class))})}
     )
     @GetMapping(path = "/all")
-    public @ResponseBody ResponseEntity<List<Menu>> getAllMenus() {
+    public @ResponseBody ResponseEntity<List<Menu>> getAllMenus(
+            @RequestHeader("username") String username
+    ) {
         var menus = menuService.getAllMenus();
         // String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(response);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Get all menus").setServiceName("menu-service")
+                .setUser(username)
+                .build());
         return new ResponseEntity<>(menus, HttpStatus.OK);
     }
 
@@ -60,8 +71,18 @@ public class MenuController {
     @GetMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<Menu> getMenu(
             @Parameter(description = "Menu ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
         var menu = menuService.getMenu(id);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Get a menu with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
 
@@ -76,7 +97,8 @@ public class MenuController {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Menu> addNewMenu(
             @Parameter(description = "Information required for menu creation", required = true)
-            @Valid @RequestBody MenuDto menuDto) {
+            @Valid @RequestBody MenuDto menuDto,
+            @RequestHeader("username") String username) {
         var menu = menuService.addNewMenu(menuDto);
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -84,8 +106,8 @@ public class MenuController {
                 .newBuilder()
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("POST")
-                .setEvent("Created a menu for restaurnat " + menuDto.getRestaurant_uuid()).setServiceName("menu-service")
-                .setUser("Test")
+                .setEvent("Created a menu for restaurant " + menuDto.getRestaurant_uuid()).setServiceName("menu-service")
+                .setUser(username)
                 .build());
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
@@ -105,7 +127,17 @@ public class MenuController {
             @Parameter(description = "Menu ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Menu information to be updated", required = true)
-            @Valid @RequestBody MenuDto menuDto) {
+            @Valid @RequestBody MenuDto menuDto,
+            @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Update a menu with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         var menu = menuService.updateMenu(menuDto, id);
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
@@ -119,7 +151,17 @@ public class MenuController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<String> deleteMenu(
             @Parameter(description = "Menu ID", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Delete a menu with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         return new ResponseEntity<>(menuService.deleteMenu(id), HttpStatus.OK);
     }
 
@@ -139,7 +181,17 @@ public class MenuController {
             @Parameter(description = "Menu ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "Values of menu items", required = true)
-            @RequestBody List<@Valid MenuItemDto> menuItemDtos) {
+            @RequestBody List<@Valid MenuItemDto> menuItemDtos,
+            @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("PUT")
+                .setEvent("Set menu items for a menu with id " + id).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         var menu = menuService.addMenuItemsToMenu(id, menuItemDtos);
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
@@ -148,15 +200,35 @@ public class MenuController {
     public @ResponseBody ResponseEntity<Menu> addNewMenuForRestaurant(
             @PathVariable Long restaurantid,
             @Parameter(description = "Information required for menu creation", required = true)
-            @Valid @RequestBody MenuDto menuDto) {
+            @Valid @RequestBody MenuDto menuDto,
+            @RequestHeader("username") String username) {
         String restaurantUUID = restTemplate.getForObject("http://restaurant-service/restaurant/uuid/" + restaurantid, String.class);
         menuDto.setRestaurant_uuid(restaurantUUID);
         var menu = menuService.addNewMenu(menuDto);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("POST")
+                .setEvent("Create a menu for restaurant with id " + restaurantid).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/restaurant-menus/{restaurantid}")
-    public  List<Menu> getRestaurantMenus (@PathVariable Long restaurantid) {
+    public  List<Menu> getRestaurantMenus (@PathVariable Long restaurantid,
+                                           @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Get menus for a restaurant with id " + restaurantid).setServiceName("menu-service")
+                .setUser(username)
+                .build());
         String restaurantUUID = restTemplate.getForObject("http://restaurant-service/restaurant/uuid/" + restaurantid, String.class);
         var menus = menuService.getRestaurantMenus(restaurantUUID);
         return menus;
