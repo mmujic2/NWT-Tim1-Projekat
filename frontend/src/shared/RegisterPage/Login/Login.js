@@ -8,6 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import auth from "../../../service/auth.service";
 import CustomAlert from "../../util/Alert";
 import { Col, Row } from "react-bootstrap";
+import SockJsClient from "react-stomp";
+import restaurantService from "../../../service/restaurant.service";
 
 function Login({ setPage }) {
   const [username, setUsername] = useState();
@@ -18,7 +20,21 @@ function Login({ setPage }) {
   const submit = (e) => {
     e.preventDefault();
     auth.login(username, password).then((res) => {
-      if (res.status == 200) navigate("/");
+      if (res.status == 200) {
+          if(res.data.user.role == "RESTAURANT_MANAGER") {
+            restaurantService.getManagersRestaurantUUID().then(res => {
+                if(res.status==200) {
+                  localStorage.setItem("restaurantUUID", res.data)
+                  navigate("/");
+                } else {
+                  console.log(res)
+                }
+            })
+
+          } else {
+            navigate("/");
+          } 
+      }
       else if (res.status == 403) setShowError(true);
     });
   };
