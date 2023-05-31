@@ -112,4 +112,8 @@ public class MenuService {
     public List<Menu> getRestaurantMenus(String restaurantUUID) {
         return menuRepository.getMenusForRestaurant(restaurantUUID);
     }
+
+    public List<Menu> getActiveRestaurantMenus(String restaurantUUID) {
+        return menuRepository.getActiveMenusForRestaurant(restaurantUUID);
+    }
 }

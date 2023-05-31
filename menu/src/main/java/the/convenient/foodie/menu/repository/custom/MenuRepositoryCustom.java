@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface MenuRepositoryCustom {
     List<Menu> getMenusForRestaurant(String restaurantUUID);
+    List<Menu> getActiveMenusForRestaurant(String restaurantUUID);
 }
