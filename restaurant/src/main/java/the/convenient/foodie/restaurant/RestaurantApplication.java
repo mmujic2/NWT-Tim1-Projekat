@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-@EnableDiscoveryClient
+@EnableDiscoveryClient(autoRegister = true)
 @EntityScan(basePackages="the.convenient.foodie.restaurant.model")
 @SpringBootApplication
 @EnableFeignClients
