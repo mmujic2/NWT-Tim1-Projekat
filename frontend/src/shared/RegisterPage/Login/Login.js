@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 import auth from "../../../service/auth.service";
 import CustomAlert from "../../util/Alert";
 import { Col, Row } from "react-bootstrap";
-import SockJsClient from "react-stomp";
 
 function Login({ setPage }) {
   const [username, setUsername] = useState();
@@ -79,13 +78,6 @@ function Login({ setPage }) {
           </div>
         </Form>
       </Container>
-      <SockJsClient
-        url="http://localhost:7070/websocket"
-        topics={["/message/test"]}
-        onMessage={(msg) => {
-          console.log(msg);
-        }}
-      ></SockJsClient>
       Test
     </>
   );
