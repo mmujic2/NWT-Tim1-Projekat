@@ -190,6 +190,24 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Get restaurant UUID by restaurant manager  UUID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the restaurant with provided restaurant manager UUID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided restaurant manager UUID not found",
+                    content = @Content)})
+    @GetMapping(path="/uuid/manager")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> getRestaurantUUIDByManagerUUID(
+            @RequestHeader("uuid") String managerUUID) {
+        var restaurant = restaurantService.getRestaurantUUIDByManagerUUID(managerUUID);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
     @Operation(description = "Get a full restaurant response by restaurant ID")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the restaurant with provided ID",
