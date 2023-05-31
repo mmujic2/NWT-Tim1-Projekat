@@ -98,7 +98,7 @@ public class MenuControllerTest {
     @Test
     public void addNewMenuValid() throws Exception {
         var restaurant_uuid = UUIDGenerator.generateType1UUID().toString();
-        MenuDto menuDao = new MenuDto(true, restaurant_uuid);
+        MenuDto menuDao = new MenuDto(true, restaurant_uuid, "name");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         post("/menu/add")
                         .content(asJsonString(menuDao))
@@ -141,7 +141,7 @@ public class MenuControllerTest {
     @Test
     public void addNewMenuInvalid() throws Exception {
         var restaurant_uuid = "123";
-        MenuDto menuDao = new MenuDto(true, restaurant_uuid);
+        MenuDto menuDao = new MenuDto(true, restaurant_uuid, "name");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         post("/menu/add")
                         .content(asJsonString(menuDao))

@@ -10,6 +10,7 @@ import CustomAlert from "../../shared/util/Alert";
 import Loader from "../../shared/util/Loader/Loader";
 import NotFound from "../../shared/util/NotFound";
 import Gallery from "./Gallery";
+import MenuOverview from "./MenuOverview";
 
 function RestaurantOverview() {
   const location = useLocation();
@@ -49,62 +50,86 @@ function RestaurantOverview() {
   }, []);
 
   const favoritesButton = () => {
-    if(restaurant.customerFavorite) {
+    if (restaurant.customerFavorite) {
       return (
-        <Button 
-        onClick={()=>removeFromFavorites(restaurant.id)}
-        style={{width:"fit-content",
-        backgroundColor:"#fe724c",
-        borderColor:"#fe724c",
-        padding:"5px",
-        marginRight:"10px",
-        float:"right"}}>
-          <HeartFill style={{
-            color:"white",
-            marginRight:"5px"}}/>
-          Remove from favorites </Button>
-      ) } else {
+        <Button
+          onClick={() => removeFromFavorites(restaurant.id)}
+          style={{
+            width: "fit-content",
+            backgroundColor: "#fe724c",
+            borderColor: "#fe724c",
+            padding: "5px",
+            marginRight: "10px",
+            float: "right",
+          }}
+        >
+          <HeartFill
+            style={{
+              color: "white",
+              marginRight: "5px",
+            }}
+          />
+          Remove from favorites{" "}
+        </Button>
+      );
+    } else {
       return (
-        <Button 
-        onClick={()=>addToFavorites(restaurant.id)}
-        style={{width:"fit-content",
-        backgroundColor:"#fe724c",
-        borderColor:"#fe724c",
-        padding:"5px",
-        marginRight:"10px",
-        float:"right"}}>
-          <HeartFill style={{
-            color:"white",
-            marginRight:"5px"}}/>
-          Add to favorites </Button>
-      )}
-  }
+        <Button
+          onClick={() => addToFavorites(restaurant.id)}
+          style={{
+            width: "fit-content",
+            backgroundColor: "#fe724c",
+            borderColor: "#fe724c",
+            padding: "5px",
+            marginRight: "10px",
+            float: "right",
+          }}
+        >
+          <HeartFill
+            style={{
+              color: "white",
+              marginRight: "5px",
+            }}
+          />
+          Add to favorites{" "}
+        </Button>
+      );
+    }
+  };
 
   const addToFavorites = (id) => {
     document.body.style.cursor = "wait";
-    restaurantService.addRestaurantToFavorites(id).then(res=> {
+    restaurantService.addRestaurantToFavorites(id).then((res) => {
       document.body.style.cursor = "default";
-      if(res.status == 201) {
-        setRestaurant({...restaurant,customerFavorite: true, customersFavorited: restaurant.customersFavorited +1 })
+      if (res.status == 201) {
+        setRestaurant({
+          ...restaurant,
+          customerFavorite: true,
+          customersFavorited: restaurant.customersFavorited + 1,
+        });
       } else {
         setAlert({ ...alert, msg: res.data, type: "error" });
         setShowAlert(true);
       }
-    })
-  }
+    });
+  };
 
   const removeFromFavorites = (id) => {
     document.body.style.cursor = "wait";
-    restaurantService.removeRestaurantFromFavorites(id).then(res=> {
+    restaurantService.removeRestaurantFromFavorites(id).then((res) => {
       document.body.style.cursor = "default";
-      if(res.status == 200) {
-        setRestaurant({...restaurant,customerFavorite: false,customersFavorited: restaurant.customersFavorited -1 })
+      if (res.status == 200) {
+        setRestaurant({
+          ...restaurant,
+          customerFavorite: false,
+          customersFavorited: restaurant.customersFavorited - 1,
+        });
       } else {
         setAlert({ ...alert, msg: res.data, type: "error" });
         setShowAlert(true);
       }
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -152,11 +177,9 @@ function RestaurantOverview() {
                   <div style={{ marginLeft: "340px", marginTop: "15px" }}>
                     <Row>
                       <Col className="col-8">
-                      <h2>{restaurant.name}</h2>
+                        <h2>{restaurant.name}</h2>
                       </Col>
-                      <Col>
-                     {favoritesButton()}
-                      </Col>
+                      <Col>{favoritesButton()}</Col>
                     </Row>
                     <h6>{restaurant.address}</h6>
                     <h6 style={{ color: "#fe724c", fontWeight: "bold" }}>
@@ -192,6 +215,9 @@ function RestaurantOverview() {
                       </span>
                     </div>
                   </div>
+                </div>
+                <div style={{ marginTop: "50px" }}>
+                  <MenuOverview restaurantUUID={restaurant.uuid}></MenuOverview>
                 </div>
               </Container>
             </div>

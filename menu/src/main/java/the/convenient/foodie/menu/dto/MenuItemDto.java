@@ -21,6 +21,7 @@ public class MenuItemDto implements Serializable {
     @Min(value = 0, message = "Prep time can not be negative")
     private Double prep_time;
 
+    private String image;
     public MenuItemDto() {
     }
 
@@ -32,12 +33,29 @@ public class MenuItemDto implements Serializable {
         this.prep_time = prep_time;
     }
 
+    public MenuItemDto(String name, String description, Double price, Double discount_price, Double prep_time, String image) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.discount_price = discount_price;
+        this.prep_time = prep_time;
+        this.image = image;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDescription() {
@@ -74,7 +92,7 @@ public class MenuItemDto implements Serializable {
 
     @AssertTrue(message = "Discounted price should not be higher than the regular price!")
     public boolean isDiscountedPriceLessThanRegular() {
-        if (discount_price > price)
+        if (discount_price != null && discount_price > price)
             return false;
         return true;
     }

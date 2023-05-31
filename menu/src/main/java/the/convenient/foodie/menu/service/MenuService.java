@@ -47,6 +47,7 @@ public class MenuService {
         menu.setActive(menuDto.isActive());
         menu.setRestaurant_uuid(menuDto.getRestaurant_uuid());
         menu.setDate_created(LocalDateTime.now());
+        menu.setName(menuDto.getName());
         menuRepository.save(menu);
         return menu;
     }
@@ -63,6 +64,7 @@ public class MenuService {
         menu.setActive(menuDto.isActive());
         menu.setRestaurant_uuid(menuDto.getRestaurant_uuid());
         menu.setDate_modified(LocalDateTime.now());
+        menu.setName(menuDto.getName());
         menuRepository.save(menu);
         return menu;
     }
