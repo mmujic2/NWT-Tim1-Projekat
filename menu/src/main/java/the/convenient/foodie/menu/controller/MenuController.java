@@ -234,4 +234,20 @@ public class MenuController {
         return menus;
     }
 
+    @GetMapping(path = "/restaurant-menus/active/{restaurantUUID}")
+    public  List<Menu> getActiveRestaurantMenus (@PathVariable
+                                                 String restaurantUUID,
+                                           @RequestHeader("username") String username) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("GET")
+                .setEvent("Get active menus for a restaurant with uuid " + restaurantUUID).setServiceName("menu-service")
+                .setUser(username)
+                .build());
+        var menus = menuService.getActiveRestaurantMenus(restaurantUUID);
+        return menus;
+    }
 }

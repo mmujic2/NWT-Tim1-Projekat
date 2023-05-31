@@ -16,4 +16,12 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
         var query = entityManager.createQuery(hql, Menu.class).setParameter("restaurantUUID",restaurantUUID);
         return query.getResultList();
     }
+
+    @Override
+    public List<Menu> getActiveMenusForRestaurant(String restaurantUUID) {
+        var hql = "SELECT m from Menu m WHERE m.restaurant_uuid = :restaurantUUID AND  m.active = TRUE ";
+        var query = entityManager.createQuery(hql, Menu.class).setParameter("restaurantUUID",restaurantUUID);
+        return query.getResultList();
+    }
+
 }
