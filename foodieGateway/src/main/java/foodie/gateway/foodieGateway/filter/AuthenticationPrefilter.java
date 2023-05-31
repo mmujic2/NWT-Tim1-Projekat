@@ -69,7 +69,7 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
                         })
                         .flatMap(chain::filter)
                         .onErrorResume(error -> {
-
+                            System.out.println(error.getMessage());
                             HttpStatusCode errorCode = null;
                             String errorMsg = "";
                             if (error instanceof WebClientResponseException) {
