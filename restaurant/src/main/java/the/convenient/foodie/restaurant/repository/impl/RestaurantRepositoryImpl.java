@@ -51,13 +51,26 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
 
     @Override
     public RestaurantResponse getRestaurantFullResponseById(Long id){
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.rating)," +
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantResponse(r,avg(rev.rating),count(rev.rating)," +
                 "(SELECT count(fr.id) FROM FavoriteRestaurant fr WHERE fr.restaurant.id=r.id))"
                 + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id  WHERE r.id=:id GROUP BY r";
 
         var query = entityManager.createQuery(hql, RestaurantResponse.class);
 
         query.setParameter("id", id);
+
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public RestaurantResponse getRestaurantByManagerUUID(String uuid){
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantResponse(r) "
+                + " FROM Restaurant r  WHERE r.managerUUID=:uuid";
+
+        var query = entityManager.createQuery(hql, RestaurantResponse.class);
+
+        query.setParameter("uuid", uuid);
 
 
         return query.getSingleResult();

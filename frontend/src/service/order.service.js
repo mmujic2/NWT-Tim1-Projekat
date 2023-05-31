@@ -66,6 +66,12 @@ class OrderService {
         return api.get("/order/get/deliveryperson")
       }
 
+      getRestaurantPastOrders() {
+        //treba vratiti narudzbe za restoran ciji restaurantManagerUUID je onaj uuid u headeru
+        //narudzbe moraju biti Delivered
+        return [];
+      }
+
 }
 
 export default new OrderService();

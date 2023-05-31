@@ -15,6 +15,7 @@ import TokenService from "./service/token.service";
 import SockJsClient from 'react-stomp';
 import { useState } from "react";
 import Alert from "./shared/util/Alert";
+import RestaurantDetails from "./restaurantManager/RestaurantDetails/RestaurantDetails";
 
 function App() {
   const [show, setShow] = useState(false)
@@ -42,6 +43,11 @@ function App() {
           <Route path="/customer/restaurant/favorites" element={<CustomerDetails></CustomerDetails>}></Route>
           <Route path="/customer/order/history" element={<CustomerDetails></CustomerDetails>}></Route>
           <Route path="/customer/restaurant" element={<RestaurantOverview></RestaurantOverview>}></Route>
+          <Route path="/restaurant/details" element={<RestaurantDetails></RestaurantDetails>}></Route>
+          <Route path="/restaurant/menus" element={<RestaurantDetails></RestaurantDetails>}></Route>
+          <Route path="/restaurant/order/history" element={<RestaurantDetails></RestaurantDetails>}></Route>
+          <Route path="/restaurant/reviews" element={<RestaurantDetails></RestaurantDetails>}></Route>
+          <Route path="/restaurant/coupons" element={<RestaurantDetails></RestaurantDetails>}></Route>
         </Route>
         
         

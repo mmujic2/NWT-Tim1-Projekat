@@ -1,10 +1,12 @@
 package the.convenient.foodie.restaurant.dto.restaurant;
 
+import the.convenient.foodie.restaurant.dto.category.CategoryResponse;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursResponse;
 import the.convenient.foodie.restaurant.model.Restaurant;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,7 @@ public class RestaurantResponse {
 
     String mapCoordinates;
 
-    Set<String> categories;
+    List<CategoryResponse> categories;
     Double rating;
 
     Integer customersRated;
@@ -43,12 +45,25 @@ public class RestaurantResponse {
         this.rating=rating;
         this.customersFavorited = customersFavorited.intValue();
         this.customersRated = customersRated.intValue();
-        this.categories=restaurant.getCategories().stream().map(c->c.getName()).collect(Collectors.toSet());
+        this.categories= restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
         this.managerUuid=restaurant.getManagerUUID();
 
     }
 
-    public RestaurantResponse(Long id, String uuid, String name, String address, String logo, OpeningHoursResponse openingHours, String mapCoordinates, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited) {
+    public RestaurantResponse(Restaurant restaurant) {
+        this.id= restaurant.getId();
+        this.name=restaurant.getName();
+        this.uuid = restaurant.getUuid();
+        this.address=restaurant.getAddress();
+        this.mapCoordinates = restaurant.getMapCoordinates();
+        this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
+        this.logo=restaurant.getLogo();
+        this.categories=restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        this.managerUuid=restaurant.getManagerUUID();
+
+    }
+
+    public RestaurantResponse(Long id, String uuid, String name, String address, String logo, OpeningHoursResponse openingHours, String mapCoordinates, List<CategoryResponse> categories, Double rating, Integer customersRated, Integer customersFavorited) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
@@ -121,11 +136,11 @@ public class RestaurantResponse {
         this.mapCoordinates = mapCoordinates;
     }
 
-    public Set<String> getCategories() {
+    public List<CategoryResponse> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<String> categories) {
+    public void setCategories(List<CategoryResponse> categories) {
         this.categories = categories;
     }
 

@@ -81,6 +81,18 @@ public class RestaurantService {
 
     }
 
+    public RestaurantResponse getRestaurantByManagerUUID(String managerUUID) {
+        var exception = new EntityNotFoundException("Restaurant with manager UUID " + managerUUID + " does not exist!");
+        try {
+            var restaurant = restaurantRepository.getRestaurantByManagerUUID(managerUUID);
+            return restaurant;
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw exception;
+        }
+
+    }
+
     public RestaurantResponse getRestaurantFullResponseById(Long id) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         try {

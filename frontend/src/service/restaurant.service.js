@@ -1,3 +1,4 @@
+import { CartCheck } from 'react-bootstrap-icons';
 import api from './api'
 
 class RestaurantService {
@@ -142,6 +143,18 @@ class RestaurantService {
     try {
       return api
         .put("/restaurant/" + id + "/remove-from-favorites")
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  getManagersRestaurant() {
+    try {
+      return api
+        .get("/restaurant/manager")
         .then(response => {
           return response;
         })

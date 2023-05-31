@@ -6,7 +6,6 @@ import { CheckCircleFill,XCircleFill,InfoCircleFill } from 'react-bootstrap-icon
 function CustomAlert({ type, msg={}, show, setShow }) {
 
     const getMessage = (message) => {
-        console.log(message)
         if(message.hasOwnProperty("errors")) {
             return message.errors.map(i => <span>{i}<br></br></span>)
         } else {
