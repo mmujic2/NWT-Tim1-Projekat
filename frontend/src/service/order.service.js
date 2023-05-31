@@ -66,10 +66,25 @@ class OrderService {
         return api.get("/order/get/deliveryperson")
       }
 
-      getRestaurantPastOrders() {
-        //treba vratiti narudzbe za restoran ciji restaurantManagerUUID je onaj uuid u headeru
-        //narudzbe moraju biti Delivered
+      getRestaurantPastOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Delivered
         return [];
+      }
+
+      getRestaurantPendingOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Pending (sve novokreirane narudzbe neka imaju ovaj status) 
+      }
+
+      getRestaurantInPreparationOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status In preparation
+      }
+
+      getRestaurantReadyOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Ready for delivery
       }
 
 }

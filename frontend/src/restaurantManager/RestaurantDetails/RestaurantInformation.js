@@ -196,7 +196,7 @@ function RestaurantInformation() {
               <Figure.Caption>Logo image</Figure.Caption>
             </Figure>
             <Stack gap={2} className="mb-3">
-            <input ref={inputRef} className="d-none" type="file" onChange={onFileChange}/>
+            <input ref={inputRef} className="d-none" type="file" onChange={onFileChange} accept="image/*"/>
             <Button style={{ width: "200px" }} onClick={uploadLogo}>Choose an image<Upload style={{marginLeft:"10px"}}/></Button>
             <Button style={{ width: "200px" }}>Image gallery<East style={{marginLeft:"10px"}}/></Button>
             </Stack>

@@ -77,6 +77,19 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
     }
 
     @Override
+    public String getRestaurantUUIDByManagerUUID(String uuid){
+        var hql = "SELECT r.uuid "
+                + " FROM Restaurant r  WHERE r.managerUUID=:uuid";
+
+        var query = entityManager.createQuery(hql, String.class);
+
+        query.setParameter("uuid", uuid);
+
+
+        return query.getSingleResult();
+    }
+
+    @Override
     public Boolean checkIfRestaurantIsCustomersFavorite(Long restaurantId, String customerUUID) {
         var hql = "SELECT CASE WHEN (COUNT(fr) > 0)  THEN TRUE ELSE FALSE END" +
                 " FROM FavoriteRestaurant fr WHERE fr.restaurant.id=:restaurantId AND fr.userUUID=:customerUUID";
