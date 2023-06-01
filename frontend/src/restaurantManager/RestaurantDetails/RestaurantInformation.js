@@ -5,16 +5,20 @@ import { LocationOn } from "@mui/icons-material";
 import CustomAlert from "../../shared/util/Alert";
 import MapModal from "../../shared/MapModal/MapModal";
 import Loader from "../../shared/util/Loader/Loader";
-import { useEffect,useRef } from "react";
+import { useEffect, useRef } from "react";
 import restaurantService from "../../service/restaurant.service";
 import defaultImage from "../../images/default.png";
 import Multiselect from "multiselect-react-dropdown";
 import { Figure } from "react-bootstrap";
 import "./Multiselect.css";
 import { Upload, East } from "@mui/icons-material";
+import dayjs from "dayjs";
+import OpeningHoursForm from "./OpeningHoursForm";
+import authService from "../../service/auth.service";
 
 function RestaurantInformation() {
   const [validated, setValidated] = useState();
+  const [restaurant, setRestaurant] = useState();
   const [formData, setFormData] = useState();
   const [showMap, setShowMap] = useState(false);
   const [alert, setAlert] = useState({});
@@ -22,7 +26,11 @@ function RestaurantInformation() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState();
   const inputRef = useRef(null);
-  
+  const [formattedHours, setFormattedHours] = useState();
+  const user = authService.getCurrentUser();
+
+  const [checked, setChecked] = useState();
+
   var mounted = false;
   useEffect(() => {
     if (!mounted) {
@@ -31,7 +39,116 @@ function RestaurantInformation() {
         setLoading(false);
         if (res.status == 200) {
           setFormData(res.data);
-          console.log(res.data);
+          setRestaurant(res.data);
+          setFormattedHours({
+            mondayOpen: res.data.openingHours.mondayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.mondayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            mondayClose: res.data.openingHours.mondayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.mondayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            tuesdayOpen: res.data.openingHours.tuesdayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.tuesdayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            tuesdayClose: res.data.openingHours.tuesdayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.tuesdayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            wednesdayOpen: res.data.openingHours.wednesdayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.wednesdayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            wednesdayClose: res.data.openingHours.wednesdayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.wednesdayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            thursdayOpen: res.data.openingHours.thursdayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.thursdayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            thursdayClose: res.data.openingHours.thursdayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.thursdayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            fridayOpen: res.data.openingHours.fridayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.fridayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            fridayClose: res.data.openingHours.fridayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.fridayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            saturdayOpen: res.data.openingHours.saturdayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.saturdayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            saturdayClose: res.data.openingHours.saturdayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.saturdayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+            sundayOpen: res.data.openingHours.sundayOpen
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.sundayOpen
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+            sundayClose: res.data.openingHours.sundayClose
+              ? dayjs(
+                  dayjs().format("YYYY-MM-DD") +
+                    "T" +
+                    res.data.openingHours.sundayClose
+                )
+              : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+          });
+          setChecked({
+            mon: res.data.openingHours.mondayOpen != null ? true : false,
+            tue: res.data.openingHours.tuesdayOpen != null ? true : false,
+            wed: res.data.openingHours.wednesdayOpen != null ? true : false,
+            thu: res.data.openingHours.thursdayOpen != null ? true : false,
+            fri: res.data.openingHours.fridayOpen != null ? true : false,
+            sat: res.data.openingHours.saturdayOpen != null ? true : false,
+            sun: res.data.openingHours.sundayOpen != null ? true : false,
+          });
         } else {
           setAlert({ ...alert, msg: res.data, type: "error" });
           setShowAlert(true);
@@ -65,7 +182,239 @@ function RestaurantInformation() {
       return;
     }
 
-    setValidated(true);
+    var hours = {};
+
+    if (checked.mon) {
+      hours.mondayOpen = dayjs(formattedHours.mondayOpen).format("HH:mm:ss");
+      hours.mondayClose = dayjs(formattedHours.mondayClose).format("HH:mm:ss");
+    } else {
+      hours.mondayOpen = null;
+      hours.mondayClose = null;
+    }
+
+    if (checked.tue) {
+      hours.tuesdayOpen = dayjs(formattedHours.tuesdayOpen).format("HH:mm:ss");
+      hours.tuesdayClose = dayjs(formattedHours.tuesdayClose).format(
+        "HH:mm:ss"
+      );
+    } else {
+      hours.tuesdayOpen = null;
+      hours.tuesdayClose = null;
+    }
+
+    if (checked.wed) {
+      hours.wednesdayOpen = dayjs(formattedHours.wednesdayOpen).format(
+        "HH:mm:ss"
+      );
+      hours.wednesdayClose = dayjs(formattedHours.wednesdayClose).format(
+        "HH:mm:ss"
+      );
+    } else {
+      hours.wednesdayOpen = null;
+      hours.wednesdayClose = null;
+    }
+
+    if (checked.thu) {
+      hours.thursdayOpen = dayjs(formattedHours.thursdayOpen).format(
+        "HH:mm:ss"
+      );
+      hours.thursdayClose = dayjs(formattedHours.thursdayClose).format(
+        "HH:mm:ss"
+      );
+    } else {
+      hours.thursdayOpen = null;
+      hours.thursdayClose = null;
+    }
+
+    if (checked.fri) {
+      hours.fridayOpen = dayjs(formattedHours.fridayOpen).format("HH:mm:ss");
+      hours.fridayClose = dayjs(formattedHours.fridayClose).format("HH:mm:ss");
+    } else {
+      hours.fridayOpen = null;
+      hours.fridayClose = null;
+    }
+
+    if (checked.sat) {
+      hours.saturdayOpen = dayjs(formattedHours.saturdayOpen).format(
+        "HH:mm:ss"
+      );
+      hours.saturdayClose = dayjs(formattedHours.saturdayClose).format(
+        "HH:mm:ss"
+      );
+    } else {
+      hours.saturdayOpen = null;
+      hours.saturdayClose = null;
+    }
+    if (checked.sun) {
+      hours.sundayOpen = dayjs(formattedHours.sundayOpen).format("HH:mm:ss");
+      hours.sundayClose = dayjs(formattedHours.sundayClose).format("HH:mm:ss");
+    } else {
+      hours.sundayOpen = null;
+      hours.sundayClose = null;
+    }
+
+    var body = {
+      name: formData.name,
+      mapCoordinates: formData.mapCoordinates,
+      address: formData.address,
+      logo: formData.logo,
+    };
+
+    var categories = formData.categories.map((c) => c.id);
+
+    
+
+    document.body.style.cursor = "wait";
+
+    restaurantService.updateRestaurant(body, restaurant.id).then((r1) => {
+      
+      if (r1.status == 200) {
+        restaurantService
+          .updateRestaurantCategories(categories, restaurant.id)
+          .then((r2) => {
+            if (r2.status == 200) {
+              restaurantService
+                .updateRestaurantOpeningHours(hours, restaurant.id)
+                .then((r3) => {
+                  document.body.style.cursor = "default";
+                  if (r3.status == 200) {
+                    setAlert({
+                      ...alert,
+                      type: "success",
+                      msg: "Successfully updated restaurant information!",
+                    });
+                    setShowAlert(true);
+                    setRestaurant(r3.data)
+                  } else {
+                    setAlert({ ...alert, type: "error", msg: r3.data });
+                    setShowAlert(true);
+                  }
+                });
+            } else {
+              document.body.style.cursor = "default";
+              setAlert({ ...alert, type: "error", msg: r2.data });
+              setShowAlert(true);
+            }
+          });
+      } else {
+        document.body.style.cursor = "default";
+        setAlert({ ...alert, type: "error", msg: r1.data });
+        setShowAlert(true);
+      }
+    });
+  };
+
+  const revert = () => {
+    setFormData(restaurant);
+    setFormattedHours({
+      mondayOpen: restaurant.openingHours.mondayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.mondayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      mondayClose: restaurant.openingHours.mondayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.mondayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      tuesdayOpen: restaurant.openingHours.tuesdayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.tuesdayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      tuesdayClose: restaurant.openingHours.tuesdayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.tuesdayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      wednesdayOpen: restaurant.openingHours.wednesdayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.wednesdayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      wednesdayClose: restaurant.openingHours.wednesdayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.wednesdayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      thursdayOpen: restaurant.openingHours.thursdayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.thursdayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      thursdayClose: restaurant.openingHours.thursdayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.thursdayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      fridayOpen: restaurant.openingHours.fridayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.fridayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      fridayClose: restaurant.openingHours.fridayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.fridayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      saturdayOpen: restaurant.openingHours.saturdayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.saturdayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      saturdayClose: restaurant.openingHours.saturdayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.saturdayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+      sundayOpen: restaurant.openingHours.sundayOpen
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.sundayOpen
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+      sundayClose: restaurant.openingHours.sundayClose
+        ? dayjs(
+            dayjs().format("YYYY-MM-DD") +
+              "T" +
+              restaurant.openingHours.sundayClose
+          )
+        : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    });
+    setChecked({
+      mon: restaurant.openingHours.mondayOpen != null ? true : false,
+      tue: restaurant.openingHours.tuesdayOpen != null ? true : false,
+      wed: restaurant.openingHours.wednesdayOpen != null ? true : false,
+      thu: restaurant.openingHours.thursdayOpen != null ? true : false,
+      fri: restaurant.openingHours.fridayOpen != null ? true : false,
+      sat: restaurant.openingHours.saturdayOpen != null ? true : false,
+      sun: restaurant.openingHours.sundayOpen != null ? true : false,
+    });
   };
 
   const handleCategoryChange = (e) => {
@@ -75,20 +424,23 @@ function RestaurantInformation() {
     });
   };
 
-  const uploadLogo = ()=> {
+  const uploadLogo = () => {
     inputRef.current?.click();
-  }
+  };
 
-  const onFileChange = (e)=> {
+  const onFileChange = (e) => {
     let files = e.target.files;
     let fileReader = new FileReader();
     fileReader.readAsDataURL(files[0]);
 
     fileReader.onload = (event) => {
-        
-        setFormData({...formData,logo:event.target.result})
-    }
-}
+      setFormData({ ...formData, logo: event.target.result });
+    };
+  };
+
+  const setOpeningHours = (openingHours) => {
+    setFormData({ ...formData, openingHours: openingHours });
+  };
 
   return (
     <Loader isOpen={loading}>
@@ -173,32 +525,61 @@ function RestaurantInformation() {
                   />
                 </Row>
               </Form.Group>
+              <OpeningHoursForm
+                checked={checked}
+                setChecked={setChecked}
+                formattedHours={formattedHours}
+                setFormattedHours={setFormattedHours}
+              />
+              <ButtonGroup style={{ float: "right" }}>
+                <Button
+                  onClick={revert}
+                  type="button"
+                  className="mb-3"
+                  style={{ width: "fit-content" }}
+                >
+                  Cancel
+                </Button>
 
-              <Button
-                type="submit"
-                className="mb-3"
-                style={{ width: "fit-content", float: "right" }}
-              >
-                Submit changes
-              </Button>
+                <Button
+                  type="submit"
+                  className="mb-3"
+                  style={{
+                    width: "fit-content",
+                    backgroundColor: "#fe724c",
+                    border: "#fe724c",
+                  }}
+                  onClick={handleSubmit}
+                >
+                  Submit changes
+                </Button>
+              </ButtonGroup>
             </Form>
           </Col>
           <Col className="col-2">
             <Figure className="mt-5" style={{ width: "200px" }}>
               <Figure.Image
                 style={{ height: "200px" }}
-                src={
-                  formData.logo
-                    ? `${formData.logo} `
-                    : defaultImage
-                }
+                src={formData.logo ? `${formData.logo} ` : defaultImage}
               />
               <Figure.Caption>Logo image</Figure.Caption>
             </Figure>
             <Stack gap={2} className="mb-3">
-            <input ref={inputRef} className="d-none" type="file" onChange={onFileChange} accept="image/*"/>
-            <Button style={{ width: "200px" }} onClick={uploadLogo}>Choose an image<Upload style={{marginLeft:"10px"}}/></Button>
-            <Button style={{ width: "200px" }}>Image gallery<East style={{marginLeft:"10px"}}/></Button>
+              <input
+                ref={inputRef}
+                className="d-none"
+                type="file"
+                onChange={onFileChange}
+                accept="image/*"
+              />
+              <Button style={{ width: "200px" }} onClick={uploadLogo}>
+                Choose an image
+                <Upload style={{ marginLeft: "10px" }} />
+              </Button>
+              <Button style={{ width: "200px" }}>
+                Image gallery
+                <East style={{ marginLeft: "10px" }} />
+              </Button>
             </Stack>
           </Col>
         </Row>

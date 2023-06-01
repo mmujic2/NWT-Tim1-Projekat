@@ -175,6 +175,42 @@ class RestaurantService {
     }
   }
 
+  updateRestaurant(req,id) {
+    try {
+      return api
+        .put("/restaurant/update/" + id,req)
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  updateRestaurantCategories(req,id) {
+    try {
+      return api
+        .put("/restaurant/" + id + "/add-categories",req)
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  updateRestaurantOpeningHours(req,id) {
+    try {
+      return api
+        .put("/restaurant/" + id + "/set-opening-hours",req)
+        .then(response => {
+          return response;
+        })
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
 }
 
 export default new RestaurantService();

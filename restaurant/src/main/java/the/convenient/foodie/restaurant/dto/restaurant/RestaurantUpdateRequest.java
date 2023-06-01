@@ -18,13 +18,13 @@ public class RestaurantUpdateRequest implements Serializable {
     private String mapCoordinates;
 
 
-    private String updatedBy;
+    private String logo;
 
-    public RestaurantUpdateRequest(String name, String address, String mapCoordinates, String updatedBy) {
+    public RestaurantUpdateRequest(String name, String address, String mapCoordinates, String logo) {
         this.name = name;
         this.address = address;
         this.mapCoordinates = mapCoordinates;
-        this.updatedBy = updatedBy;
+        this.logo = logo;
     }
 
     public RestaurantUpdateRequest() {
@@ -54,11 +54,11 @@ public class RestaurantUpdateRequest implements Serializable {
         this.mapCoordinates = mapCoordinates;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public String getLogo() {
+        return logo;
     }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

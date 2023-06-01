@@ -24,7 +24,7 @@ function RestaurantCard({ res, grid = true }) {
 
                     <Row >
                         <Col className={grid ? "col-5 px-2" : "col-3 px-2"} >
-                            <Card.Img variant="top" src={res.logo ? `data:image/jpeg;base64,${res.logo} ` : defaultImage} style={{ objectFit: "cover", height: "10rem", width: "100%" }} />
+                            <Card.Img variant="top" src={res.logo ? `${res.logo} ` : defaultImage} style={{ objectFit: "cover", height: "10rem", width: "100%" }} />
                         </Col>
                         <Col className="col-7 p-0">
                             <Card.Body className="p-2" >

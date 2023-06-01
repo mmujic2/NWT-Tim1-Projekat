@@ -160,7 +160,7 @@ function RestaurantOverview() {
                     thumbnail
                     src={
                       restaurant.logo
-                        ? `data:image/jpeg;base64,${restaurant.logo} `
+                        ? `${restaurant.logo} `
                         : defaultImage
                     }
                     style={{

@@ -93,9 +93,9 @@ public class RestaurantController {
             @RequestHeader("uuid") String userUUID,
             @RequestHeader("username") String username) {
 
-        request.setUpdatedBy(userUUID);
+
         Restaurant restaurant = null;
-        restaurant = restaurantService.updateRestaurant(request,id);
+        restaurant = restaurantService.updateRestaurant(request,id,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);

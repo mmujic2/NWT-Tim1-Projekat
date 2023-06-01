@@ -40,14 +40,15 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public Restaurant updateRestaurant(RestaurantUpdateRequest request, Long id) {
+    public Restaurant updateRestaurant(RestaurantUpdateRequest request, Long id,String uuid) {
             var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
                 var restaurant = restaurantRepository.findById(id).orElseThrow(()-> exception);
                 restaurant.setName(request.getName());
                 restaurant.setMapCoordinates(request.getMapCoordinates());
                 restaurant.setAddress(request.getAddress());
+                restaurant.setLogo(request.getLogo());
                 restaurant.setModified(LocalDateTime.now());
-                restaurant.setModifiedBy(request.getUpdatedBy());
+                restaurant.setModifiedBy(uuid);
                 restaurantRepository.save(restaurant);
                 return restaurant;
 
@@ -129,6 +130,10 @@ public class RestaurantService {
     public Restaurant addCategoriesToRestaurant(Long id, List<Long> categoryIds,String userUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->exception);
+        if(restaurant.getCategories().stream().map(c -> c.getId()).collect(Collectors.toList()).equals(categoryIds)) {
+            System.out.println("all match");
+            return restaurant;
+        }
         var categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
         restaurant.setCategories(categories);
         restaurant.setModified(LocalDateTime.now());

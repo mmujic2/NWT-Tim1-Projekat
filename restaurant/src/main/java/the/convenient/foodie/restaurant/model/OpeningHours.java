@@ -2,9 +2,11 @@ package the.convenient.foodie.restaurant.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -253,6 +255,48 @@ public class OpeningHours implements Serializable {
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
+
+    @AssertTrue(message = "Both opening and closing hours for the same day must be specified!")
+    public boolean isBothDefinedOrUndefined() {
+        if((mondayOpen == null && mondayClose != null)
+                || (mondayOpen != null && mondayClose == null)
+                || (tuesdayOpen == null && tuesdayClose != null)
+                || (tuesdayOpen != null && tuesdayClose == null)
+                || (wednesdayOpen == null && wednesdayClose != null)
+                || (wednesdayOpen != null && wednesdayClose == null)
+                || (thursdayOpen == null && thursdayClose != null)
+                || (thursdayOpen != null && thursdayClose == null)
+                || (fridayOpen == null && fridayClose != null)
+                || (fridayOpen != null && fridayClose == null)
+                || (saturdayOpen == null && saturdayClose != null)
+                || (saturdayOpen != null && saturdayClose == null)
+                || (sundayOpen == null && sundayClose != null)
+                || (sundayOpen != null && sundayClose == null))
+            return false;
+
+        return  true;
+    }
+
+    @AssertTrue(message = "There must be at least an hour between opening and closing times!")
+    public boolean isPeriodBetweenOpeningAndClosingValid() {
+        if(mondayOpen!=null && mondayClose != null && Duration.between(mondayOpen,mondayClose).getSeconds()<3600)
+            return  false;
+        if(tuesdayOpen!=null && tuesdayClose != null && Duration.between(tuesdayOpen,tuesdayClose).getSeconds()<3600)
+            return  false;
+        if(wednesdayOpen!=null && wednesdayClose != null && Duration.between(wednesdayOpen,wednesdayClose).getSeconds()<3600)
+            return  false;
+        if(thursdayOpen!=null && thursdayClose != null && Duration.between(thursdayOpen,thursdayClose).getSeconds()<3600)
+            return  false;
+        if(fridayOpen!=null && fridayClose != null && Duration.between(fridayOpen,fridayClose).getSeconds()<3600)
+            return  false;
+        if(saturdayOpen!=null && saturdayClose != null && Duration.between(saturdayOpen,saturdayClose).getSeconds()<3600)
+            return  false;
+        if(sundayOpen!=null && sundayClose != null && Duration.between(sundayOpen,sundayClose).getSeconds()<3600)
+            return  false;
+
+        return true;
+    }
+
 
 
 }
