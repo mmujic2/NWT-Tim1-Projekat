@@ -12,6 +12,7 @@ import authService from '../../../service/auth.service'
 import { right, left } from "@popperjs/core";
 import { KeyboardDoubleArrowUpRounded, KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
 import OrderCard from '../../Order/OrderCard'
+import CouponCard from '../../../restaurantManager/Coupons/CouponCard'
 
 
 function ListContainer({ title, showFilters, items, type = "restaurant", perPage = 4, categories = null, setItems, grid = true }) {
@@ -139,7 +140,12 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
                     <h2 style={{ textAlign: "start", float: left }}>{title}</h2>
                     {user.role == "ADMINISTRATOR" && type == "restaurant" ?
                         <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", height: "50px", marginBottom: 0, marginRight: 0, }}>
-                            <Button style={{ clear: left, textAlign: "center", width: "250px", height: "40px", }} class="rounded">Add restaurant <Add ></Add></Button>
+                            <Button style={{ clear: left, textAlign: "center", width: "fit-content", height: "40px", }} class="rounded">Add restaurant <Add ></Add></Button>
+                        </Container>
+                        : <></>}
+                    {user.role == "RESTAURANT_MANAGER" && type == "coupon" ?
+                        <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", height: "50px", marginBottom: 0, marginRight: 0, }}>
+                            <Button style={{ clear: left, textAlign: "center", width: "fit-content", height: "40px", }} class="rounded">Add coupon <Add ></Add></Button>
                         </Container>
                         : <></>}
                     <hr style={{ clear: left }}></hr>
@@ -152,6 +158,8 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
                                         <RestaurantCard grid={grid} style={{ width: "100%" }} res={i}  />
                                         : type=="order" ?
                                         <OrderCard grid={grid} style={{width:"100%"}} order={i} />
+                                        : type=="coupon" ?
+                                        <CouponCard grid={grid} style={{width:"100%"}} res={i} />
                                         : <></>
                                     }
                                 </Col>
