@@ -6,6 +6,7 @@ import './CouponCard.css'
 import { right, left } from "@popperjs/core";
 import authService from '../../service/auth.service'
 import { useNavigate } from 'react-router-dom';
+import discountService from '../../service/discount.service';
 
 
 
@@ -13,6 +14,19 @@ import { useNavigate } from 'react-router-dom';
 function CouponCard({ res, grid = true }) {
     const user = authService.getCurrentUser();
     const navigate = useNavigate();
+
+    const deleteCoupon=(id)=>{
+        discountService.deleteCoupon(id).then(res => {
+            if (res.status == 200) {
+                console.log(res.data)
+                window.location.reload(false);
+            }
+            else
+                console.log(res)
+    
+        })
+        window.location.reload(false);
+    }
 
     return (
         <>
@@ -29,7 +43,7 @@ function CouponCard({ res, grid = true }) {
                                     Amount left: {res.quantity}
                                     <div style={{ position: "absolute", bottom: "5%", right: "5%" }}>
                                         
-                                        <Button onClick={(e) => { console.log("BRISI"); e.stopPropagation() }} style={{backgroundColor: "#fe724c", borderColor: "#fe724c",color: "white"}} class="rounded"> Delete<Delete fontSize="medium"></Delete></Button>
+                                        <Button onClick={(e) => { deleteCoupon(res.id); e.stopPropagation() }} style={{backgroundColor: "#fe724c", borderColor: "#fe724c",color: "white"}} class="rounded"> Delete<Delete fontSize="medium"></Delete></Button>
                                     </div>
                                 </Card.Text>
                             </Card.Body>

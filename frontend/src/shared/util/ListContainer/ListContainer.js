@@ -13,6 +13,7 @@ import { right, left } from "@popperjs/core";
 import { KeyboardDoubleArrowUpRounded, KeyboardDoubleArrowDownRounded } from '@mui/icons-material'
 import OrderCard from '../../Order/OrderCard'
 import CouponCard from '../../../restaurantManager/Coupons/CouponCard'
+import AddCoupon from '../../../restaurantManager/Coupons/AddCoupon'
 
 
 function ListContainer({ title, showFilters, items, type = "restaurant", perPage = 4, categories = null, setItems, grid = true }) {
@@ -20,6 +21,7 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
     const [currentPage, setCurrentPage] = useState([])
     const [filterData, setFilterData] = useState({ sortBy: "RATING", ascending: false })
     const [loading, setLoading] = useState(false)
+    const [openReportDialog,setOpenReportDialog] = useState(false)
     const [selectedValues, setSelectedValues] = useState([])
     const user = authService.getCurrentUser();
 
@@ -129,6 +131,9 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
         )
     }
 
+    const createCoupon=()=>{
+        setOpenReportDialog(true)
+    }
 
 
 
@@ -145,7 +150,8 @@ function ListContainer({ title, showFilters, items, type = "restaurant", perPage
                         : <></>}
                     {user.role == "RESTAURANT_MANAGER" && type == "coupon" ?
                         <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", height: "50px", marginBottom: 0, marginRight: 0, }}>
-                            <Button style={{ clear: left, textAlign: "center", width: "fit-content", height: "40px", }} class="rounded">Add coupon <Add ></Add></Button>
+                            <Button onClick={createCoupon} style={{ clear: left, textAlign: "center", width: "fit-content", height: "40px", }} class="rounded">Add coupon <Add ></Add></Button>
+                            <AddCoupon open={openReportDialog} setOpen={setOpenReportDialog} ticket={user}></AddCoupon>
                         </Container>
                         : <></>}
                     <hr style={{ clear: left }}></hr>
