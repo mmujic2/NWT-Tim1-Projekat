@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Col, Row, Button, Container, ButtonGroup } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Button,
+  Container,
+  ButtonGroup,
+  Modal,
+} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import "./MenuCard.css";
@@ -18,9 +25,18 @@ function MenuCard({
   setShowAlert,
   setLoading,
 }) {
-  const handleDelete = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleDeleteModal = () => {
+    handleDelete();
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const handleDelete = () => {
     setLoading(true);
     menuService.deleteMenu(menu.id).then((res) => {
       if (res.status == 200) {
@@ -46,6 +62,20 @@ function MenuCard({
 
   return (
     <div>
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this menu</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteModal}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
       {menu ? (
         <Card
           onClick={() => console.log(menu.id)}
@@ -115,7 +145,11 @@ function MenuCard({
                           backgroundColor: "#fe724c",
                           border: "#fe724c",
                         }}
-                        onClick={handleDelete}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowModal(true);
+                        }}
                       >
                         Delete <Delete fontSize="small"></Delete>
                       </Button>
