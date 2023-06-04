@@ -13,7 +13,6 @@ import discountService from '../../service/discount.service';
 
 function CouponCard({ res, grid = true }) {
     const user = authService.getCurrentUser();
-    const navigate = useNavigate();
 
     const deleteCoupon=(id)=>{
         discountService.deleteCoupon(id).then(res => {
@@ -25,7 +24,6 @@ function CouponCard({ res, grid = true }) {
                 console.log(res)
     
         })
-        window.location.reload(false);
     }
 
     return (

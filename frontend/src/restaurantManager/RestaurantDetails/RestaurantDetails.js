@@ -8,11 +8,8 @@ import OrderHistory from '../../customer/CustomerDetails/OrderHistory'
 import RestaurantInformation from './RestaurantInformation'
 import RestaurantGallery from './RestaurantGallery'
 import AddMenu from "../Menus/AddMenu"
-import Loader from '../../shared/util/Loader/Loader'
-import { useEffect } from 'react'
 import MenusOverview from "../Menus/MenusOverview"
-import ListContainer from '../../shared/util/ListContainer/ListContainer'
-import discountService from '../../service/discount.service'
+import CouponList from "../Coupons/CouponList";
 
 function RestaurantDetails() {
   var mounted = false;
@@ -33,21 +30,6 @@ function RestaurantDetails() {
   const user = authService.getCurrentUser();
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const items = ["Nesto", "Nesto", "Nesto"];
-  const [loading, setLoading] = useState(true);
-  const [coupons, setCoupons] = useState();
-  useEffect(() => {
-    if (!mounted) {
-      mounted = true;
-      discountService.getAllCoupons().then((res) => {
-        if (res.status == 200) {
-          setCoupons(res.data);
-          setLoading(false);
-          console.log(res.data);
-        }
-      });
-    }
-  }, []);
 
   return (
     <div>
@@ -62,21 +44,14 @@ function RestaurantDetails() {
         />
       )}
       <MainContainer collapsed={collapsed}>
-        <Loader isOpen={loading}>
           {location.pathname == "/restaurant/details" ? (
             <RestaurantInformation />
           ) : location.pathname=="/restaurant/gallery" ?
           <RestaurantGallery/> 
           : location.pathname == "/restaurant/order/history" ? (
             <OrderHistory />
-          ) : location.pathname == "/restaurant/coupons" && coupons ? (
-            <ListContainer
-              title={"Active coupons"}
-              type="coupon"
-              grid={false}
-              items={coupons}
-              perPage={5}
-            />
+          ) : location.pathname == "/restaurant/coupons" ? (
+            <CouponList />
           ) : location.pathname == "/restaurant/menus" ? (
             <MenusOverview />
           ) : location.pathname == "/menu/add" ? (
@@ -84,7 +59,6 @@ function RestaurantDetails() {
           ) : (
             <></>
           )}
-        </Loader>
       </MainContainer>
     </div>
   );

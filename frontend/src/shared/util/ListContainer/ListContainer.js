@@ -192,6 +192,7 @@ function ListContainer({
   const createCoupon = () => {
     setOpenReportDialog(true);
   };
+  const reload=()=>window.location.reload();
 
   return (
     <>
@@ -228,7 +229,7 @@ function ListContainer({
                 }}
                 class="rounded"
               >
-                Add restaurant <Add></Add>
+                Add a restaurant <Add></Add>
               </Button>
             </Container>
           ) : (
@@ -256,12 +257,14 @@ function ListContainer({
                 }}
                 class="rounded"
               >
-                Add coupon <Add></Add>
+                Add a coupon <Add></Add>
               </Button>
               <AddCoupon
                 open={openReportDialog}
                 setOpen={setOpenReportDialog}
-                ticket={user}
+                onExit={reload}
+                onHide={reload}
+                onExiting={reload}
               ></AddCoupon>
             </Container>
           ) : (

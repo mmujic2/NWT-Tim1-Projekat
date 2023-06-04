@@ -13,7 +13,7 @@ import discountService from '../../service/discount.service';
 import InputAdornment from '@mui/material/InputAdornment';
 import Input from '@mui/material/Input';
 
-export default function AddCoupon({open,setOpen}) {
+export default function AddCoupon({open,setOpen,coupon}) {
    const [newCoupon, setnewCoupon] = useState({ code: "", discount_percentage: 0, quantity:0, restaurant_uuid:"" })
    const [validation,setValidation] = useState(false)
    const user = authService.getCurrentUser();
@@ -21,6 +21,7 @@ export default function AddCoupon({open,setOpen}) {
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload(false);
   };
  
 
@@ -30,7 +31,7 @@ export default function AddCoupon({open,setOpen}) {
     console.log(newCoupon)
     setOpen(false)
     discountService.addCoupon(newCoupon).then(res => {
-        if (res.status == 200) {
+        if (res.status == 201) {
             console.log(res.data)
             window.location.reload(false);
         }
@@ -38,7 +39,6 @@ export default function AddCoupon({open,setOpen}) {
             console.log(res)
 
     })
-    window.location.reload(false);
   }
 
   return (
