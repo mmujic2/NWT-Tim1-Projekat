@@ -29,6 +29,7 @@ public class RestaurantService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+
     public Restaurant addNewRestaurant(RestaurantCreateRequest request) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
@@ -185,5 +186,7 @@ public class RestaurantService {
             throw exception;
         return uuid;
     }
+
+
 
 }

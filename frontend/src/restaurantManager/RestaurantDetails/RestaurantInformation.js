@@ -15,6 +15,7 @@ import { Upload, East } from "@mui/icons-material";
 import dayjs from "dayjs";
 import OpeningHoursForm from "./OpeningHoursForm";
 import authService from "../../service/auth.service";
+import { useNavigate } from "react-router-dom";
 
 function RestaurantInformation() {
   const [validated, setValidated] = useState();
@@ -26,10 +27,33 @@ function RestaurantInformation() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState();
   const inputRef = useRef(null);
-  const [formattedHours, setFormattedHours] = useState();
-  const user = authService.getCurrentUser();
+  const [formattedHours, setFormattedHours] = useState({
+    mondayOpen : dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    tuesdayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    wednesdayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    thursdayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    fridayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    saturdayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    sundayOpen: dayjs(dayjs().format("YYYY-MM-DD") + "T09:00:00"),
+    mondayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    tuesdayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    wednesdayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    thursdayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    fridayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    saturdayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
+    sundayClose: dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00")
 
-  const [checked, setChecked] = useState();
+  });
+  const [checked, setChecked] = useState({
+    mon: false,
+    tue:false,
+    wed:false,
+    thu:false,
+    fri:false,
+    sat:false,
+    sun:false
+  });
+  const navigate = useNavigate();
 
   var mounted = false;
   useEffect(() => {
@@ -40,6 +64,7 @@ function RestaurantInformation() {
         if (res.status == 200) {
           setFormData(res.data);
           setRestaurant(res.data);
+          if(res.data.openingHours) {
           setFormattedHours({
             mondayOpen: res.data.openingHours.mondayOpen
               ? dayjs(
@@ -139,7 +164,7 @@ function RestaurantInformation() {
                     res.data.openingHours.sundayClose
                 )
               : dayjs(dayjs().format("YYYY-MM-DD") + "T22:00:00"),
-          });
+          }); 
           setChecked({
             mon: res.data.openingHours.mondayOpen != null ? true : false,
             tue: res.data.openingHours.tuesdayOpen != null ? true : false,
@@ -148,7 +173,7 @@ function RestaurantInformation() {
             fri: res.data.openingHours.fridayOpen != null ? true : false,
             sat: res.data.openingHours.saturdayOpen != null ? true : false,
             sun: res.data.openingHours.sundayOpen != null ? true : false,
-          });
+          }); }
         } else {
           setAlert({ ...alert, msg: res.data, type: "error" });
           setShowAlert(true);
@@ -456,6 +481,7 @@ function RestaurantInformation() {
         msg={alert.msg}
       ></CustomAlert>
       {formData ? (
+        <>
         <Row>
           <Col className="col-8">
             <Form
@@ -525,35 +551,14 @@ function RestaurantInformation() {
                   />
                 </Row>
               </Form.Group>
+              {checked && formattedHours ? 
               <OpeningHoursForm
                 checked={checked}
                 setChecked={setChecked}
                 formattedHours={formattedHours}
                 setFormattedHours={setFormattedHours}
-              />
-              <ButtonGroup style={{ float: "right" }}>
-                <Button
-                  onClick={revert}
-                  type="button"
-                  className="mb-3"
-                  style={{ width: "fit-content" }}
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  type="submit"
-                  className="mb-3"
-                  style={{
-                    width: "fit-content",
-                    backgroundColor: "#fe724c",
-                    border: "#fe724c",
-                  }}
-                  onClick={handleSubmit}
-                >
-                  Submit changes
-                </Button>
-              </ButtonGroup>
+              /> : <></> }
+              
             </Form>
           </Col>
           <Col className="col-2">
@@ -576,13 +581,46 @@ function RestaurantInformation() {
                 Choose an image
                 <Upload style={{ marginLeft: "10px" }} />
               </Button>
-              <Button style={{ width: "200px" }}>
+              <Button style={{ width: "200px" }} onClick={()=>navigate("/restaurant/gallery",{state: restaurant.id})}>
                 Image gallery
                 <East style={{ marginLeft: "10px" }} />
               </Button>
+              
             </Stack>
+            
           </Col>
+          
         </Row>
+        <Row>
+        <Col className="col-8">
+        </Col>
+        <Col className="col-4">
+          <ButtonGroup style={{width:"fit-content" }}>
+                <Button
+                  onClick={revert}
+                  type="button"
+                  className="mb-3"
+                  style={{ width: "fit-content" }}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  type="submit"
+                  className="mb-3"
+                  style={{
+                    width: "fit-content",
+                    backgroundColor: "#fe724c",
+                    border: "#fe724c",
+                  }}
+                  onClick={handleSubmit}
+                >
+                  Submit changes
+                </Button>
+              </ButtonGroup>
+              </Col>
+        </Row>
+        </>
       ) : (
         <></>
       )}

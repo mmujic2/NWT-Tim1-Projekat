@@ -56,7 +56,8 @@ public class RestaurantResponse {
         this.uuid = restaurant.getUuid();
         this.address=restaurant.getAddress();
         this.mapCoordinates = restaurant.getMapCoordinates();
-        this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
+        if(restaurant.getOpeningHours()!=null)
+            this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
         this.logo=restaurant.getLogo();
         this.categories=restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
         this.managerUuid=restaurant.getManagerUUID();

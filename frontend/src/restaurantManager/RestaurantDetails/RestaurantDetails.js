@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "../../shared/util/Sidebar/Sidebar";
-import authService from "../../service/auth.service";
-import NotFound from "../../shared/util/NotFound";
-import { useLocation } from "react-router-dom";
-import MainContainer from "../../shared/util/RightSideContainer/MainContainer";
-import OrderHistory from "../../customer/CustomerDetails/OrderHistory";
-import RestaurantInformation from "./RestaurantInformation";
-import ListContainer from "../../shared/util/ListContainer/ListContainer";
-import discountService from "../../service/discount.service";
-import Loader from "../../shared/util/Loader/Loader";
-import MenusOverview from "../Menus/MenusOverview";
-import AddMenu from "../Menus/AddMenu";
+import React, { useState } from 'react'
+import Sidebar from '../../shared/util/Sidebar/Sidebar'
+import authService from '../../service/auth.service'
+import NotFound from '../../shared/util/NotFound'
+import { useLocation } from 'react-router-dom'
+import MainContainer from '../../shared/util/RightSideContainer/MainContainer'
+import OrderHistory from '../../customer/CustomerDetails/OrderHistory'
+import RestaurantInformation from './RestaurantInformation'
+import RestaurantGallery from './RestaurantGallery'
+import AddMenu from "../Menus/AddMenu"
+import Loader from '../../shared/util/Loader/Loader'
+import { useEffect } from 'react'
+import MenusOverview from "../Menus/MenusOverview"
+import ListContainer from '../../shared/util/ListContainer/ListContainer'
+import discountService from '../../service/discount.service'
 
 function RestaurantDetails() {
   var mounted = false;
@@ -63,7 +65,9 @@ function RestaurantDetails() {
         <Loader isOpen={loading}>
           {location.pathname == "/restaurant/details" ? (
             <RestaurantInformation />
-          ) : location.pathname == "/restaurant/order/history" ? (
+          ) : location.pathname=="/restaurant/gallery" ?
+          <RestaurantGallery/> 
+          : location.pathname == "/restaurant/order/history" ? (
             <OrderHistory />
           ) : location.pathname == "/restaurant/coupons" && coupons ? (
             <ListContainer
@@ -84,6 +88,6 @@ function RestaurantDetails() {
       </MainContainer>
     </div>
   );
-}
-
+      
+          }
 export default RestaurantDetails;

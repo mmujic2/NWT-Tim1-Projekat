@@ -500,5 +500,31 @@ public class RestaurantController {
 
         return new ResponseEntity<>("Successfully added restaurant images!",HttpStatus.CREATED);
     }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Delete an image from restaurant gallery")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the image with provided ID"),
+            @ApiResponse(responseCode = "404", description = "Image with provided ID not found",
+                    content = @Content)})
+    @DeleteMapping(path="/image/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> deleteRestaurantImage(
+            @Parameter(description = "Image ID", required = true)
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Deleted image with id " + id).setServiceName("restaurant-service")
+                .setUser(username)
+                .build());
+
+        return new ResponseEntity<>(restaurantImageService.deleteRestaurantImage(id),HttpStatus.OK);
+    }
 }
 

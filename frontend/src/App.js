@@ -88,6 +88,10 @@ function App() {
             element={<RestaurantDetails></RestaurantDetails>}
           ></Route>
           <Route
+            path="/restaurant/gallery"
+            element={<RestaurantDetails></RestaurantDetails>}
+          ></Route>
+          <Route
             path="/menu/add"
             element={<RestaurantDetails></RestaurantDetails>}
           ></Route>

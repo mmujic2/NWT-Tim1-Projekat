@@ -48,6 +48,7 @@ public class RestaurantShortResponse {
 
         if(restaurant.getOpeningHours()!=null) {
         var day = LocalDateTime.now().getDayOfWeek();
+
         switch (day) {
             case MONDAY -> {
                 if(restaurant.getOpeningHours().getMondayOpen()==null)

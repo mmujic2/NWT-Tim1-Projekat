@@ -1,5 +1,6 @@
 package the.convenient.foodie.restaurant.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.restaurant.dto.restaurantimage.RestaurantImageResponse;
@@ -38,8 +39,14 @@ public class RestaurantImageService {
 
     public List<RestaurantImageResponse> getRestaurantImages(Long restaurantId) {
         return restaurantImageRepository.findAllByRestaurantId(restaurantId).stream()
-                .map(ri -> new RestaurantImageResponse(ri.getImage()))
+                .map(ri -> new RestaurantImageResponse(ri.getImage(),ri.getId()))
                 .collect(Collectors.toList());
 
+    }
+
+    public String deleteRestaurantImage(Long id) {
+        var image = restaurantImageRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Image with id " + id + " does not exist!"));
+        restaurantImageRepository.delete(image);
+        return "Image with id " + id + " successfully deleted!";
     }
 }
