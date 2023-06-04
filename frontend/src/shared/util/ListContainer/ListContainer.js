@@ -1,25 +1,24 @@
-import React, { useEffect } from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import RestaurantCard from "../../../customer/Restaurant/RestaurantCard";
-import PaginationControl from "../Pagination/PaginationControl";
-import { useState } from "react";
-import Multiselect from "multiselect-react-dropdown";
-import { Form } from "react-bootstrap";
-import { Search, Add } from "@mui/icons-material";
-import restaurantService from "../../../service/restaurant.service";
-import Loader from "../Loader/Loader";
-import authService from "../../../service/auth.service";
-import { right, left } from "@popperjs/core";
 import {
-  KeyboardDoubleArrowUpRounded,
+  Add,
   KeyboardDoubleArrowDownRounded,
+  KeyboardDoubleArrowUpRounded,
+  Search,
 } from "@mui/icons-material";
-import OrderCard from "../../Order/OrderCard";
-import CouponCard from "../../../restaurantManager/Coupons/CouponCard";
-import AddCoupon from "../../../restaurantManager/Coupons/AddCoupon";
+import { left } from "@popperjs/core";
+import Multiselect from "multiselect-react-dropdown";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import MenuItem from "../../../customer/Restaurant/MenuItem";
+import RestaurantCard from "../../../customer/Restaurant/RestaurantCard";
+import AddCoupon from "../../../restaurantManager/Coupons/AddCoupon";
+import CouponCard from "../../../restaurantManager/Coupons/CouponCard";
 import MenuCard from "../../../restaurantManager/Menus/MenuCard";
-
+import authService from "../../../service/auth.service";
+import restaurantService from "../../../service/restaurant.service";
+import OrderCard from "../../Order/OrderCard";
+import Loader from "../Loader/Loader";
+import PaginationControl from "../Pagination/PaginationControl";
 function ListContainer({
   title,
   showFilters,
@@ -45,6 +44,8 @@ function ListContainer({
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [selectedValues, setSelectedValues] = useState([]);
   const user = authService.getCurrentUser();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     goToPage(page);
@@ -279,7 +280,7 @@ function ListContainer({
               }}
             >
               <Button
-                // onClick={createCoupon}
+                onClick={() => navigate("/menu/add")}
                 style={{
                   clear: left,
                   textAlign: "center",
@@ -294,6 +295,7 @@ function ListContainer({
           ) : (
             <></>
           )}
+
           <hr style={{ clear: left }}></hr>
           {showFilters && categories ? filters() : <></>}
           <Row xs={1} md={grid ? 2 : 1} className="gy-2 gx-2 mw-100">
@@ -332,6 +334,12 @@ function ListContainer({
                       showAlert={showAlert}
                       setShowAlert={setShowAlert}
                       setLoading={setLoadingPage}
+                    />
+                  ) : type == "menuItems" ? (
+                    <MenuItem
+                      grid={grid}
+                      style={{ width: "100%" }}
+                      menuItem={i}
                     />
                   ) : (
                     <></>

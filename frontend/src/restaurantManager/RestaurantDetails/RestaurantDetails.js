@@ -10,6 +10,7 @@ import ListContainer from "../../shared/util/ListContainer/ListContainer";
 import discountService from "../../service/discount.service";
 import Loader from "../../shared/util/Loader/Loader";
 import MenusOverview from "../Menus/MenusOverview";
+import AddMenu from "../Menus/AddMenu";
 
 function RestaurantDetails() {
   var mounted = false;
@@ -74,6 +75,8 @@ function RestaurantDetails() {
             />
           ) : location.pathname == "/restaurant/menus" ? (
             <MenusOverview />
+          ) : location.pathname == "/menu/add" ? (
+            <AddMenu />
           ) : (
             <></>
           )}
