@@ -16,10 +16,9 @@ import userService from '../../service/user.service';
 
 function AdminRestaurants() {
     var mounted = false;
-    const [favorites, setFavorites] = useState();
     const [searchResults, setSearchResults] = useState();
-    const [categories, setCategories] = useState();
     const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState();
     const user = authService.getCurrentUser();
 
     useEffect(() => {
@@ -27,46 +26,41 @@ function AdminRestaurants() {
 
             mounted = true;
             setLoading(true) // ... vrati ovo na true
-            restaurantService.getAllRestaurants().then(res => {
+            restaurantService.getAllFullRestaurants().then(res => {
+                console.log(res.data)
                 if (res.status == 200) {
                     res.data.forEach(element => {
                         var cat = element.categories
                         element.categories = ""
                         cat.forEach(c => {
-                            element.categories += c
+                            element.categories += c.name
                             element.categories += ", "
                         })
                         element.categories = element.categories.substring(0,element.categories.length-2)
                         //console.log(element.categories)
                     });
-                    setSearchResults(res.data)
-                    //console.log(res.data)
-
-                    userService.getAllUsers().then(res => {
+                    userService.getAllManagers().then(mng => {
                         //setLoading(false)
-                        if (res.status == 200)
-                            console.log(res.data)
-                    })
-
-                    restaurantService.getAllFullRestaurants().then(res => {
-                        if (res.status == 200)
-                            console.log(res.data)
-                        
-                    })
-
-                    restaurantService.getUserFavorites().then(res => {
-                        if (res.status == 200)
-                            setFavorites(res.data)
-                        else
-                            console.log(res)
-
-                        restaurantService.getCategories().then(res => {
+                        if (mng.status == 200){
+                            mng.data.forEach(el => {
+                                var uuid = el.uuid
+                                var managerName = el.firstname +" " +el.lastname
+                                res.data.forEach(element => {
+                                    if(element.managerUuid == uuid){
+                                        element.manager = managerName
+                                    } 
+                                });
+                            });
+                            setSearchResults(res.data)
+                            //console.log(res.data)
                             setLoading(false)
-                            if (res.status == 200)
-                                setCategories(res.data)
-                        })
-
+                        }
                     })
+                    
+
+                    
+                    
+
                 }
                 else
                     console.log(res)
@@ -83,8 +77,8 @@ function AdminRestaurants() {
 
     const columns = [
         {
-          dataField: "id",
-          text: "Restaurant ID",
+          dataField: "manager",
+          text: "Restaurant manager",
           sort: true
         },
         {
