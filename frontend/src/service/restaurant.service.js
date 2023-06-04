@@ -1,141 +1,119 @@
-import { CartCheck } from 'react-bootstrap-icons';
-import api from './api'
+import api from "./api";
+import TokenService from "./token.service";
 
 class RestaurantService {
   getAllRestaurants() {
     try {
-      return api
-        .get("/restaurant/all")
-        .then(response => {
-          return response;
-        })
+      return api.get("/restaurant/all").then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-
   }
 
   getAllFullRestaurants() {
     try {
-      return api
-        .get("/restaurant/all/full")
-        .then(response => {
-          return response;
-        })
+      return api.get("/restaurant/all/full").then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-
   }
 
   getUserFavorites() {
     try {
-      return api
-        .get("/restaurant/favorites")
-        .then(response => {
-          return response;
-        })
+      return api.get("/restaurant/favorites").then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-
   }
 
   searchRestaurants(filters) {
     let query = "";
     if (filters.name) {
       if (query.length == 0) {
-        query += "?name=" + filters.name
+        query += "?name=" + filters.name;
       } else {
-        query += "&name=" + filters.name
+        query += "&name=" + filters.name;
       }
-
     }
 
     if (filters.offeringDiscount) {
       if (query.length == 0) {
-        query += "?isOfferingDiscount=" + filters.offeringDiscount
+        query += "?isOfferingDiscount=" + filters.offeringDiscount;
       } else {
-        query += "&isOfferingDiscount=" + filters.offeringDiscount
+        query += "&isOfferingDiscount=" + filters.offeringDiscount;
       }
-
     }
 
     if (filters.categoryIds) {
-      filters.categoryIds.forEach(cid => {
+      filters.categoryIds.forEach((cid) => {
         if (query.length == 0) {
-          query += "?categoryIds=" + cid
+          query += "?categoryIds=" + cid;
         } else {
-          query += "&categoryIds=" + cid
+          query += "&categoryIds=" + cid;
         }
-      })
-
-
+      });
     }
 
     if (query.length == 0) {
-      query += "?sortBy=" + filters.sortBy + "&ascending=" + filters.ascending
+      query += "?sortBy=" + filters.sortBy + "&ascending=" + filters.ascending;
     } else {
-      query += "&sortBy=" + filters.sortBy + "&ascending=" + filters.ascending
+      query += "&sortBy=" + filters.sortBy + "&ascending=" + filters.ascending;
     }
 
     try {
-      return api
-        .get("/restaurant/search" + query)
-        .then(response => {
-          return response;
-        })
+      return api.get("/restaurant/search" + query).then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-
   }
 
   getCategories() {
     try {
-      return api
-        .get("/category/all")
-        .then(response => {
-          return response;
-        })
+      return api.get("/category/all").then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
 
   getRestaurant(id) {
     try {
-      return api
-        .get("/restaurant/" + id)
-        .then(response => {
-          return response;
-        })
+      return api.get("/restaurant/" + id).then((response) => {
+        return response;
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   }
 
   getRestaurantImages(id) {
     try {
-      return api
-        .get("/restaurant/image/"+id)
-        .then(response=> {
-          return response;
-        })
-      } catch (e) {
-        console.log(e)
-      }
+      return api.get("/restaurant/image/" + id).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   addRestaurantToFavorites(id) {
     try {
       return api
         .post("/restaurant/" + id + "/add-to-favorites")
-        .then(response => {
+        .then((response) => {
           return response;
-        })
-    } catch(e) {
-      console.log(e)
+        });
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -143,74 +121,72 @@ class RestaurantService {
     try {
       return api
         .put("/restaurant/" + id + "/remove-from-favorites")
-        .then(response => {
+        .then((response) => {
           return response;
-        })
-    } catch(e) {
-      console.log(e)
+        });
+    } catch (e) {
+      console.log(e);
     }
   }
 
   getManagersRestaurant() {
     try {
-      return api
-        .get("/restaurant/manager")
-        .then(response => {
-          return response;
-        })
-    } catch(e) {
-      console.log(e)
+      return api.get("/restaurant/manager").then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
   getManagersRestaurantUUID() {
     try {
-      return api
-        .get("/restaurant/uuid/manager")
-        .then(response => {
-          return response;
-        })
-    } catch(e) {
-      console.log(e)
+      return api.get("/restaurant/uuid/manager").then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  updateRestaurant(req,id) {
+  updateRestaurant(req, id) {
+    try {
+      return api.put("/restaurant/update/" + id, req).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  updateRestaurantCategories(req, id) {
     try {
       return api
-        .put("/restaurant/update/" + id,req)
-        .then(response => {
+        .put("/restaurant/" + id + "/add-categories", req)
+        .then((response) => {
           return response;
-        })
-    } catch(e) {
-      console.log(e)
+        });
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  updateRestaurantCategories(req,id) {
+  updateRestaurantOpeningHours(req, id) {
     try {
       return api
-        .put("/restaurant/" + id + "/add-categories",req)
-        .then(response => {
+        .put("/restaurant/" + id + "/set-opening-hours", req)
+        .then((response) => {
           return response;
-        })
-    } catch(e) {
-      console.log(e)
+        });
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  updateRestaurantOpeningHours(req,id) {
-    try {
-      return api
-        .put("/restaurant/" + id + "/set-opening-hours",req)
-        .then(response => {
-          return response;
-        })
-    } catch(e) {
-      console.log(e)
-    }
+  getCurrentRestaurantUUID() {
+    let restaurantUUID = TokenService.getRestaurantUUID();
+    return restaurantUUID;
   }
-
 }
 
 export default new RestaurantService();

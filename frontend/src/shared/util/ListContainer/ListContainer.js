@@ -18,6 +18,7 @@ import OrderCard from "../../Order/OrderCard";
 import CouponCard from "../../../restaurantManager/Coupons/CouponCard";
 import AddCoupon from "../../../restaurantManager/Coupons/AddCoupon";
 import MenuItem from "../../../customer/Restaurant/MenuItem";
+import MenuCard from "../../../restaurantManager/Menus/MenuCard";
 
 function ListContainer({
   title,
@@ -28,6 +29,11 @@ function ListContainer({
   categories = null,
   setItems,
   grid = true,
+  alert,
+  setAlert,
+  showAlert,
+  setShowAlert,
+  setLoadingPage,
 }) {
   const [page, setPage] = useState();
   const [currentPage, setCurrentPage] = useState([]);
@@ -260,6 +266,34 @@ function ListContainer({
           ) : (
             <></>
           )}
+          {user.role == "RESTAURANT_MANAGER" && type == "menus" ? (
+            <Container
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
+                backgroundColor: "#F5F5F4",
+                height: "50px",
+                marginBottom: 0,
+                marginRight: 0,
+              }}
+            >
+              <Button
+                // onClick={createCoupon}
+                style={{
+                  clear: left,
+                  textAlign: "center",
+                  width: "fit-content",
+                  height: "40px",
+                }}
+                class="rounded"
+              >
+                Add a menu <Add></Add>
+              </Button>
+            </Container>
+          ) : (
+            <></>
+          )}
           <hr style={{ clear: left }}></hr>
           {showFilters && categories ? filters() : <></>}
           <Row xs={1} md={grid ? 2 : 1} className="gy-2 gx-2 mw-100">
@@ -285,6 +319,19 @@ function ListContainer({
                       grid={grid}
                       style={{ width: "100%" }}
                       menuItem={i}
+                    />
+                  ) : type == "menus" ? (
+                    <MenuCard
+                      grid={grid}
+                      style={{ width: "100%" }}
+                      menu={i}
+                      menus={items}
+                      setMenus={setItems}
+                      alert={alert}
+                      setAlert={setAlert}
+                      showAlert={showAlert}
+                      setShowAlert={setShowAlert}
+                      setLoading={setLoadingPage}
                     />
                   ) : (
                     <></>
