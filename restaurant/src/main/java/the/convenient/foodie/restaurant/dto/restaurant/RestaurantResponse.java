@@ -6,6 +6,7 @@ import the.convenient.foodie.restaurant.model.Restaurant;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,12 +41,16 @@ public class RestaurantResponse {
         this.uuid = restaurant.getUuid();
         this.address=restaurant.getAddress();
         this.mapCoordinates = restaurant.getMapCoordinates();
-        this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
+        if(restaurant.getOpeningHours()!=null)
+            this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
         this.logo=restaurant.getLogo();
         this.rating=rating;
         this.customersFavorited = customersFavorited.intValue();
         this.customersRated = customersRated.intValue();
-        this.categories= restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        if(restaurant.getCategories()!=null)
+            this.categories= restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        else
+            this.categories = new ArrayList<>();
         this.managerUuid=restaurant.getManagerUUID();
 
     }
@@ -59,7 +64,10 @@ public class RestaurantResponse {
         if(restaurant.getOpeningHours()!=null)
             this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
         this.logo=restaurant.getLogo();
-        this.categories=restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        if(this.getCategories()!=null)
+            this.categories=restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        else
+            this.categories=new ArrayList<>();
         this.managerUuid=restaurant.getManagerUUID();
 
     }
