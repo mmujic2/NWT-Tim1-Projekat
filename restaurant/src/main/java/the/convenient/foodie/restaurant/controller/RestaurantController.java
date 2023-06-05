@@ -41,7 +41,7 @@ public class RestaurantController {
 
 
 
-    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Create a new restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new restaurant",
@@ -55,7 +55,7 @@ public class RestaurantController {
             @Parameter(description = "Information required for restaurant creation", required = true)
             @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
 
-        request.setManagerUUID(uuid);
+        //request.setManagerUUID(uuid);
         var restaurant = restaurantService.addNewRestaurant(request);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
@@ -273,7 +273,7 @@ public class RestaurantController {
 
     }
 
-    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Delete a restaurant")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the restaurant with provided ID"),

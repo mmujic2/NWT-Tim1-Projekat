@@ -8,7 +8,7 @@ import Sidebar from "./shared/util/Sidebar/Sidebar";
 import Header from "./shared/util/Header";
 import NotFound from "./shared/util/NotFound";
 import Home from "./shared/Home/Home";
-import AdminRestaurants from "./admin/Home/Restaurants";
+import AdminRestaurants from "./admin/Home/AdminRestaurants";
 import CustomerDetails from "./customer/CustomerDetails/CustomerDetails";
 import RestaurantOverview from "./customer/Restaurant/RestaurantOverview";
 import TokenService from "./service/token.service";

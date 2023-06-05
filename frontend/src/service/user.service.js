@@ -16,6 +16,18 @@ class UserService {
         }
   }
 
+  addManager(manager){
+    try{
+      return api
+            .post("/auth/register-manager",manager)
+            .then(response=> {
+              return response;
+            })
+        } catch(e) {
+          console.log(e)
+        }
+  }
+
   getAllManagers() {
     
     try {

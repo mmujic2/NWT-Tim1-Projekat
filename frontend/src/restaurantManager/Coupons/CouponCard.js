@@ -34,14 +34,14 @@ function CouponCard({ res, grid = true }) {
                     <Row >
                         <Col className="col-7 p-0">
                             <Card.Body className="p-2" >
-                                <Card.Title style={{ fontSize: "20px", fontWeight: "bold", float: left, paddingBottom:"10%"}}>Coupon code: {res.code}</Card.Title>
+                                <Card.Title style={{ fontSize: "20px", fontWeight: "bold", float: left, paddingBottom:"8%"}}>Coupon code: {res.code}</Card.Title>
                                 <Card.Text style={{ clear: left, fontSize: "16px" }}>
                                     Discount percentage: {res.discount_percentage}%
                                     <br />
                                     Amount left: {res.quantity}
                                     <div style={{ position: "absolute", bottom: "5%", right: "5%" }}>
                                         
-                                        <Button onClick={(e) => { deleteCoupon(res.id); e.stopPropagation() }} style={{backgroundColor: "#fe724c", borderColor: "#fe724c",color: "white"}} class="rounded"> Delete<Delete fontSize="medium"></Delete></Button>
+                                        <Button onClick={(e) => { deleteCoupon(res.id); e.stopPropagation() }} style={{backgroundColor: "#fe724c", borderColor: "#fe724c",color: "white"}} class="rounded"> Delete<Delete fontSize="small"></Delete></Button>
                                     </div>
                                 </Card.Text>
                             </Card.Body>

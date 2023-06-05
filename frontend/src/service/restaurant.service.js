@@ -12,6 +12,26 @@ class RestaurantService {
     }
   }
 
+  addRestaurant(restaurant){
+    try {
+      return api.post("/restaurant/add",restaurant).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  deleteRestaurant(id){
+    try {
+      return api.delete("/restaurant/"+id).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   getAllFullRestaurants() {
     try {
       return api.get("/restaurant/all/full").then((response) => {
