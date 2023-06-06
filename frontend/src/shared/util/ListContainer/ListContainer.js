@@ -33,6 +33,7 @@ function ListContainer({
   showAlert,
   setShowAlert,
   setLoadingPage,
+  restaurantUuid
 }) {
   const [page, setPage] = useState();
   const [currentPage, setCurrentPage] = useState([]);
@@ -265,6 +266,7 @@ function ListContainer({
                 setOpen={setOpenReportDialog}
                 coupons={items}
                 setCoupons={setItems}
+                restaurantUuid={restaurantUuid}
               ></AddCoupon>
             </Container>
           ) : (

@@ -12,10 +12,11 @@ import authService from '../../service/auth.service';
 import discountService from '../../service/discount.service';
 import InputAdornment from '@mui/material/InputAdornment';
 import Input from '@mui/material/Input';
+import { useEffect } from 'react';
 
-export default function AddCoupon({open,setOpen,coupons,setCoupons}) {
+export default function AddCoupon({open,setOpen,coupons,setCoupons,restaurantUuid}) {
    const user = authService.getCurrentUser();
-   const [newCoupon, setnewCoupon] = useState({ code: "", discount_percentage: 0, quantity:0, restaurant_uuid:user.id })
+   const [newCoupon, setnewCoupon] = useState({ code: "", discount_percentage: 0, quantity:0, restaurant_uuid:restaurantUuid })
    const [validation,setValidation] = useState(false)
    
  
@@ -24,7 +25,6 @@ export default function AddCoupon({open,setOpen,coupons,setCoupons}) {
     setOpen(false);
   };
  
-
   const handleCreate = () => {
     setCoupons(oldArray => [...oldArray,newCoupon] );
     console.log(newCoupon)

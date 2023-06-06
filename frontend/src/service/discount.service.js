@@ -13,6 +13,18 @@ class DiscountService {
     }
   }
 
+  getAllCouponsForRestaurant(restaurant_uuid) {
+    try {
+      return api
+        .get("/coupon/res/" +restaurant_uuid)
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   addCoupon(coupon) {
     try {
       return api
