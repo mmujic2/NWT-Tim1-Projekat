@@ -108,14 +108,16 @@ function RestaurantCard({ res, grid = true }) {
                 <Card.Text style={{ clear: left, fontSize: "14px" }}>
                   {res.address}
                   <br />
-                  <strong>Categories: </strong>
+                  {res.categories!=null && res.categories.length>0 ?
+                  <>
+                  <strong>Categories: </strong> 
                   {res.categories[0] + " "}
                   {res.categories.length > 1 ? "and " : ""}
                   {res.categories.length > 1 ? (
                     <u>{(res.categories.length - 1).toString() + " more"}</u>
                   ) : (
                     ""
-                  )}
+                  )}</> : <></> }
                   <br />
                   {res.open ? (
                     <strong className="text-success">OPEN</strong>

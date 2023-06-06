@@ -2,7 +2,7 @@
 import Modal from 'react-bootstrap/Modal';
 import Map from './Map';
 
-function MapModal({show,setShow,setAddress}) {
+function MapModal({show,setShow,setAddress,title="Enter your delivery address"}) {
  
   const handleClose = () => setShow(false);
   
@@ -10,7 +10,7 @@ function MapModal({show,setShow,setAddress}) {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Enter your delivery address</Modal.Title>
+          <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Map setAddress={setAddress} ></Map>
       </Modal>
