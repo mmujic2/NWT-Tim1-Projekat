@@ -42,13 +42,38 @@ function RestaurantGallery() {
     fileReader.readAsDataURL(files[0]);
 
     fileReader.onload = (event) => {
-      setImages([  {imageData: event.target.result},...images ]);
+      setLoading(true)
+      restaurantService.addImageToRestaurantGallery({imageData: event.target.result},state).then((res)=> {
+        setLoading(false);
+        if(res.status==201) {
+          setImages([  {imageData: event.target.result,id: res.data},...images ]);
+        } else {
+          setAlert({...alert,msg:res.data,type:"error"})
+          setShowAlert(true)
+        }
+      })
+      
     };
+
+
   };
 
   const uploadImage = () => {
     inputRef.current?.click();
   };
+
+  const deleteImage = (e) => {
+    setLoading(true)
+    restaurantService.deleteImageFromRestaurantGallery(e.target.id).then((res)=> {
+      setLoading(false)
+      if(res.status==200) {
+        setImages(images.filter(i => i.id!=e.target.id))
+      } else {
+        setAlert({...alert,msg:res.data,type:"error"})
+        setShowAlert(true)
+      }
+    })
+  }
 
   return (
     <Loader isOpen={loading}>
@@ -59,10 +84,10 @@ function RestaurantGallery() {
         msg={alert.msg}
       ></CustomAlert>
       <Row>
-        <Col className="col-8 mx-2 mt-2">
+        <Col className="col-9 mx-2 mt-2">
           <h2>Image gallery</h2>
         </Col>
-        <Col className="col-3 mt-3">
+        <Col className="col-2 mt-3">
           <input
             ref={inputRef}
             className="d-none"
@@ -98,7 +123,7 @@ function RestaurantGallery() {
                     background: "#fe724c",
                     border:"#fe724c"
                   }}
-                  onClick={(e)=> {console.log(e.target.id)}}
+                  onClick={deleteImage}
                 >
                   Delete
                 </Button>

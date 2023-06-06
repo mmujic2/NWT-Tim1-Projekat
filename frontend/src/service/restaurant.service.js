@@ -207,6 +207,30 @@ class RestaurantService {
     let restaurantUUID = TokenService.getRestaurantUUID();
     return restaurantUUID;
   }
+
+  addImageToRestaurantGallery(req,id) {
+    try {
+      return api
+        .post("/restaurant/image/add/" + id , req)
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  deleteImageFromRestaurantGallery(id) {
+    try {
+      return api
+        .delete("/restaurant/image/" + id)
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
 
 export default new RestaurantService();

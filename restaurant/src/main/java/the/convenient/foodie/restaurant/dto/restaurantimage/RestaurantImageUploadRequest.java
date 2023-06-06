@@ -4,28 +4,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class RestaurantImageUploadRequest {
-    @NotNull(message = "Restaurant id must be specified!")
-    private Long restaurantId;
+
 
     @NotNull(message = "Image data must not be empty!")
     @NotBlank(message = "Image data must not be empty!")
     private String imageData;
 
-    public RestaurantImageUploadRequest(Long restaurantId, String imageData) {
-        this.restaurantId = restaurantId;
+    public RestaurantImageUploadRequest( String imageData) {
         this.imageData = imageData;
     }
 
     public RestaurantImageUploadRequest() {
     }
 
-    public Long getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(Long restaurantId) {
-        this.restaurantId = restaurantId;
-    }
 
     public String getImageData() {
         return imageData;

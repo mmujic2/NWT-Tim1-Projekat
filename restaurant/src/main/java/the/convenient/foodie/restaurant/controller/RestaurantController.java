@@ -468,24 +468,24 @@ public class RestaurantController {
     }
 
     @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
-    @Operation(description = "Upload images to restaurant gallery")
+    @Operation(description = "Upload image to restaurant gallery")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully added restaurant images",
+            @ApiResponse(responseCode = "201", description = "Successfully added restaurant image",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Restaurant.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content)})
     @PostMapping(path="/image/add/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ResponseEntity<String> addRestaurantImages (
+    public @ResponseBody ResponseEntity<Long> addRestaurantImage (
             @Parameter(description = "Image data", required = true)
-            @Valid @RequestBody List<RestaurantImageUploadRequest> request,
+            @Valid @RequestBody RestaurantImageUploadRequest request,
             @Parameter (description = "Restaurant id", required = true)
             @PathVariable("id") Long restaurantid,
             @RequestHeader("uuid") String uuid,
             @RequestHeader("username") String username) {
 
-       restaurantImageService.uploadRestaurantImages(request,uuid,restaurantid);
+       var id = restaurantImageService.uploadRestaurantImage(request,uuid,restaurantid);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -498,7 +498,7 @@ public class RestaurantController {
                 .build());
 
 
-        return new ResponseEntity<>("Successfully added restaurant images!",HttpStatus.CREATED);
+        return new ResponseEntity<>(id,HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('RESTAURANT_MANAGER')")

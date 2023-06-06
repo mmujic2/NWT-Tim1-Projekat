@@ -23,18 +23,17 @@ public class RestaurantImageService {
     RestaurantRepository restaurantRepository;
 
 
-    public void uploadRestaurantImages(List<RestaurantImageUploadRequest> imageData,String userUUID, Long restaurantId) {
-        List<RestaurantImage> restaurantImages = new ArrayList<>();
-        imageData.forEach(data-> {
-            var restaurantImage = new RestaurantImage();
-            restaurantImage.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
-            restaurantImage.setCreated(LocalDateTime.now());
-            restaurantImage.setCreatedBy(userUUID);
-            restaurantImage.setImage(data.getImageData());
-            restaurantImages.add(restaurantImage);
-        });
+    public Long uploadRestaurantImage(RestaurantImageUploadRequest imageData,String userUUID, Long restaurantId) {
 
-        restaurantImageRepository.saveAll(restaurantImages);
+        var restaurantImage = new RestaurantImage();
+        restaurantImage.setRestaurant(restaurantRepository.findById(restaurantId).orElseThrow());
+        restaurantImage.setCreated(LocalDateTime.now());
+        restaurantImage.setCreatedBy(userUUID);
+        restaurantImage.setImage(imageData.getImageData());
+
+
+        var image = restaurantImageRepository.save(restaurantImage);
+        return image.getId();
     }
 
     public List<RestaurantImageResponse> getRestaurantImages(Long restaurantId) {
