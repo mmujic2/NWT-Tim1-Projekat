@@ -45,6 +45,8 @@ function ListContainer({
   const [selectedValues, setSelectedValues] = useState([]);
   const user = authService.getCurrentUser();
 
+  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -192,7 +194,6 @@ function ListContainer({
   const createCoupon = () => {
     setOpenReportDialog(true);
   };
-  const reload=()=>window.location.reload();
 
   return (
     <>
@@ -262,9 +263,8 @@ function ListContainer({
               <AddCoupon
                 open={openReportDialog}
                 setOpen={setOpenReportDialog}
-                onExit={reload}
-                onHide={reload}
-                onExiting={reload}
+                coupons={items}
+                setCoupons={setItems}
               ></AddCoupon>
             </Container>
           ) : (
@@ -318,7 +318,7 @@ function ListContainer({
                       order={i}
                     />
                   ) : type == "coupon" ? (
-                    <CouponCard grid={grid} style={{ width: "100%" }} res={i} />
+                    <CouponCard coupon={i} setCoupons={setItems} style={{ width: "100%" }}   />
                   ) : type == "menu" ? (
                     <MenuItem
                       grid={grid}

@@ -25,6 +25,7 @@ function CouponList() {
                   type="coupon"
                   grid={false}
                   items={coupons}
+                  setItems={setCoupons}
                   perPage={5}
                 /> : <></>
             }

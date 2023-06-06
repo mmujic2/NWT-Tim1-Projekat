@@ -13,27 +13,25 @@ import discountService from '../../service/discount.service';
 import InputAdornment from '@mui/material/InputAdornment';
 import Input from '@mui/material/Input';
 
-export default function AddCoupon({open,setOpen,coupon}) {
-   const [newCoupon, setnewCoupon] = useState({ code: "", discount_percentage: 0, quantity:0, restaurant_uuid:"" })
-   const [validation,setValidation] = useState(false)
+export default function AddCoupon({open,setOpen,coupons,setCoupons}) {
    const user = authService.getCurrentUser();
+   const [newCoupon, setnewCoupon] = useState({ code: "", discount_percentage: 0, quantity:0, restaurant_uuid:user.id })
+   const [validation,setValidation] = useState(false)
+   
  
 
   const handleClose = () => {
     setOpen(false);
-    window.location.reload(false);
   };
  
 
   const handleCreate = () => {
-    
-    setnewCoupon({code:newCoupon.code, discount_percentage:newCoupon.discount_percentage, quantity:newCoupon.restaurant_uuid, restaurant_uuid:user.id })
+    setCoupons(oldArray => [...oldArray,newCoupon] );
     console.log(newCoupon)
     setOpen(false)
     discountService.addCoupon(newCoupon).then(res => {
         if (res.status == 201) {
             console.log(res.data)
-            window.location.reload(false);
         }
         else
             console.log(res)
@@ -59,7 +57,7 @@ export default function AddCoupon({open,setOpen,coupon}) {
             onChange={e => {
                 if(e.target.value.length == 12) {
                     setValidation(true)
-                    setnewCoupon({code:e.target.value, discount_percentage: newCoupon.discount_percentage, quantity:newCoupon.quantity, restaurant_uuid:newCoupon.restaurant_uuid })
+                    setnewCoupon({...newCoupon, ...{code:e.target.value}})
                 }
                 else setValidation(false)
             }}
@@ -73,7 +71,7 @@ export default function AddCoupon({open,setOpen,coupon}) {
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
           onChange={e => {
-            setnewCoupon({code:newCoupon.code, discount_percentage: e.target.value, quantity:newCoupon.quantity, restaurant_uuid:newCoupon.restaurant_uuid })
+            setnewCoupon({...newCoupon, ...{discount_percentage: e.target.value}})
         }}
         />
         <br></br>
@@ -86,7 +84,7 @@ export default function AddCoupon({open,setOpen,coupon}) {
             type="number"
             variant="standard"
             onChange={e => {
-                setnewCoupon({code:newCoupon.code, discount_percentage:newCoupon.discount_percentage, quantity:e.target.value, restaurant_uuid:newCoupon.restaurant_uuid })
+                setnewCoupon({...newCoupon, ...{quantity: e.target.value}})
             }}
           />
         </DialogContent>
