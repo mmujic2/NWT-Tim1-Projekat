@@ -110,18 +110,26 @@ function AdminRestaurants() {
       const rowEvents = {
         onClick: (e, row, rowIndex) => {
           console.log(row) // ovo je objekat u tom redu
-          //deleteRestaurant(row.id)
+          //deleteRestaurant(row.id,row.managerUuid)
         }
       };
 
 
-      const deleteRestaurant = (id) => {
+      const deleteRestaurant = (id,managerUuid) => {
         console.log("Gledaj ovo")
         console.log(id)
         setSearchResults((current) =>
             current.filter((rest) => rest.id !== id)
         );
+
+        
+
         restaurantService.deleteRestaurant(id).then( res => {
+            console.log(res);
+        })
+
+        //obrisi i menadzera
+        userService.deleteUserByUUID(managerUuid).then(res=> {
             console.log(res);
         })
       }

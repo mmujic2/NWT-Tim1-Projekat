@@ -58,4 +58,10 @@ public class UserService {
         return "User with id " + id + " is successfully deleted!";
     }
 
+    public String deleteUserByUUID(String uuid){
+        var us = userRepository.findByUUID(uuid).orElseThrow(()-> new EntityNotFoundException("User with id " + uuid + " does not exist!"));
+        userRepository.delete(us);
+        return "User with UUID " + uuid + " is successfully deleted!";
+    }
+
 }

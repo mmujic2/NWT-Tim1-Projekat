@@ -40,6 +40,18 @@ class UserService {
         }
   }
 
+  deleteUserByUUID(uuid){
+    try{
+      return api
+            .delete("/user/uuid/"+uuid)
+            .then(response=> {
+              return response;
+            })
+        } catch(e) {
+          console.log(e)
+        }
+  }
+
   getAllManagers() {
     
     try {
@@ -65,6 +77,8 @@ class UserService {
           console.log(e)
         }
   }
+
+
 
 
 

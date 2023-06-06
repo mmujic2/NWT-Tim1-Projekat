@@ -36,7 +36,7 @@ function AdminCouriers() {
     }, [])
 
     const addNewCourier = () => {
-        //setOpenReportDialog(true);
+        setOpenReportDialog(true);
         console.log("Kreiranje couriera");
         //console.log(openReportDialog);
     }
@@ -75,7 +75,7 @@ function AdminCouriers() {
       const rowEvents = {
         onClick: (e, row, rowIndex) => {
           console.log(row) // ovo je objekat u tom redu
-          //deleteCouriers(row.id) // ovo upali ako hoces da brises couriere
+        //deleteCouriers(row.id) // ovo upali ako hoces da brises couriere
         }
       };
 
