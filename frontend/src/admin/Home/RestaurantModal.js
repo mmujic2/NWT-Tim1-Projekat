@@ -64,15 +64,16 @@ function RestaurantModal({ show, setShow, restaurants, setRestaurants }) {
 
     setRestaurants((oldArray) => [...oldArray, restoran]); // privremeno da doda dok se ne povuce iz baze ponovo
 
-    setShow(false);
+    
     console.log("Ulazim u servis");
     userService.addManager(newManager).then((res) => {
-      console.log(res.data.user.uuid);
+
+      console.log(res.data);
       let rest = newRestaurant;
       rest = { ...rest, ...{ managerUUID: res.data.user.uuid } };
 
       console.log(rest);
-
+      setShow(false);
       restaurantService.addRestaurant(rest).then((resz) => {
         console.log("Uspjesno dodan restoran za managera");
         console.log(resz.data);

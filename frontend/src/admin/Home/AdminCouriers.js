@@ -75,18 +75,18 @@ function AdminCouriers() {
       const rowEvents = {
         onClick: (e, row, rowIndex) => {
           console.log(row) // ovo je objekat u tom redu
-          //deleteRestaurant(row.id)
+          //deleteCouriers(row.id) // ovo upali ako hoces da brises couriere
         }
       };
 
 
-      const deleteRestaurant = (id) => {
+      const deleteCouriers = (id) => {
         console.log("Gledaj ovo")
         console.log(id)
         setSearchResults((current) =>
             current.filter((rest) => rest.id !== id)
         );
-        restaurantService.deleteRestaurant(id).then( res => {
+        userService.deleteUser(id).then( res => {
             console.log(res);
         })
       }

@@ -17,7 +17,7 @@ function CouponList() {
         setRestaurantUuid(res.data);
         console.log(res.data)
         console.log(user)
-        discountService.getAllCouponsForRestaurant(res.data).then((resp) => {
+        discountService.getAllCouponsForRestaurant(res.data).then((resp) => { 
           if (resp.status == 200) {
             setCoupons(resp.data);
             setLoading(false);

@@ -28,6 +28,18 @@ class UserService {
         }
   }
 
+  deleteUser(id){
+    try{
+      return api
+            .delete("/user/"+id)
+            .then(response=> {
+              return response;
+            })
+        } catch(e) {
+          console.log(e)
+        }
+  }
+
   getAllManagers() {
     
     try {
