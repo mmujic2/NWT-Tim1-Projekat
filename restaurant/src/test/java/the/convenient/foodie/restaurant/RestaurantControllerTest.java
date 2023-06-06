@@ -187,7 +187,7 @@ public class RestaurantControllerTest {
 
     @Test
     public void addShouldCreateNewRestaurantWhenInformationValid() throws Exception {
-        RestaurantCreateRequest request = new RestaurantCreateRequest("New restaurant",UUIDGenerator.generateType1UUID().toString());
+        RestaurantCreateRequest request = new RestaurantCreateRequest("New restaurant",UUIDGenerator.generateType1UUID().toString(),"Test adresa","43.855192423704246, 18.399534998146528");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                 post("/restaurant/add")
                 .content(asJsonString(request))
@@ -204,7 +204,7 @@ public class RestaurantControllerTest {
 
     @Test
     public void addShouldNotCreateNewRestaurantWhenInformationInvalid() throws Exception {
-        RestaurantCreateRequest request = new RestaurantCreateRequest("T","");
+        RestaurantCreateRequest request = new RestaurantCreateRequest("T","","","43.855192423704246, 18.399534998146528");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.
                         post("/restaurant/add")
                         .content(asJsonString(request))

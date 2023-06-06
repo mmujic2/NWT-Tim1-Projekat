@@ -55,8 +55,8 @@ public class RestaurantController {
             @Parameter(description = "Information required for restaurant creation", required = true)
             @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
 
-        //request.setManagerUUID(uuid);
-        var restaurant = restaurantService.addNewRestaurant(request);
+
+        var restaurant = restaurantService.addNewRestaurant(request,username);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);

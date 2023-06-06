@@ -30,12 +30,14 @@ public class RestaurantService {
     private ReviewRepository reviewRepository;
 
 
-    public Restaurant addNewRestaurant(RestaurantCreateRequest request) {
+    public Restaurant addNewRestaurant(RestaurantCreateRequest request, String username) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
         restaurant.setManagerUUID(request.getManagerUUID());
+        restaurant.setAddress(request.getAddress());
+        restaurant.setMapCoordinates(request.getMapCoordinates());
         restaurant.setCreated(LocalDateTime.now());
-        restaurant.setCreatedBy(request.getManagerUUID());
+        restaurant.setCreatedBy(username);
         restaurantRepository.save(restaurant);
 
         return restaurant;
