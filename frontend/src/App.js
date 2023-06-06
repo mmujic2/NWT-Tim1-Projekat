@@ -17,6 +17,7 @@ import { useState } from "react";
 import Alert from "./shared/util/Alert";
 import RestaurantDetails from "./restaurantManager/RestaurantDetails/RestaurantDetails";
 import AddMenu from "./restaurantManager/Menus/AddMenu";
+import AdminCouriers from "./admin/Home/AdminCouriers";
 
 function App() {
   const [show, setShow] = useState(false);
@@ -94,6 +95,10 @@ function App() {
           <Route
             path="/menu/add"
             element={<RestaurantDetails></RestaurantDetails>}
+          ></Route>
+          <Route
+            path="/admin/couriers"
+            element={<AdminCouriers></AdminCouriers>}
           ></Route>
         </Route>
       </Routes>
