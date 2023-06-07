@@ -22,7 +22,7 @@
     "force": "^0.0.3",
     "http-proxy-middleware": "^2.0.6",
     "maplibre-gl": "^2.4.0",
-    "mdb-react-ui-kit": "^6.0.0",
+    "mdb-react-ui-kit": "^6.1.0",
     "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",

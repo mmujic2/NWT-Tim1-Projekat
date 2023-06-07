@@ -10,7 +10,28 @@ import { right, left } from "@popperjs/core";
 import authService from "../../service/auth.service";
 import { useNavigate } from "react-router-dom";
 import priceImage from "../../images/price.png";
-function MenuItem({ menuItem, grid = true }) {
+import { MDBInput } from 'mdb-react-ui-kit';
+import { useState } from "react";
+
+function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
+  const [value, setValue] = useState(0);
+
+  const addToOrder = (e) => {
+    var found = false;
+    var orderListCopy = JSON.parse(JSON.stringify(orderList));
+    for(var i = 0; i < orderListCopy.length; i++) {
+      if(orderListCopy[i].menuItem.id == menuItem.id) {
+        orderListCopy[i].count += parseInt(value);
+        found = true;
+        break;
+      }
+    }
+    if(!found) {
+      orderListCopy.push({menuItem: menuItem, count: parseInt(value)})
+    }
+    setOrderList(orderListCopy)
+  }
+
   return (
     <div>
       <Card
@@ -36,10 +57,46 @@ function MenuItem({ menuItem, grid = true }) {
                 style={{ fontSize: "16px", fontWeight: "bold", float: left }}
               >
                 {menuItem.name}
+                
               </Card.Title>
 
               <Card.Text style={{ clear: left, fontSize: "14px" }}>
                 <div style={{ color: "#606060" }}>{menuItem.description}</div>
+                {setOrderList != undefined && orderList != undefined 
+                ? 
+                  <div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 15,
+                        right: 20,
+                        display: "flex",
+                      }}
+                    >
+                      <Row style={{marginBottom: "5px", marginLeft: "0px"}}>
+                        <Col style={{padding: "0px"}}>
+                          <MDBInput
+                            value={value} 
+                            onChange={(e) => setValue(e.target.value)} 
+                            id='typeNumber' 
+                            type='number'
+                            style={{width: "50px", height: "25px", fontSize: "16px"}}/>
+                        </Col>
+                        <Col style={{padding: "0px"}}>
+                          <Button
+                            style={{width: "50px", height: "25px", fontSize: "16px", padding: "0px"}}
+                            onClick={(e) => addToOrder(e)}
+                          > 
+                          Add
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  </div>
+                :
+                  <></>
+                }
+                
 
                 <br />
                 <div>

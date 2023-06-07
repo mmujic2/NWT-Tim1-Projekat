@@ -2,14 +2,57 @@ import React, { useEffect, useState } from "react";
 import menuService from "../../service/menu.service";
 import { Tabs, Tab } from "react-bootstrap";
 import "./MenuOverview.css";
+import { Trash, X, HeartFill } from "react-bootstrap-icons";
 import MenuItem from "./MenuItem";
 import Loader from "../../shared/util/Loader/Loader";
 import ListContainer from "../../shared/util/ListContainer/ListContainer";
 import { Spinner, Container } from "react-bootstrap";
+import {Row, Col, Button} from "react-bootstrap";
 
 function MenuOverview({ restaurantUUID }) {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [orderList, setOrderList] = useState([]);
+
+  useEffect(() => {
+    console.log(orderList)
+  }, [orderList])
+
+  const removeItemFromOrder = (item) => {
+    var newOrderList = []
+    orderList.forEach(i => {if(i.menuItem.id != item.menuItem.id) newOrderList.push(i)})
+    setOrderList(newOrderList)
+  }
+
+  const orderListToUI = () => {
+    return (orderList.map(item => (
+      <>
+        <Row style={{marginBottom: "5px"}}>
+          <Col xs={7}>
+            {item.menuItem.name} x{item.count}
+          </Col>
+          <Col xs={3}>
+            {(item.menuItem.discount_price != null ? item.menuItem.discount_price : item.menuItem.price) * item.count} KM
+          </Col>
+          <Col xs={1}>
+            <Button
+              onClick={() => removeItemFromOrder(item)}
+              style={{
+                backgroundColor: "#fe724c",
+                borderColor: "#fe724c",
+                width: "fit-content",
+                height: "25px",
+                width: "25px",
+                padding: "0px"
+              }}
+            >
+              <Trash></Trash>
+            </Button>
+          </Col>
+        </Row>
+      </>
+    )))
+  }
 
   useEffect(() => {
     if (restaurantUUID != null) {
@@ -55,6 +98,8 @@ function MenuOverview({ restaurantUUID }) {
                           perPage={5}
                           type={"menu"}
                           grid={false}
+                          orderList={orderList}
+                          setOrderList={setOrderList}
                         ></ListContainer>
                       ) : (
                         <div
@@ -79,6 +124,19 @@ function MenuOverview({ restaurantUUID }) {
                       }}
                     >
                       Order
+                      <Container
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        width: "100%",
+                        margin: "auto",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                      }}
+                      >
+                        {orderListToUI()}
+                        
+                      </Container>
+
                     </Container>
                   </>
                 ) : (

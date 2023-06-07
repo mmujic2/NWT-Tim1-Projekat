@@ -33,7 +33,9 @@ function ListContainer({
   showAlert,
   setShowAlert,
   setLoadingPage,
-  restaurantUuid
+  restaurantUuid,
+  setOrderList,
+  orderList
 }) {
   const [page, setPage] = useState();
   const [currentPage, setCurrentPage] = useState([]);
@@ -326,6 +328,9 @@ function ListContainer({
                       grid={grid}
                       style={{ width: "100%" }}
                       menuItem={i}
+                      setOrderList={setOrderList}
+                      orderList={orderList}
+                      
                     />
                   ) : type == "menus" ? (
                     <MenuCard
@@ -345,6 +350,8 @@ function ListContainer({
                       grid={grid}
                       style={{ width: "100%" }}
                       menuItem={i}
+                      setOrderList={setOrderList}
+                      orderList={orderList}
                     />
                   ) : (
                     <></>
