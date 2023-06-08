@@ -10,6 +10,8 @@ import RestaurantGallery from './RestaurantGallery'
 import AddMenu from "../Menus/AddMenu"
 import MenusOverview from "../Menus/MenusOverview"
 import CouponList from "../Coupons/CouponList";
+import Reviews from '../Reviews/Reviews'
+
 
 function RestaurantDetails() {
   var mounted = false;
@@ -56,9 +58,9 @@ function RestaurantDetails() {
             <MenusOverview />
           ) : location.pathname == "/menu/add" ? (
             <AddMenu />
-          ) : (
-            <></>
-          )}
+          ) : location.pathname == "/restaurant/reviews" ? (
+            <Reviews/>
+          ) : (<></>)}
       </MainContainer>
     </div>
   );

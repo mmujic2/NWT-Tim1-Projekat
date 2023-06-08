@@ -2,6 +2,7 @@ package the.convenient.foodie.restaurant.repository.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import the.convenient.foodie.restaurant.dto.review.ReviewResponse;
 import the.convenient.foodie.restaurant.model.Restaurant;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.repository.custom.ReviewRepositoryCustom;
@@ -13,9 +14,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<Review> getReviewsForRestaurant(Long restaurantId) {
-        var hql = "SELECT r from Review r  where r.restaurant.id = :restaurantId order by r.created desc";
-        var query = entityManager.createQuery(hql, Review.class).setParameter("restaurantId",restaurantId);
+    public List<ReviewResponse> getReviewsForRestaurant(String restaurantUUID) {
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.review.ReviewResponse(r.id,r.userUUID,r.restaurant.id,r.restaurant.uuid,r.comment,r.rating,r.created) from Review r  where r.restaurant.uuid = :restaurantUUID order by r.created desc";
+        var query = entityManager.createQuery(hql, ReviewResponse.class).setParameter("restaurantUUID",restaurantUUID);
         return query.getResultList();
     }
 

@@ -24,11 +24,12 @@ function RestaurantCard({ res, grid = true }) {
             height: "10rem",
             overflow: "hidden",
             backgroundColor: "#D9D9D9",
+            padding:0
           }}
           className="box"
         >
           <Row>
-            <Col className={grid ? "col-5 px-2" : "col-3 px-2"}>
+            <Col className={grid ? "col-5 " : "col-3 "}>
               <Card.Img
                 variant="top"
                 src={res.logo ? `${res.logo} ` : defaultImage}

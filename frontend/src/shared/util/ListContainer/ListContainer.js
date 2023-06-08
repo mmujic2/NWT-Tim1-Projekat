@@ -19,6 +19,7 @@ import restaurantService from "../../../service/restaurant.service";
 import OrderCard from "../../Order/OrderCard";
 import Loader from "../Loader/Loader";
 import PaginationControl from "../Pagination/PaginationControl";
+import ReviewCard from "../../../restaurantManager/Reviews/ReviewCard";
 function ListContainer({
   title,
   showFilters,
@@ -360,8 +361,15 @@ function ListContainer({
                       menuItem={i}
                       setOrderList={setOrderList}
                       orderList={orderList}
-                    />
-                  ) : (
+                    />)
+                    : type == "review" ? (
+                      <ReviewCard
+                      grid={grid}
+                      style={{ width: "100%" }}
+                      review={i}
+                      />
+                    )
+                   : (
                     <></>
                   )}
                 </Col>

@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.dto.review.ReviewResponse;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
 import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
@@ -35,10 +36,10 @@ public class ReviewService {
         return review;
     }
 
-    public List<Review> getReviewsForRestaurant(Long restaurantId) {
-        var exception = new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!");
-        restaurantRepository.findById(restaurantId).orElseThrow(()-> exception);
-        return reviewRepository.getReviewsForRestaurant(restaurantId);
+    public List<ReviewResponse> getReviewsForRestaurant(String restaurantUUID) {
+        var exception = new EntityNotFoundException("Restaurant with uuid " + restaurantUUID + " does not exist!");
+        restaurantRepository.findByUUID(restaurantUUID).orElseThrow(()-> exception);
+        return reviewRepository.getReviewsForRestaurant(restaurantUUID);
     }
 
     public List<Review> getUserReviews(String userUUID) {

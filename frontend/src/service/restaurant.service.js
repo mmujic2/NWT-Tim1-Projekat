@@ -231,6 +231,18 @@ class RestaurantService {
       console.log(e);
     }
   }
+
+  getReviews() {
+    try {
+      return api
+        .get("/review/restaurant/" + this.getCurrentRestaurantUUID())
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
 
 export default new RestaurantService();
