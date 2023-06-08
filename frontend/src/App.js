@@ -28,7 +28,6 @@ function App() {
       {TokenService.getUserUUID() != undefined ? (
         <>
           <Alert
-            type="success"
             msg={socketMsg}
             show={show}
             setShow={setShow}
