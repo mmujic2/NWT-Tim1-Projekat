@@ -8,7 +8,10 @@ function CustomAlert({ type, msg={}, show, setShow }) {
     const getMessage = (message) => {
         if(message.hasOwnProperty("errors")) {
             return message.errors.map(i => <span>{i}<br></br></span>)
-        } else {
+        } else if(message.hasOwnProperty("error")) {
+            return message.error;
+        }
+        else {
             return message
         }
     }

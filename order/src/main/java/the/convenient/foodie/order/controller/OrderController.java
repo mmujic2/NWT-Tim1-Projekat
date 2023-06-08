@@ -275,7 +275,7 @@ public class OrderController {
         return ResponseEntity.ok(orderRepository.getOrdersByUserUUID(userUuid).stream().map(OrderResponse::new).toList());
     }
 
-    @PreAuthorize("hasAnyRole('COURIER','RESTAURANT_MANAGER')")
+    @PreAuthorize("hasAnyRole('COURIER','RESTAURANT_MANAGER','CUSTOMER')")
     @PutMapping("/status/{id}/{status}")
     public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
         var order = orderRepository.findById(id).orElseThrow();
@@ -303,8 +303,8 @@ public class OrderController {
             System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message)));
             restTemplate.postForObject("http://websocket-service/websocket/message/" + uuid,
                     new ObjectMapper().writeValueAsString(new WebSocketMessage(message)), String.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
         }
     }
 

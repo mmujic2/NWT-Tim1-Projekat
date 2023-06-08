@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import Actions from './Actions';
 
 
-function OrderCard({ order }) {
+function OrderCard({ order,moveOrder,changeOrder }) {
     const [noActions,setNoActions] = useState(false)
     const navigate = useNavigate();
     const user = authService.getCurrentUser();
@@ -104,7 +104,7 @@ function OrderCard({ order }) {
                         </Card.Body>
                     </Card>
                     <div style={{float:"right"}}>
-                    <Actions status={order.orderStatus} setNoActions={setNoActions}/>
+                    <Actions order={order} setNoActions={setNoActions} moveOrder={moveOrder} setOrder={changeOrder}/>
                     </div>
                 </>
                 : <></>}

@@ -19,10 +19,12 @@ function Login({ setPage }) {
 
   const submit = (e) => {
     e.preventDefault();
+    document.body.style.cursor = "wait"
     auth.login(username, password).then((res) => {
       if (res.status == 200) {
           if(res.data.user.role == "RESTAURANT_MANAGER") {
             restaurantService.getManagersRestaurantUUID().then(res => {
+              document.body.style.cursor = "default"
                 if(res.status==200) {
                   localStorage.setItem("restaurantUUID", res.data)
                   navigate("/");
@@ -32,10 +34,13 @@ function Login({ setPage }) {
             })
 
           } else {
+            document.body.style.cursor = "default"
             navigate("/");
           } 
       }
-      else if (res.status == 403) setShowError(true);
+      else if (res.status == 403) {
+        document.body.style.cursor = "default"
+        setShowError(true);}
     });
   };
   return (

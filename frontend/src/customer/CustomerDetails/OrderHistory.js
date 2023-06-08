@@ -4,6 +4,7 @@ import orderService from '../../service/order.service'
 import Loader from '../../shared/util/Loader/Loader'
 import CustomAlert from '../../shared/util/Alert'
 import authService from '../../service/auth.service'
+import restaurantService from '../../service/restaurant.service'
 
 
 function OrderHistory() {
@@ -28,7 +29,7 @@ function OrderHistory() {
         }
       })
     } else if(role == "RESTAURANT_MANAGER") {
-      orderService.getRestaurantPastOrders().then((res) => {
+      orderService.getRestaurantPastOrders(restaurantService.getCurrentRestaurantUUID()).then((res) => {
         setLoading(false)
         if (res.status == 200) {
           setOrders(res.data)
@@ -51,6 +52,7 @@ function OrderHistory() {
         type="order"
         grid={false}
         items={orders}
+        setItems={setOrders}
         perPage={5}
       /> : <></>}
     </Loader>

@@ -35,7 +35,8 @@ function ListContainer({
   setLoadingPage,
   restaurantUuid,
   setOrderList,
-  orderList
+  orderList,
+  moveOrder
 }) {
   const [page, setPage] = useState();
   const [currentPage, setCurrentPage] = useState([]);
@@ -88,6 +89,8 @@ function ListContainer({
     setSelectedValues(e);
     setFilterData({ ...filterData, categoryIds: ids });
   };
+
+  const changeOrder = (o) => setItems([o,...items.filter(item=> item.id!=o.id)])
 
   const filters = () => {
     const options = categories.map((c) => ({ key: c.name, cat: c.id }));
@@ -320,6 +323,8 @@ function ListContainer({
                       grid={grid}
                       style={{ width: "100%" }}
                       order={i}
+                      moveOrder={moveOrder}
+                      changeOrder={changeOrder}
                     />
                   ) : type == "coupon" ? (
                     <CouponCard coupon={i} setCoupons={setItems} style={{ width: "100%" }}   />

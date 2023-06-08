@@ -10,8 +10,8 @@ import orderService from '../service/order.service';
 function Orders() {
     var mounted = false;
     const [favorites, setFavorites] = useState();
-    const [readyfordelivery, setReadyForDelivery] = useState(undefined)
-    const [inDelivery, setInDelivery] = useState(undefined)
+    const [readyfordelivery, setReadyForDelivery] = useState()
+    const [inDelivery, setInDelivery] = useState()
     const [searchResults, setSearchResults] = useState();
     const [categories, setCategories] = useState();
     const [loading, setLoading] = useState(true);
@@ -49,6 +49,15 @@ function Orders() {
         }
     }, [readyfordelivery, inDelivery])
 
+    const acceptForDelivery = (oldOrder,newOrder) => {
+        setReadyForDelivery(readyfordelivery.filter(o=>o.id!=oldOrder.id))
+        setInDelivery([newOrder,...inDelivery])
+    }
+
+    const deliver = (oldOrder) => {
+        setInDelivery(inDelivery.filter(o => o.id!=oldOrder.id))
+    }
+
     return (
         <>
             <Loader isOpen={loading} >
@@ -58,10 +67,10 @@ function Orders() {
                     ?
                         <Row>
                             <Col>
-                                <ListContainer title={"Ready for delivery"} type="order" grid={false} items={readyfordelivery} perPage={5}/>
+                                <ListContainer title={"Ready for delivery"} type="order" grid={false} items={readyfordelivery} perPage={5} moveOrder={acceptForDelivery} setItems={setReadyForDelivery}/>
                             </Col>
                             <Col>
-                                <ListContainer title={"In delivery"} type="order" grid={false} items={inDelivery} perPage={5}/>
+                                <ListContainer title={"In delivery"} type="order" grid={false} items={inDelivery} perPage={5} moveOrder={deliver} setItems={setInDelivery}/>
                             </Col>
                         </Row>
                     :
