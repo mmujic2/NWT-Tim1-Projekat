@@ -67,10 +67,10 @@ function Orders() {
                     ?
                         <Row>
                             <Col>
-                                <ListContainer title={"Ready for delivery"} type="order" grid={false} items={readyfordelivery} perPage={5} moveOrder={acceptForDelivery} setItems={setReadyForDelivery}/>
+                                <ListContainer title={"Ready for delivery"} type="order" grid={false} items={readyfordelivery} perPage={5} moveOrder={acceptForDelivery} setItems={setReadyForDelivery} setAlert={setAlert} setShowAlert={setShowAlert} alert={alert}/>
                             </Col>
                             <Col>
-                                <ListContainer title={"In delivery"} type="order" grid={false} items={inDelivery} perPage={5} moveOrder={deliver} setItems={setInDelivery}/>
+                                <ListContainer title={"In delivery"} type="order" grid={false} items={inDelivery} perPage={5} moveOrder={deliver} setItems={setInDelivery} setAlert={setAlert} setShowAlert={setShowAlert} alert={alert}/>
                             </Col>
                         </Row>
                     :

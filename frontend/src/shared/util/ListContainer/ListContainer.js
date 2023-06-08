@@ -325,6 +325,9 @@ function ListContainer({
                       order={i}
                       moveOrder={moveOrder}
                       changeOrder={changeOrder}
+                      setAlert={setAlert}
+                      alert={alert}
+                      setShowAlert={setShowAlert}
                     />
                   ) : type == "coupon" ? (
                     <CouponCard coupon={i} setCoupons={setItems} style={{ width: "100%" }}   />

@@ -19,57 +19,67 @@ function RestaurantOrders() {
 
   useEffect(() => {
     setLoading(true);
-    orderService.getRestaurantPendingOrders(restaurantService.getCurrentRestaurantUUID()).then((res) => {
-      setLoading(false);
-      if (res.status == 200) {
-        setPendingOrders(res.data);
-      } else {
-        setAlert({ msg: res.data, type: "error" });
-        setShowAlert(true);
-      }
-    });
+    orderService
+      .getRestaurantPendingOrders(restaurantService.getCurrentRestaurantUUID())
+      .then((res) => {
+        setLoading(false);
+        if (res.status == 200) {
+          setPendingOrders(res.data);
+        } else {
+          setAlert({ msg: res.data, type: "error" });
+          setShowAlert(true);
+        }
+      });
 
-    orderService.getRestaurantReadyOrders(restaurantService.getCurrentRestaurantUUID()).then((res) => {
-      setLoading(false);
-      if (res.status == 200) {
-        setReadyOrders(res.data);
-      } else {
-        setAlert({ msg: res.data, type: "error" });
-        setShowAlert(true);
-      }
-    });
-    orderService.getRestaurantInPreparationOrders(restaurantService.getCurrentRestaurantUUID()).then((res) => {
-      setLoading(false);
-      if (res.status == 200) {
-        setInPreparationOrders(res.data);
-      } else {
-        setAlert({ msg: res.data, type: "error" });
-        setShowAlert(true);
-      }
-    });
+    orderService
+      .getRestaurantReadyOrders(restaurantService.getCurrentRestaurantUUID())
+      .then((res) => {
+        setLoading(false);
+        if (res.status == 200) {
+          setReadyOrders(res.data);
+        } else {
+          setAlert({ msg: res.data, type: "error" });
+          setShowAlert(true);
+        }
+      });
+    orderService
+      .getRestaurantInPreparationOrders(
+        restaurantService.getCurrentRestaurantUUID()
+      )
+      .then((res) => {
+        setLoading(false);
+        if (res.status == 200) {
+          setInPreparationOrders(res.data);
+        } else {
+          setAlert({ msg: res.data, type: "error" });
+          setShowAlert(true);
+        }
+      });
   }, []);
 
-  const acceptOrder = (oldOrder,newOrder) => {
-    setPendingOrders(pendingOrders.filter(o => o.id!=oldOrder.id))
-    setInPreparationOrders([...inPreparationOrders,newOrder])
-  }
+  const acceptOrder = (oldOrder, newOrder) => {
+    setPendingOrders(pendingOrders.filter((o) => o.id != oldOrder.id));
+    setInPreparationOrders([...inPreparationOrders, newOrder]);
+  };
 
   const rejectOrder = (order) => {
-    setPendingOrders(pendingOrders.filter(o => o.id!=order.id))
-  }
+    setPendingOrders(pendingOrders.filter((o) => o.id != order.id));
+  };
 
-  const movePendingOrder = (oldOrder,newOrder,action) => {
-    if(action == "Accept") {
-        acceptOrder(oldOrder,newOrder)
+  const movePendingOrder = (oldOrder, newOrder, action) => {
+    if (action == "Accept") {
+      acceptOrder(oldOrder, newOrder);
     } else {
-        rejectOrder(oldOrder)
+      rejectOrder(oldOrder);
     }
-  }
+  };
 
-  const readyOrder = (oldOrder,newOrder) => {
-    setInPreparationOrders(inPreparationOrders.filter(o => o.id!=oldOrder.id))
-    setReadyOrders([...readyOrders,newOrder])
-  }
+  const readyOrder = (oldOrder, newOrder) => {
+    setInPreparationOrders(
+      inPreparationOrders.filter((o) => o.id != oldOrder.id)
+    );
+    setReadyOrders([...readyOrders, newOrder]);
+  };
 
   return (
     <>
@@ -101,6 +111,9 @@ function RestaurantOrders() {
                 setItems={setPendingOrders}
                 type="order"
                 moveOrder={movePendingOrder}
+                setAlert={setAlert}
+                setShowAlert={setShowAlert}
+                alert={alert}
               ></ListContainer>
             ) : (
               <div style={{ display: "flex", justifyContent: "center" }}>
@@ -121,6 +134,9 @@ function RestaurantOrders() {
                 setItems={setInPreparationOrders}
                 type="order"
                 moveOrder={readyOrder}
+                setAlert={setAlert}
+                setShowAlert={setShowAlert}
+                alert={alert}
               ></ListContainer>
             ) : (
               <div style={{ display: "flex", justifyContent: "center" }}>

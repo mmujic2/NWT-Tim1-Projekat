@@ -20,11 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.order.dao.*;
@@ -277,24 +279,41 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('COURIER','RESTAURANT_MANAGER','CUSTOMER')")
     @PutMapping("/status/{id}/{status}")
-    public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
+    public ResponseEntity<?> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
         var order = orderRepository.findById(id).orElseThrow();
+        switch(status) {
+            case ("In preparation"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+            case ("Rejected"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+                break;
+            case ("Cancelled"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+                break;
+            case ("Accepted for delivery"):
+                if(!order.getOrderStatus().equals(OrderStatus.READY_FOR_DELIVERY.getName()))
+                    return new ResponseEntity<>("Order is not ready for delivery!",HttpStatus.BAD_REQUEST);
+                break;
+        }
         order.setOrderStatus(status);
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Order status changed to: " + status);
+        SendWebSocketMessage(order.getUser_id(), "Order " + order.getOrderCode() + " status changed to: " + status);
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
     @PreAuthorize("hasRole('COURIER')")
     @PutMapping("/adddeliveryperson/{id}")
-    public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid) {
+    public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
         var order = orderRepository.findById(id).orElseThrow();
         order.setDeliveryPersonId(uuid);
         order.setOrderStatus("In delivery");
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Order status changed to: In delivery");
+        SendWebSocketMessage(order.getUser_id(), "Courier " + username + " will pick up order " + order.getOrderCode()+"!" );
         return ResponseEntity.ok(new OrderResponse(order));
     }
 

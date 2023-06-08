@@ -5,8 +5,13 @@ import authService from '../../service/auth.service'
 import { Check2Circle } from 'react-bootstrap-icons'
 import { XCircleFill } from 'react-bootstrap-icons'
 
-function Actions({ order,setNoActions,moveOrder,setOrder }) {
+function Actions({ order,setNoActions,moveOrder,setOrder,alert,setAlert,setShowAlert }) {
     const user = authService.getCurrentUser();
+
+    const handleError = (err) => {
+        setAlert({...alert,msg:err,type:"error"})
+        setShowAlert(true)
+    }
 
     const acceptOrder = ()=> {
         document.body.style.cursor = "wait"
@@ -15,7 +20,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 moveOrder(order,res.data,"Accept")
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
     }
@@ -28,7 +33,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 moveOrder(order,res.data,"Reject")
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
 
@@ -42,7 +47,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 setOrder(res.data)
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
 
@@ -56,7 +61,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 moveOrder(order,res.data)
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
 
@@ -70,7 +75,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 moveOrder(order,res.data)
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
 
@@ -84,7 +89,7 @@ function Actions({ order,setNoActions,moveOrder,setOrder }) {
             if(res.status==200) {
                 moveOrder(res.data)
             } else {
-                console.log(res)
+                handleError(res.data)
             }
         })
     }
