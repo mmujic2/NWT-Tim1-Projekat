@@ -67,6 +67,7 @@ public class OrderController {
         this.menuItemRepository = menuItemRepository;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new order")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "201", description = "Successfully created a new order",
@@ -118,7 +119,7 @@ public class OrderController {
                 orderCreateRequest.getEstimatedDeliveryTime(),
                 LocalDateTime.now(),
                 orderCreateRequest.getCouponId(),
-                OrderStatus.Processing.toString(),
+                OrderStatus.PENDING.getName(),
                 orderCreateRequest.getTotalPrice(),
                 null,
                 orderCreateRequest.getDeliveryFee(),
@@ -264,6 +265,7 @@ public class OrderController {
         return orderMap;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/getforuser")
     public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("uuid") String userUuid) {
         /*return ResponseEntity.ok(orderRepository.findAll().stream()
@@ -273,6 +275,7 @@ public class OrderController {
         return ResponseEntity.ok(orderRepository.getOrdersByUserUUID(userUuid).stream().map(OrderResponse::new).toList());
     }
 
+    @PreAuthorize("hasAnyRole('COURIER','RESTAURANT_MANAGER')")
     @PutMapping("/status/{id}/{status}")
     public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
         var order = orderRepository.findById(id).orElseThrow();
@@ -283,6 +286,7 @@ public class OrderController {
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @PutMapping("/adddeliveryperson/{id}")
     public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid) {
         var order = orderRepository.findById(id).orElseThrow();
@@ -304,14 +308,40 @@ public class OrderController {
         }
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @GetMapping("/get/readyfordelivery")
     public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrders() {
         return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrders().stream().map(OrderResponse::new).toList());
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @GetMapping("/get/deliveryperson")
     public ResponseEntity<List<OrderResponse>> getOrdersByDeliveryPersonId(@RequestHeader("uuid") String uuid) {
         return ResponseEntity.ok(orderRepository.getOrdersByDeliveryPersonId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/pending")
+    public ResponseEntity<List<OrderResponse>> getPendingOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getPendingOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/in-preparation")
+    public ResponseEntity<List<OrderResponse>> getInPreparationOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getInPreparationOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/ready-for-delivery")
+    public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/delivered")
+    public ResponseEntity<List<OrderResponse>> getDeliveredOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getDeliveredOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
     }
 
     @PostConstruct
