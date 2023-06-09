@@ -34,8 +34,8 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
   const [estDeliveryTime, setEstDeliveryTime] = useState(0);
   const [orderCreated, setOrderCreated] = useState(false);
 
-  const [requiredScore, setRequiredScore] = useState({})
-  const [currentScore, setCurrentScore] = useState({});
+  const [requiredScore, setRequiredScore] = useState(undefined)
+  const [currentScore, setCurrentScore] = useState(undefined);
   const [freeDeliveryUsed, setFreeDeliveryUsed] = useState(false);
   const [hasFreeDelivery, setHasFreeDelivery] = useState(false);
   const [freeDeliveryType, setFreeDeliveryType] = useState("");
@@ -54,7 +54,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
         setRequiredScore(response.data);
       }
       else {
-        setAlert({msg: "Error while fetching requires score!"});
+        setAlert({msg: "Error while fetching required score!"});
         setShowAlert(true);
       }
     });
@@ -64,7 +64,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
         setCurrentScore(response.data);
       }
       else {
-        setAlert({msg: "Error while fetching requires score!"});
+        setAlert({msg: "Error while fetching user score!"});
         setShowAlert(true);
       }
     });
@@ -135,11 +135,11 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
 
   const checkFreeDelivery = () => {
     setFreeDeliveryUsed(true);
-    if(currentScore.money_spent >= requiredScore.money_required) {
+    if(requiredScore != undefined && currentScore != undefined && currentScore.money_spent >= requiredScore.money_required) {
       setHasFreeDelivery(true);
       setFreeDeliveryType("money");
     }
-    else if(currentScore.number_of_orders >= requiredScore.orders_required) {
+    else if(requiredScore != undefined && currentScore != undefined && currentScore.number_of_orders >= requiredScore.orders_required) {
       setHasFreeDelivery(true);
       setFreeDeliveryType("order");
     }
