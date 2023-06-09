@@ -192,6 +192,7 @@ public class MenuController {
                 .setEvent("Set menu items for a menu with id " + id).setServiceName("menu-service")
                 .setUser(username)
                 .build());
+        System.out.println(menuItemDtos);
         var menu = menuService.addMenuItemsToMenu(id, menuItemDtos);
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
