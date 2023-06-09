@@ -11,6 +11,7 @@ import Card from "react-bootstrap/Card";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import "./MenuCard.css";
 import CustomAlert from "../../shared/util/Alert";
+import { useNavigate } from "react-router-dom";
 
 import { left } from "@popperjs/core";
 import menuService from "../../service/menu.service";
@@ -26,6 +27,7 @@ function MenuCard({
   setLoading,
 }) {
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleDeleteModal = () => {
     handleDelete();
@@ -34,6 +36,10 @@ function MenuCard({
 
   const handleClose = () => {
     setShowModal(false);
+  };
+
+  const handleEdit = () => {
+    navigate("/menu/add?id=" + menu.id);
   };
 
   const handleDelete = () => {
@@ -129,7 +135,7 @@ function MenuCard({
                       }}
                     >
                       <Button
-                        // onClick={revert}
+                        onClick={handleEdit}
                         type="button"
                         className="mb-3"
                         style={{ width: "fit-content" }}

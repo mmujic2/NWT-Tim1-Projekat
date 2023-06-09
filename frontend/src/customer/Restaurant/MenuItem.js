@@ -10,28 +10,40 @@ import { right, left } from "@popperjs/core";
 import authService from "../../service/auth.service";
 import { useNavigate } from "react-router-dom";
 import priceImage from "../../images/price.png";
-import { MDBInput } from 'mdb-react-ui-kit';
+import { MDBInput } from "mdb-react-ui-kit";
 import { useState } from "react";
 
-function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
-  const [value, setValue] = useState(0);
+import menuService from "../../service/menu.service";
 
+function MenuItem({
+  menuItem,
+  grid = true,
+  setOrderList,
+  orderList,
+  setMenuItems,
+  menuItems,
+  setMenuItem,
+  setLoading,
+}) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [value, setValue] = useState(0);
+  const user = authService.getCurrentUser();
   const addToOrder = (e) => {
     if(value <= 0) return;
     var found = false;
     var orderListCopy = JSON.parse(JSON.stringify(orderList));
-    for(var i = 0; i < orderListCopy.length; i++) {
-      if(orderListCopy[i].menuItem.id == menuItem.id) {
+    for (var i = 0; i < orderListCopy.length; i++) {
+      if (orderListCopy[i].menuItem.id == menuItem.id) {
         orderListCopy[i].count += parseInt(value);
         found = true;
         break;
       }
     }
-    if(!found) {
-      orderListCopy.push({menuItem: menuItem, count: parseInt(value)})
+    if (!found) {
+      orderListCopy.push({ menuItem: menuItem, count: parseInt(value) });
     }
-    setOrderList(orderListCopy)
-  }
+    setOrderList(orderListCopy);
+  };
 
   return (
     <div>
@@ -41,11 +53,12 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
           height: "10rem",
           overflow: "hidden",
           backgroundColor: "#D9D9D9",
+          padding: 0,
         }}
         className="box"
       >
         <Row>
-          <Col className={grid ? "col-5 px-2" : "col-3 px-2"}>
+          <Col className={grid ? "col-5" : "col-3 "}>
             <Card.Img
               variant="top"
               src={menuItem.image ? `${menuItem.image} ` : defaultImage}
@@ -58,13 +71,92 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
                 style={{ fontSize: "16px", fontWeight: "bold", float: left }}
               >
                 {menuItem.name}
-                
               </Card.Title>
-
+              {user.role == "RESTAURANT_MANAGER" ? (
+                <Container
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                    backgroundColor: "#D9D9D9",
+                    height: "40px",
+                    marginBottom: 0,
+                    marginTop: 0,
+                    marginRight: 0,
+                    padding: 10,
+                    float: "right",
+                    position: "absolute",
+                    top: 10,
+                    right: 0,
+                  }}
+                >
+                  <div
+                    class="btn-group"
+                    role="group"
+                    aria-label="Basic example"
+                    style={{ float: "right" }}
+                  >
+                    <Button
+                      onClick={(e) => {
+                        console.log("UREDI");
+                        setEditOpen(true);
+                        console.log(editOpen);
+                        e.stopPropagation();
+                      }}
+                      style={{
+                        clear: left,
+                        textAlign: "center",
+                        width: "45px",
+                        height: "30px",
+                        margin: 2,
+                        marginRight: 0,
+                        padding: 0,
+                      }}
+                      class="rounded"
+                    >
+                      <Edit fontSize="small"></Edit>
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLoading(true);
+                        menuService.deleteMenuItem(menuItem.id).then((res) => {
+                          if (res.status == 200) {
+                            const updatedMenuItems = menuItems.filter(
+                              (item) => item !== menuItem
+                            );
+                            setLoading(false);
+                            setMenuItems(updatedMenuItems);
+                          } else {
+                            // setAlert({ ...alert, msg: res.data, type: "error" });
+                            // setShowAlert(true);
+                          }
+                        });
+                      }}
+                      style={{
+                        clear: left,
+                        textAlign: "center",
+                        width: "45px",
+                        height: "30px",
+                        margin: 2,
+                        padding: 0,
+                        marginRight: 5,
+                        marginLeft: 0,
+                        backgroundColor: "#fe724c",
+                        borderColor: "#fe724c",
+                      }}
+                      class="rounded"
+                    >
+                      <Delete fontSize="small"></Delete>
+                    </Button>
+                  </div>
+                </Container>
+              ) : (
+                <></>
+              )}
               <Card.Text style={{ clear: left, fontSize: "14px" }}>
                 <div style={{ color: "#606060" }}>{menuItem.description}</div>
-                {setOrderList != undefined && orderList != undefined 
-                ? 
+                {setOrderList != undefined && orderList != undefined ? (
                   <div>
                     <div
                       style={{
@@ -74,8 +166,8 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
                         display: "flex",
                       }}
                     >
-                      <Row style={{marginBottom: "5px", marginLeft: "0px"}}>
-                        <Col style={{padding: "0px"}}>
+                      <Row style={{ marginBottom: "5px", marginLeft: "0px" }}>
+                        <Col style={{ padding: "0px" }}>
                           <MDBInput
                             value={value} 
                             onChange={(e) => {if(e.target.value < 0) setValue(0); else setValue(e.target.value);}} 
@@ -83,21 +175,25 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
                             type='number'
                             style={{width: "50px", height: "25px", fontSize: "16px"}}/>
                         </Col>
-                        <Col style={{padding: "0px"}}>
+                        <Col style={{ padding: "0px" }}>
                           <Button
-                            style={{width: "50px", height: "25px", fontSize: "16px", padding: "0px"}}
+                            style={{
+                              width: "50px",
+                              height: "25px",
+                              fontSize: "16px",
+                              padding: "0px",
+                            }}
                             onClick={(e) => addToOrder(e)}
-                          > 
-                          Add
+                          >
+                            Add
                           </Button>
                         </Col>
                       </Row>
                     </div>
                   </div>
-                :
+                ) : (
                   <></>
-                }
-                
+                )}
 
                 <br />
                 <div>

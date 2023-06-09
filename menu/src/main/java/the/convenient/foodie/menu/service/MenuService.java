@@ -88,6 +88,7 @@ public class MenuService {
             menuItem.setDiscount_price(menuItemDao.getDiscount_price());
             //menuItem.setUuid(UUIDGenerator.generateType1UUID().toString());
             menuItem.setDate_created(LocalDateTime.now());
+            menuItem.setImage(menuItemDao.getImage());
             items.add(menuItem);
             newItems.add(menuItem);
         }

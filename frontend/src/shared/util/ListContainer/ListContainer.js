@@ -37,7 +37,7 @@ function ListContainer({
   restaurantUuid,
   setOrderList,
   orderList,
-  moveOrder
+  moveOrder,
 }) {
   const [page, setPage] = useState();
   const [currentPage, setCurrentPage] = useState([]);
@@ -49,8 +49,6 @@ function ListContainer({
   const [openReportDialog, setOpenReportDialog] = useState(false);
   const [selectedValues, setSelectedValues] = useState([]);
   const user = authService.getCurrentUser();
-
-  
 
   const navigate = useNavigate();
 
@@ -91,7 +89,8 @@ function ListContainer({
     setFilterData({ ...filterData, categoryIds: ids });
   };
 
-  const changeOrder = (o) => setItems([o,...items.filter(item=> item.id!=o.id)])
+  const changeOrder = (o) =>
+    setItems([o, ...items.filter((item) => item.id != o.id)]);
 
   const filters = () => {
     const options = categories.map((c) => ({ key: c.name, cat: c.id }));
@@ -331,7 +330,11 @@ function ListContainer({
                       setShowAlert={setShowAlert}
                     />
                   ) : type == "coupon" ? (
-                    <CouponCard coupon={i} setCoupons={setItems} style={{ width: "100%" }}   />
+                    <CouponCard
+                      coupon={i}
+                      setCoupons={setItems}
+                      style={{ width: "100%" }}
+                    />
                   ) : type == "menu" ? (
                     <MenuItem
                       grid={grid}
@@ -339,7 +342,6 @@ function ListContainer({
                       menuItem={i}
                       setOrderList={setOrderList}
                       orderList={orderList}
-                      
                     />
                   ) : type == "menus" ? (
                     <MenuCard
@@ -361,15 +363,17 @@ function ListContainer({
                       menuItem={i}
                       setOrderList={setOrderList}
                       orderList={orderList}
-                    />)
-                    : type == "review" ? (
-                      <ReviewCard
+                      setMenuItems={setItems}
+                      menuItems={items}
+                      setLoading={setLoadingPage}
+                    />
+                  ) : type == "review" ? (
+                    <ReviewCard
                       grid={grid}
                       style={{ width: "100%" }}
                       review={i}
-                      />
-                    )
-                   : (
+                    />
+                  ) : (
                     <></>
                   )}
                 </Col>
