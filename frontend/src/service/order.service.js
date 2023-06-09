@@ -91,6 +91,10 @@ class OrderService {
         return api.get("/order/get/restaurant/" + uuid +"/ready-for-delivery")
       }
 
+      createOrder(orderCreateRequest) {
+        return api.post("/order/add", orderCreateRequest)
+      }
+
 }
 
 export default new OrderService();

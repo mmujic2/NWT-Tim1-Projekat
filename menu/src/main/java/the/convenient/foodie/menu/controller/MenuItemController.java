@@ -49,6 +49,7 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getAllItems());
     }
 
+    @GetMapping("/get/{id}")
     public ResponseEntity<MenuItem> getItemById(@PathVariable Long id) {
         return ResponseEntity.ok(menuItemRepository.findById(id).orElseThrow());
     }

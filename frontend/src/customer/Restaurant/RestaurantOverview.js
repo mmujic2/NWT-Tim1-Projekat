@@ -217,7 +217,7 @@ function RestaurantOverview() {
                   </div>
                 </div>
                 <div style={{ marginTop: "50px" }}>
-                  <MenuOverview restaurantUUID={restaurant.uuid}></MenuOverview>
+                  <MenuOverview restaurant={restaurant} setAlert={setAlert} setShowAlert={setShowAlert}></MenuOverview>
                 </div>
               </Container>
             </div>

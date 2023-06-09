@@ -92,8 +92,11 @@ public class OrderController {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
         XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.registerModule(new JavaTimeModule());
+        xmlMapper.registerModule(new ParameterNamesModule());
 
         List<MenuItem> menuItems = new ArrayList<>();
+        List<Long> processedIds = new ArrayList<>();
         for(var id : orderCreateRequest.getMenuItemIds()) {
             var newMenuItem = menuItemRepository.findById(id);
             if(newMenuItem.isPresent()) {
@@ -101,17 +104,15 @@ public class OrderController {
             }
             else {
                 MenuItem temp = null;
-                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/" + id.toString(), String.class);
+                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/get/" + id.toString(), String.class);
+                temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
 
-                try {
-                    temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
-                }
-                catch(Exception e) {
-                    continue;
-                }
                 menuItems.add(temp);
-                menuItemRepository.save(temp);
+                if(!processedIds.contains(id)) {
+                    menuItemRepository.save(temp);
+                }
             }
+            processedIds.add(id);
         }
 
         System.out.println(menuItems);

@@ -28,10 +28,10 @@ function App() {
       {TokenService.getUserUUID() != undefined ? (
         <>
           <Alert
-            msg={socketMsg}
-            show={show}
-            setShow={setShow}
-          ></Alert>
+           msg={socketMsg}
+           show={show}
+           setShow={setShow}
+      ></Alert>
           <SockJsClient
             url="http://localhost:7050/websocket"
             topics={["/message/" + TokenService.getUserUUID()]}

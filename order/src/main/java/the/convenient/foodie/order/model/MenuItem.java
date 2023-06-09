@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "menu_item")
 public class MenuItem implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 

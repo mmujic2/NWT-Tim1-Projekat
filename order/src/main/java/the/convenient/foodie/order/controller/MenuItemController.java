@@ -18,6 +18,8 @@ import the.convenient.foodie.order.exception.MenuItemNotFoundException;
 import the.convenient.foodie.order.model.MenuItem;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path="/menuitem")
 public class MenuItemController {
@@ -25,6 +27,11 @@ public class MenuItemController {
 
     public MenuItemController(MenuItemRepository menuItemRepository) {
         this.menuItemRepository = menuItemRepository;
+    }
+
+    @GetMapping("/get")
+    public List<MenuItem> getAllMenuItems() {
+        return menuItemRepository.findAll();
     }
 
     /*@PostMapping(path = "/add")

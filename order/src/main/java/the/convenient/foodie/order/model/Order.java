@@ -59,7 +59,6 @@ public class Order {
 
     @ManyToMany(fetch = FetchType.LAZY,
     cascade = {
-            CascadeType.PERSIST,
             CascadeType.MERGE
     })
     @JoinTable(name = "OrderMenuItems",
