@@ -45,4 +45,9 @@ public class RequiredScoreService {
         requiredScoreRepository.save(requiredScore);
         return requiredScore;
     }
+
+    public RequiredScore getRequiredScore() {
+        var scores = requiredScoreRepository.findAll();
+        return scores.get(scores.size() - 1);
+    }
 }

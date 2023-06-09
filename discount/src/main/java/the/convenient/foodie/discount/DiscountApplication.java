@@ -59,7 +59,7 @@ public class DiscountApplication implements CommandLineRunner {
 		couponRepository.save(c3);
 		couponRepository.save(c4);
 		couponRepository.save(amila);
-		Score s = new Score(341,10,3150);
+		Score s = new Score("test",10,3150);
 		scoreRepository.save(s);
 		RequiredScore r = new RequiredScore(31,500);
 		requiredScoreRepository.save(r);

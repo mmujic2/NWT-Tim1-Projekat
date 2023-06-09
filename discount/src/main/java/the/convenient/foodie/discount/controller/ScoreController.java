@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.discount.dto.ScoreDto;
+import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.entity.Score;
 
 import the.convenient.foodie.discount.service.ScoreService;
@@ -91,5 +92,20 @@ public class ScoreController {
     @DeleteMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<String> deleteScore(@Parameter(description = "Score ID", required = true) @PathVariable Integer id) {
         return new ResponseEntity<>(scoreService.deleteScore(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/get/uuid")
+    public @ResponseBody ResponseEntity<Score> getCouponByUserUUID(@RequestHeader("uuid") String uuid) {
+        return ResponseEntity.ok(scoreService.getScoreByUserId(uuid));
+    }
+
+    @PostMapping("/update/incrementorders/{ordercount}")
+    public @ResponseBody ResponseEntity<Score> incrementUserOrders(@RequestHeader("uuid") String uuid, @PathVariable Integer ordercount) {
+        return ResponseEntity.ok(scoreService.incrementUserOrders(uuid, ordercount));
+    }
+
+    @PostMapping("/update/incrementmoney/{money}")
+    public @ResponseBody ResponseEntity<Score> incrementUserMoneySpent(@RequestHeader("uuid") String uuid, @PathVariable Integer money) {
+        return ResponseEntity.ok(scoreService.incrementUserMoneySpent(uuid, money));
     }
 }

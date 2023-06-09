@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.collect.Iterables;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import the.convenient.foodie.order.repository.MenuItemRepository;
 import the.convenient.foodie.order.exception.MenuItemNotFoundException;
 
@@ -43,14 +40,14 @@ public class Order {
     private String orderStatus;
 
     @NotNull(message = "Order must have price!")
-    @Positive(message = "Price must be positive!")
+    @PositiveOrZero(message = "Price must be positive!")
     private Double totalPrice;
 
     @Nullable
     private String deliveryPersonId;
 
     @NotNull(message = "Order must have delivery fee!")
-    @Positive(message = "Delivery fee must be positive!")
+    @PositiveOrZero(message = "Delivery fee must be positive!")
     private Double deliveryFee;
 
     // @NotNull(message = "Order must have code")
