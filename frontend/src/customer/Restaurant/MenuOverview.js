@@ -27,18 +27,57 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [usedCode, setUsedCode] = useState(null)
   const [couponId, setCouponId] = useState(null);
+  const [couponuuid, setCouponUuid] = useState(null);
   const [couponValid, setCouponValid] = useState(false)
   const [checkingCoupon, setCheckingCoupon] = useState(false);
   const [checkedCoupon, setCheckedCoupon] = useState(false);
   const [estDeliveryTime, setEstDeliveryTime] = useState(0);
   const [orderCreated, setOrderCreated] = useState(false);
 
+  const [requiredScore, setRequiredScore] = useState({})
+  const [currentScore, setCurrentScore] = useState({});
+  const [freeDeliveryUsed, setFreeDeliveryUsed] = useState(false);
+  const [hasFreeDelivery, setHasFreeDelivery] = useState(false);
+  const [freeDeliveryType, setFreeDeliveryType] = useState("");
+  const [placingOrder, setPlacingOrder] = useState(false);
+
+  const marginBetweenOrderItems = "10px";
+
   useEffect(() => {
-    var c1 = restaurant.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI)
-    var c2 = tokenService.getUser().user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI)
-    var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0] )*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10
-    setDeliveryPrice(Math.round(d) / 10)
-  })
+    var c1 = restaurant.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    var c2 = tokenService.getUser().user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0] )*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10;
+    setDeliveryPrice(Math.round(d) / 10);
+
+    discountService.getRequiredScore().then(response => {
+      if(response.status < 300) {
+        setRequiredScore(response.data);
+      }
+      else {
+        setAlert({msg: "Error while fetching requires score!"});
+        setShowAlert(true);
+      }
+    });
+
+    discountService.getUserScore().then(response => {
+      if(response.status < 300) {
+        setCurrentScore(response.data);
+      }
+      else {
+        setAlert({msg: "Error while fetching requires score!"});
+        setShowAlert(true);
+      }
+    });
+  }, [])
+
+
+  useEffect(() => {
+    console.log(requiredScore);
+  }, [requiredScore])
+
+  useEffect(() => {
+    console.log(currentScore);
+  }, [currentScore])
 
   useEffect(() => {
     var price = 0;
@@ -62,21 +101,51 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
     setCheckingCoupon(true);
     
     discountService.getAllCouponsForRestaurant(restaurant.uuid).then(response => {
+      console.log(response)
+      var coupon = undefined
       if(response.status == 200) {
-        if(response.data.includes(couponCode)) {
-          setCouponValid(true);
-          usedCode = couponCode;
-          // setCouponId()
+        var coupons = response.data;
+        for(var i = 0; i < coupons.length; i++) {
+          if(coupons[i].code === couponCode) {
+            coupon = coupons[i];
+            break;
+          }
         }
-        else {
-          setCouponValid(false);
-        }
+      }
+      if(coupon != undefined) {
+        setCouponValid(true);
         setCouponCode("");
         setCheckingCoupon(false);
         setCheckedCoupon(true);
+        setCouponId(coupon.id)
+        setCouponUuid(coupon.coupon_uuid);
+        setTotalDiscount(coupon.discount_percentage)
+      }
+      else {
+        setCouponValid(false);
+        setCouponCode("");
+        setCheckingCoupon(false);
+        setCheckedCoupon(true);
+        setCouponUuid(null);
+        setCouponId(null)
+        setTotalDiscount(0);
       }
     });
-    
+  }
+
+  const checkFreeDelivery = () => {
+    setFreeDeliveryUsed(true);
+    if(currentScore.money_spent >= requiredScore.money_required) {
+      setHasFreeDelivery(true);
+      setFreeDeliveryType("money");
+    }
+    else if(currentScore.number_of_orders >= requiredScore.orders_required) {
+      setHasFreeDelivery(true);
+      setFreeDeliveryType("order");
+    }
+    else {
+     setHasFreeDelivery(false);
+    }
   }
 
   const removeItemFromOrder = (item) => {
@@ -116,14 +185,17 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
   }
 
   const placeOrder = () => {
+    setPlacingOrder(true);
     var user = tokenService.getUser();
     var orderRequest = {};
 
+    orderRequest.totalPrice = (totalPrice + (deliveryPrice * !hasFreeDelivery)) * (1 - totalDiscount / 100);
+
     orderRequest.restaurantId = restaurant.uuid;
     orderRequest.estimatedDeliveryTime = estDeliveryTime;
-    orderRequest.couponId = null;
-    orderRequest.totalPrice = totalPrice;
-    orderRequest.deliveryFee = deliveryPrice;
+    orderRequest.couponId = couponuuid;
+    
+    orderRequest.deliveryFee = deliveryPrice * !hasFreeDelivery;
     orderRequest.menuItemIds = []
     for(var i = 0; i < orderList.length; i++) {
       for(var j = 0; j < orderList[i].count; j++) {
@@ -137,21 +209,42 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
     console.log(orderRequest);
 
     orderService.createOrder(orderRequest).then(response => {
-      console.log(response)
-      if(response.status == 201) {
+      if(response.status < 300) {
         setOrderCreated(true);
-        setShowAlert(true)
-        setAlert({msg: "Order successfully created!", type: "success"})
+        setShowAlert(true);
+        setAlert({msg: "Order successfully created!", type: "success"});
+
+        if(couponId != null) {
+          discountService.applyCoupon(couponId);
+        }
+        if(hasFreeDelivery) {
+          if(freeDeliveryType === "order") {
+            discountService.incrementUserOrders((1 - requiredScore.orders_required).toFixed(0));
+            discountService.incrementUserMoney(orderRequest.totalPrice);
+          } 
+          else if(freeDeliveryType === "money") {
+            discountService.incrementUserOrders(1);
+            discountService.incrementUserMoney((orderRequest.totalPrice - requiredScore.money_required).toFixed(0));
+          } 
+        }
+        else {
+          discountService.incrementUserOrders(1);
+          discountService.incrementUserMoney(orderRequest.totalPrice.toFixed(0));
+        }
       }
       else {
-        setShowAlert(true)
-        setAlert({msg: "Error creating order!", type: "error"})
+        console.log(response);
+        setShowAlert(true);
+        setAlert({msg: "Error creating order!", type: "error"});
       }
+
+      setPlacingOrder(false);
     })
   }
 
   useEffect(() => {
     if (restaurant.uuid != null) {
+      console.log(restaurant.uuid);
       menuService.getActiveRestaurantMenus(restaurant.uuid).then((res) => {
         setLoading(false);
         if (res.status == 200) {
@@ -160,6 +253,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
         }
       });
     }
+    
   }, []);
 
   return (
@@ -252,7 +346,11 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
                               </Col>
                               <Col xs={3}>
                                 {
-                                  !checkingCoupon ? <Button style={{fontSize: "16px", width: "100%"}} onClick={checkCoupon}> Check </Button> : <MDBSpinner></MDBSpinner>
+                                  !checkingCoupon 
+                                  ?
+                                    <Button style={{fontSize: "16px", width: "100%"}} onClick={checkCoupon}> Check </Button> 
+                                  : 
+                                    <MDBSpinner></MDBSpinner>
                                 }
                               </Col>
                             </Row>
@@ -266,31 +364,64 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
                               : 
                                 <></>
                             }
-
-                            <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
+                            {
+                              !freeDeliveryUsed 
+                              ? 
+                                <Row >
+                                  <Col xs={8}>
+                                    <div style={{fontSize: "16px", marginTop: "20px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
+                                  </Col>
+                                  <Col xs={3}>
+                                    <Button style={{fontSize: "16px", marginTop: marginBetweenOrderItems}} onClick={checkFreeDelivery}> Use </Button> 
+                                  </Col>
+                                </Row>
+                              :
+                                hasFreeDelivery
+                                ?
+                                  <>
+                                    <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: <del>{deliveryPrice.toFixed(2)}</del> 0.00 KM</div>
+                                    <div style={{fontSize: "10px", color: "green"}}>Free delivery used! </div> 
+                                  </>
+                                  
+                                :
+                                  <>
+                                    <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
+                                    <div style={{fontSize: "10px", color: "red"}}>Not enough score for free delivery! </div> 
+                                  </>
+                            }
+                            
 
                             {
-                              usedCode != undefined
+                              couponValid
                               ?
                                 <>
-                                  <div style={{fontSize: "16px", marginTop: "10px"}}>Total discount: %</div>
-                                  <div style={{fontSize: "16px", marginTop: "10px"}}>Total price: KM</div>
+                                  <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total discount: {totalDiscount}%</div>
+                                  <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: <del>{(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)}</del>  {((totalPrice + (deliveryPrice * !hasFreeDelivery)) * (1 - totalDiscount / 100)).toFixed(2)} KM </div>
                                 </>
                               :
-                                <div style={{fontSize: "16px", marginTop: "10px"}}>Total price: {(totalPrice + deliveryPrice).toFixed(2)} KM</div>
+                                <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: {(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)} KM</div>
                             }
-                            <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery time: {(estDeliveryTime).toFixed(0)} min</div>
+                            <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Delivery time: {(estDeliveryTime).toFixed(0)} min</div>
                             <hr></hr>
                             {
                               orderCreated
                               ?
                                 <></>
                               :
+                                placingOrder
+                                ?
+                                <Row>
+                                  <Col xs={5}></Col>
+                                  <Col xs={1}><MDBSpinner></MDBSpinner></Col>
+                                  <Col xs={5}></Col>
+                                </Row>
+                                :
                                 <Row>
                                   <Col xs={2}></Col>
                                   <Col xs={7}><Button onClick={placeOrder}>Place order</Button></Col>
                                   <Col xs={2}></Col>
                                 </Row>
+                                
                             }
                             
                           </>

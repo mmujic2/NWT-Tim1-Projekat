@@ -49,6 +49,32 @@ class DiscountService {
     }
   }
 
+  applyCoupon(id) {
+    return api.post("/coupon/apply/"+id);
+  }
+
+  getUserScore() {
+    return api.get("/score/get/uuid");
+  }
+
+  getRequiredScore() {
+    return api.get("/requiredscore/get");
+  }
+
+  incrementUserOrders(orders) {
+    return api.post("/score/update/incrementorders/" + orders).then(response => {
+      console.log(response);
+    });
+  }
+
+  incrementUserMoney(money) {
+    return api.post("/score/update/incrementmoney/" + money).then(response => {
+      console.log(response);
+    });
+  }
+
+
+
 }
 
 export default new DiscountService();

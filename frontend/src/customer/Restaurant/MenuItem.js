@@ -17,6 +17,7 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
   const [value, setValue] = useState(0);
 
   const addToOrder = (e) => {
+    if(value <= 0) return;
     var found = false;
     var orderListCopy = JSON.parse(JSON.stringify(orderList));
     for(var i = 0; i < orderListCopy.length; i++) {
@@ -77,7 +78,7 @@ function MenuItem({ menuItem, grid = true, setOrderList, orderList }) {
                         <Col style={{padding: "0px"}}>
                           <MDBInput
                             value={value} 
-                            onChange={(e) => setValue(e.target.value)} 
+                            onChange={(e) => {if(e.target.value < 0) setValue(0); else setValue(e.target.value);}} 
                             id='typeNumber' 
                             type='number'
                             style={{width: "50px", height: "25px", fontSize: "16px"}}/>
