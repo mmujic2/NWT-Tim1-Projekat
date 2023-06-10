@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import priceImage from "../../images/price.png";
 import { MDBInput } from "mdb-react-ui-kit";
 import { useState } from "react";
+import { Modal } from "react-bootstrap";
 
 import menuService from "../../service/menu.service";
 
@@ -29,6 +30,8 @@ function MenuItem({
   showAlert,
   setShowAlert,
 }) {
+  const [showModal, setShowModal] = useState(false);
+
   const [editOpen, setEditOpen] = useState(false);
   const [value, setValue] = useState(0);
   const user = authService.getCurrentUser();
@@ -49,8 +52,56 @@ function MenuItem({
     setOrderList(orderListCopy);
   };
 
+  const handleDeleteModal = () => {
+    handleDelete();
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const handleDelete = () => {
+    setLoading(true);
+    menuService.deleteMenuItem(menuItem.id).then((res) => {
+      if (res.status == 200) {
+        const updatedMenuItems = menuItems.filter((item) => item !== menuItem);
+        setLoading(false);
+        setMenuItems(updatedMenuItems);
+        setAlert({
+          ...alert,
+          msg: "Successfully deleted a menu item!",
+          type: "success",
+        });
+        setShowAlert(true);
+      } else {
+        setAlert({
+          ...alert,
+          msg: res.data,
+          type: "error",
+        });
+        setShowAlert(true);
+      }
+    });
+  };
+
   return (
     <div>
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this menu item</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteModal}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Card
         style={{
           width: "100%",
@@ -121,30 +172,8 @@ function MenuItem({
                     </Button>
                     <Button
                       onClick={(e) => {
+                        setShowModal(true);
                         e.stopPropagation();
-                        setLoading(true);
-                        menuService.deleteMenuItem(menuItem.id).then((res) => {
-                          if (res.status == 200) {
-                            const updatedMenuItems = menuItems.filter(
-                              (item) => item !== menuItem
-                            );
-                            setLoading(false);
-                            setMenuItems(updatedMenuItems);
-                            setAlert({
-                              ...alert,
-                              msg: "Successfully deleted a menu item!",
-                              type: "success",
-                            });
-                            setShowAlert(true);
-                          } else {
-                            setAlert({
-                              ...alert,
-                              msg: res.data,
-                              type: "error",
-                            });
-                            setShowAlert(true);
-                          }
-                        });
                       }}
                       style={{
                         clear: left,
