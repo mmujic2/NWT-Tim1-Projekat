@@ -214,7 +214,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
         orderRequest.menuItemIds.push(orderList[i].menuItem.id);
       }
     }
-    orderRequest.restauranName = restaurant.name;
+    orderRequest.restaurantName = restaurant.name;
     orderRequest.customerPhoneNumber = user.user.phoneNumber;
     orderRequest.customerAddress = user.user.address;
     orderRequest.restaurantAddress = restaurant.address;

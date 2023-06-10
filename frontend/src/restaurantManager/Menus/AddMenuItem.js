@@ -395,7 +395,7 @@ export default function AddMenuItem({
               control={
                 <Checkbox
                   defaultChecked={discount}
-                  onChange={() => setDiscount(!discount)}
+                  onChange={(e) => {setDiscount(!discount); if(!e.target.checked) {setMenuItem({...menuItem,discount_price:null})}}}
                 />
               }
               label="Discounted price"
