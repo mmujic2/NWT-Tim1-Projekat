@@ -166,8 +166,14 @@ function MenuItem({
                         display: "flex",
                       }}
                     >
-                      <Row style={{ marginBottom: "5px", marginLeft: "0px",height:"27px" }}>
-                        <Col style={{ padding: "0px", }}>
+                      <Row
+                        style={{
+                          marginBottom: "5px",
+                          marginLeft: "0px",
+                          height: "27px",
+                        }}
+                      >
+                        <Col style={{ padding: "0px" }}>
                           <MDBInput
                             value={value}
                             onChange={(e) => {
@@ -182,8 +188,7 @@ function MenuItem({
                               fontSize: "14px",
                               borderTopRightRadius: 0,
                               borderBottomRightRadius: 0,
-                              boxShadow:"none",
-                            
+                              boxShadow: "none",
                             }}
                           />
                         </Col>

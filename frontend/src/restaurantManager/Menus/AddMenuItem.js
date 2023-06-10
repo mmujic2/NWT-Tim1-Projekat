@@ -30,7 +30,7 @@ export default function AddMenuItem({
     name: item?.name || "",
     description: item?.description || "",
     price: item?.price || 0,
-    discount_price: item?.discount_price || 0,
+    discount_price: item?.discount_price || null,
     prep_time: item?.prep_time || null,
     image: item?.image || null,
   });
@@ -105,6 +105,11 @@ export default function AddMenuItem({
     if (i.prep_time != null && i.prep_time < 0) {
       isValid = false;
       updatedValidation.prep_time = false;
+      updatedValidation.prep_time_error_m = "Cooking time can not be negative!";
+    } else if (i.prep_time == null) {
+      isValid = false;
+      updatedValidation.prep_time = false;
+      updatedValidation.prep_time_error_m = "Cooking time must be defined!";
     } else {
       updatedValidation.prep_time = true;
     }
@@ -115,6 +120,7 @@ export default function AddMenuItem({
       updatedValidation.discount_price_error_m =
         "Discount price cannot be negative";
     } else if (
+      discount &&
       i.discount_price != null &&
       i.price != null &&
       i.discount_price >= i.price
@@ -232,7 +238,7 @@ export default function AddMenuItem({
             required
             error={!validation.price}
             helperText={
-              !validation.price ? "Menu item price should not be null!" : ""
+              !validation.price ? "Menu item price must be defined!" : ""
             }
             onChange={(event) => {
               const inputValue = event.target.value;
@@ -252,7 +258,7 @@ export default function AddMenuItem({
             name="prep_time"
             error={!validation.prep_time}
             helperText={
-              !validation.prep_time ? "Cooking time can not be negative!" : ""
+              !validation.prep_time ? validation.prep_time_error_m : ""
             }
             value={menuItem?.prep_time || 0}
             onChange={(event) => {
@@ -289,7 +295,7 @@ export default function AddMenuItem({
             disabled={!discount}
             error={!validation.discount_price}
             helperText={
-              !validation.discount_price
+              discount && !validation.discount_price
                 ? validation.discount_price_error_m
                 : ""
             }

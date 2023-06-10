@@ -56,7 +56,7 @@ function AddMenu() {
     e.stopPropagation();
     const restaurantUUID = restaurantService.getCurrentRestaurantUUID();
     document.body.style.cursor = "wait";
-    if (id != null) {
+    if (idMenu) {
       menuService
         .updateMenu({ ...formData, restaurant_uuid: restaurantUUID }, idMenu)
         .then((res) => {
@@ -157,47 +157,54 @@ function AddMenu() {
                   style={{ width: "60%" }}
                 />
               </Form.Group>
-              <h2
-                style={{
-                  textAlign: "start",
-                  float: left,
-                  marginTop: "10px",
-                  marginLeft: "16px",
-                }}
-              >
-                Menu items
-              </h2>
 
-              <div
-                style={{
-                  float: "right",
-                  marginTop: "10px",
-                  marginRight: "16px",
-                }}
-              >
-                <Button
-                  style={{
-                    clear: left,
-                    textAlign: "center",
-                    width: "fit-content",
-                    height: "40px",
-                  }}
-                  class="rounded"
-                  onClick={() => setOpen(true)}
-                >
-                  Add a menu item <Add></Add>
-                </Button>
-              </div>
+              {idMenu ? (
+                <div>
+                  <h2
+                    style={{
+                      textAlign: "start",
+                      float: left,
+                      marginTop: "10px",
+                      marginLeft: "16px",
+                    }}
+                  >
+                    Menu items
+                  </h2>
+                  <div
+                    style={{
+                      float: "right",
+                      marginTop: "10px",
+                      marginRight: "16px",
+                    }}
+                  >
+                    <Button
+                      style={{
+                        clear: left,
+                        textAlign: "center",
+                        width: "fit-content",
+                        height: "40px",
+                      }}
+                      class="rounded"
+                      onClick={() => setOpen(true)}
+                    >
+                      Add a menu item <Add></Add>
+                    </Button>
+                  </div>
 
-              <ListContainer
-                items={menuItems}
-                setItems={setMenuItems}
-                showFilters={false}
-                perPage={5}
-                type={"menuItems"}
-                grid={false}
-                setLoadingPage={setLoading}
-              ></ListContainer>
+                  <ListContainer
+                    items={menuItems}
+                    setItems={setMenuItems}
+                    showFilters={false}
+                    perPage={5}
+                    type={"menuItems"}
+                    grid={false}
+                    setLoadingPage={setLoading}
+                  ></ListContainer>
+                </div>
+              ) : (
+                <div></div>
+              )}
+
               <Button
                 type="submit"
                 className="mb-3"
