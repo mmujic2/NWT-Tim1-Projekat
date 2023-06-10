@@ -188,8 +188,12 @@ export default function AddMenuItem({
 
     if (isValid) {
       document.body.style.cursor = "wait";
+      var req = {...menuItem}
+      if(!discount)
+        req.discount_price=null;
       if (menuItemId != null && menuItemId != undefined) {
-        menuService.updateMenuItem(menuItemId, menuItem).then((res) => {
+
+        menuService.updateMenuItem(menuItemId, req).then((res) => {
           console.log(res);
           if (res.status == 201) {
             document.body.style.cursor = "default";
@@ -206,7 +210,7 @@ export default function AddMenuItem({
           }
         });
       } else {
-        menuService.setMenuItems([menuItem], menuId).then((res) => {
+        menuService.setMenuItems([req], menuId).then((res) => {
           if (res.status == 200) {
             setMenuItems(res.data.menuItems);
             document.body.style.cursor = "default";
