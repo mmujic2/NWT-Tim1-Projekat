@@ -260,6 +260,7 @@ export default function AddMenuItem({
               variant="standard"
               id="prep_time"
               name="prep_time"
+              required
               error={!validation.prep_time}
               helperText={
                 !validation.prep_time ? validation.prep_time_error_m : ""
@@ -285,8 +286,8 @@ export default function AddMenuItem({
           </div>
           <br></br>
           <div>
-          <TextField
-              style={{verticalAlign:"bottom"}}
+            <TextField
+              style={{ verticalAlign: "bottom" }}
               className="col-5"
               type="number"
               variant="standard"
@@ -296,8 +297,7 @@ export default function AddMenuItem({
               disabled={!discount}
               error={!validation.discount_price}
               helperText={
-                discount &&
-                !validation.discount_price
+                discount && !validation.discount_price
                   ? validation.discount_price_error_m
                   : ""
               }
@@ -315,7 +315,7 @@ export default function AddMenuItem({
             />
             <FormControlLabel
               className="col-6"
-              style={{marginLeft:"10px"}}
+              style={{ marginLeft: "10px" }}
               control={
                 <Checkbox
                   defaultChecked={discount}
@@ -324,7 +324,6 @@ export default function AddMenuItem({
               }
               label="Discounted price"
             />
-            
           </div>
           <br></br>
           <br></br>
