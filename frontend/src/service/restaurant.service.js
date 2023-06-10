@@ -243,6 +243,18 @@ class RestaurantService {
       console.log(e);
     }
   }
+
+  getNumberOfFavorites() {
+    try {
+      return api
+        .get("/restaurant/favorites/" + this.getCurrentRestaurantUUID())
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
 
 export default new RestaurantService();

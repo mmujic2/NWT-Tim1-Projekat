@@ -20,7 +20,7 @@ function CustomAlert({ type, msg={}, show, setShow }) {
     //Possible variants: primary, secondary, success, danger, warning, info, light, dark
     return (
         <>
-            <ToastContainer className="p-3" position={'top-end'} >
+            <ToastContainer className="p-3" sticky="top" position={'top-end'} >
                 <Toast onClose={() => setShow(false)} animation show={show} bg={variant} delay={10000} autohide>
                     <Toast.Header>
                         {type =="error"?
