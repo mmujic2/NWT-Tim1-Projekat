@@ -49,7 +49,13 @@ public class ScoreService {
     }
 
     public Score getScoreByUserId(String useruuid) {
-        var score = scoreRepository.findAll().stream().filter(x -> x.getUser_id().equals(useruuid)).findFirst().orElseThrow();
+        Score score = null;
+        try {
+            score = scoreRepository.findAll().stream().filter(x -> x.getUser_id().equals(useruuid)).findFirst().orElseThrow();
+        }catch(Exception e) {
+            score = new Score(useruuid, 0, 0);
+            scoreRepository.save(score);
+        }
         return score;
     }
 
