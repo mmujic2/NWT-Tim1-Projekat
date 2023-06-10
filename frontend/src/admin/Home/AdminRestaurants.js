@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import restaurantService from '../../service/restaurant.service';
-import { Spinner, Container ,Button } from 'react-bootstrap';
+import { Spinner, Container ,Button, Modal } from 'react-bootstrap';
 import Loader from '../../shared/util/Loader/Loader';
 import Header from '../../shared/util/Header';
 import BootstrapTable from "react-bootstrap-table-next";
@@ -13,12 +13,14 @@ import userService from '../../service/user.service';
 import RestaurantModal from './RestaurantModal';
 
 
+
 function AdminRestaurants() {
     var mounted = false;
     const [searchResults, setSearchResults] = useState();
     const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState();
+    const [chosenRestaurant, setchosenRestaurant] = useState({name:"", manager:"", address:"",rating:"",customersFavorited:""});
     const [openReportDialog, setOpenReportDialog] = useState(false);
+    const [showModal, setshowModal] = useState(false);
     const user = authService.getCurrentUser();
 
     useEffect(() => {
@@ -109,32 +111,42 @@ function AdminRestaurants() {
 
       const rowEvents = {
         onClick: (e, row, rowIndex) => {
+          setchosenRestaurant(row);
+          openModal();
           console.log(row) // ovo je objekat u tom redu
           //deleteRestaurant(row.id,row.managerUuid)
         }
       };
 
+      const closeModal=()=>{
+        setshowModal(false)
+      }
 
-      const deleteRestaurant = (id,managerUuid) => {
-        console.log("Gledaj ovo")
-        console.log(id)
+
+        const openModal=()=>{
+            setshowModal(true)
+        }
+
+
+      const deleteRestaurant = () => {
+        console.log(chosenRestaurant.id)
+        console.log(chosenRestaurant.managerUuid)
         setSearchResults((current) =>
-            current.filter((rest) => rest.id !== id)
+            current.filter((rest) => rest.id !== chosenRestaurant.id)
         );
 
         
 
-        restaurantService.deleteRestaurant(id).then( res => {
+        restaurantService.deleteRestaurant(chosenRestaurant.id).then( res => {
             console.log(res);
         })
 
         //obrisi i menadzera
-        userService.deleteUserByUUID(managerUuid).then(res=> {
+        userService.deleteUserByUUID(chosenRestaurant.managerUuid).then(res=> {
             console.log(res);
         })
+        setshowModal(false);
       }
-
-// <ListContainer items={searchResults} title={"All restaurants"} showFilters={true} perPage={8} categories={categories} setRestaurants={setSearchResults}></ListContainer>
 
 
     return (
@@ -165,6 +177,29 @@ function AdminRestaurants() {
                             columns={columns}
                             pagination={paginationFactory({ sizePerPage: 5 })}
                         />
+                        <Modal show={showModal} onHide={closeModal}>
+                            <Modal.Header closeButton>
+                            <Modal.Title>Overview: {chosenRestaurant.name}</Modal.Title>
+                            </Modal.Header>
+                            
+                            <Modal.Body>
+                                Address: {chosenRestaurant.address}
+                                <br></br>
+                                Rating: {chosenRestaurant.rating}
+                                <br></br>
+                                Favourited: {chosenRestaurant.customersFavorited}
+                                <br></br>
+                                Do you want to delete this restaurant?
+                            </Modal.Body>
+                            <Modal.Footer>
+                            <Button variant="secondary" onClick={closeModal}>
+                                Cancel
+                            </Button>
+                            <Button variant="danger" onClick={deleteRestaurant}>
+                                Delete
+                            </Button>
+                            </Modal.Footer>
+                        </Modal>
                         
                     </Container> : <></>}
             </Loader>
