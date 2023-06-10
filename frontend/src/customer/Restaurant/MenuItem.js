@@ -37,6 +37,7 @@ function MenuItem({
   const [value, setValue] = useState(0);
   const user = authService.getCurrentUser();
   const addToOrder = (e) => {
+    console.log(menuItem)
     if (value <= 0) return;
     var found = false;
     var orderListCopy = JSON.parse(JSON.stringify(orderList));
