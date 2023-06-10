@@ -154,9 +154,7 @@ function MenuItem({
               ) : (
                 <></>
               )}
-              <Card.Text style={{ clear: left, fontSize: "14px" }}>
-                <div style={{ color: "#606060" }}>{menuItem.description}</div>
-                {setOrderList != undefined && orderList != undefined ? (
+              {setOrderList != undefined && orderList != undefined ? (
                   <div>
                     <div
                       style={{
@@ -213,6 +211,8 @@ function MenuItem({
                 ) : (
                   <></>
                 )}
+              <Card.Text style={{ clear: left, fontSize: "14px",paddingTop:"10px" }}>
+                <div style={{ color: "#606060" }}>{menuItem.description}</div>
 
                 <br />
                 <div>
@@ -297,6 +297,7 @@ function MenuItem({
                         style={{
                           fontWeight: "bold",
                           paddingLeft: "8px",
+                          color:"#fe724c"
                         }}
                       >
                         {menuItem?.discount_price.toFixed(2)}

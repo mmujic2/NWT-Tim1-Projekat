@@ -9,7 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 import { useRef, useState } from "react";
-import { Figure } from "react-bootstrap";
+import { Figure, Row } from "react-bootstrap";
 import defaultImage from "../../images/default.png";
 //import { Button, Form, Row, Col, ButtonGroup, Stack } from "react-bootstrap";
 import menuService from "../../service/menu.service";
@@ -229,6 +229,7 @@ export default function AddMenuItem({
           <br></br>
           <br></br>
           <TextField
+            className="col-5"
             type="number"
             label="Original price"
             variant="standard"
@@ -249,66 +250,81 @@ export default function AddMenuItem({
               });
             }}
           />
-
+          <br></br>
+          <div className="p-0 mt-3" style={{ position: "relative" }}>
+            <TextField
+              className="col-5"
+              type="number"
+              label="Cooking time"
+              variant="standard"
+              id="prep_time"
+              name="prep_time"
+              error={!validation.prep_time}
+              helperText={
+                !validation.prep_time ? validation.prep_time_error_m : ""
+              }
+              value={menuItem?.prep_time || 0}
+              onChange={(event) => {
+                const inputValue = event.target.value;
+                const formattedValue = Number(
+                  parseFloat(inputValue).toFixed(2)
+                );
+                setMenuItem({
+                  ...menuItem,
+                  prep_time: formattedValue,
+                });
+              }}
+            />
+            <span
+              className="col-2 px-2"
+              style={{ position: "absolute", bottom: "0" }}
+            >
+              min
+            </span>
+          </div>
+          <br></br>
+          <div>
           <TextField
-            type="number"
-            label="Cooking time"
-            variant="standard"
-            id="prep_time"
-            name="prep_time"
-            error={!validation.prep_time}
-            helperText={
-              !validation.prep_time ? validation.prep_time_error_m : ""
-            }
-            value={menuItem?.prep_time || 0}
-            onChange={(event) => {
-              const inputValue = event.target.value;
-              const formattedValue = Number(parseFloat(inputValue).toFixed(2));
-              setMenuItem({
-                ...menuItem,
-                prep_time: formattedValue,
-              });
-            }}
-            style={{ marginLeft: "140px" }}
-          />
-          <div style={{ float: "right", marginTop: "25px" }}>min</div>
-          <br></br>
-          <br></br>
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                defaultChecked={discount}
-                onChange={() => setDiscount(!discount)}
-              />
-            }
-            label="Discounted price"
-          />
-          <br></br>
-
-          <TextField
-            type="number"
-            variant="standard"
-            id="discount"
-            label="Discounted price"
-            name="discount_price"
-            disabled={!discount}
-            error={!validation.discount_price}
-            helperText={
-              discount && !validation.discount_price
-                ? validation.discount_price_error_m
-                : ""
-            }
-            value={menuItem?.discount_price}
-            onChange={(event) => {
-              const inputValue = event.target.value;
-              const formattedValue = Number(parseFloat(inputValue).toFixed(2));
-              setMenuItem({
-                ...menuItem,
-                discount_price: formattedValue,
-              });
-            }}
-          />
+              style={{verticalAlign:"bottom"}}
+              className="col-5"
+              type="number"
+              variant="standard"
+              id="discount"
+              label="Discounted price"
+              name="discount_price"
+              disabled={!discount}
+              error={!validation.discount_price}
+              helperText={
+                discount &&
+                !validation.discount_price
+                  ? validation.discount_price_error_m
+                  : ""
+              }
+              value={menuItem?.discount_price}
+              onChange={(event) => {
+                const inputValue = event.target.value;
+                const formattedValue = Number(
+                  parseFloat(inputValue).toFixed(2)
+                );
+                setMenuItem({
+                  ...menuItem,
+                  discount_price: formattedValue,
+                });
+              }}
+            />
+            <FormControlLabel
+              className="col-5"
+              style={{marginLeft:"10px"}}
+              control={
+                <Checkbox
+                  defaultChecked={discount}
+                  onChange={() => setDiscount(!discount)}
+                />
+              }
+              label="Discounted price"
+            />
+            
+          </div>
           <br></br>
           <br></br>
           <input
