@@ -255,6 +255,18 @@ class RestaurantService {
       console.log(e);
     }
   }
+
+  addReview(req) {
+    try {
+      return api
+        .post("/review/add",req)
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
 
 export default new RestaurantService();

@@ -31,7 +31,7 @@ export default function AddMenuItem({
     description: item?.description || "",
     price: item?.price || 0,
     discount_price: item?.discount_price || null,
-    prep_time: item?.prep_time || null,
+    prep_time: item?.prep_time || 0,
     image: item?.image || null,
   });
 
@@ -143,9 +143,14 @@ export default function AddMenuItem({
     console.log(isValid);
     if (isValid) {
       console.log(menuItems);
+      if(!discount)
+        var body = {...menuItem,discount_price:null}
+      else
+        body = {...menuItem}
 
+      console.log(menuItem)
       document.body.style.cursor = "wait";
-      menuService.setMenuItems([menuItem], menuId).then((res) => {
+      menuService.setMenuItems([body], menuId).then((res) => {
         if (res.status == 200) {
           setMenuItems(res.data.menuItems);
           document.body.style.cursor = "default";
@@ -239,6 +244,10 @@ export default function AddMenuItem({
             value={menuItem?.price}
             required
             error={!validation.price}
+            inputProps={{
+              min: 0,
+              step: "0.5"
+            }}
             helperText={
               !validation.price ? "Menu item price must be defined!" : ""
             }
@@ -262,6 +271,7 @@ export default function AddMenuItem({
               name="prep_time"
               required
               error={!validation.prep_time}
+              inputProps={{min:0}}
               helperText={
                 !validation.prep_time ? validation.prep_time_error_m : ""
               }
@@ -301,6 +311,10 @@ export default function AddMenuItem({
                   ? validation.discount_price_error_m
                   : ""
               }
+              inputProps={{
+                min: 0,
+                step: "0.5"
+              }}
               value={menuItem?.discount_price}
               onChange={(event) => {
                 const inputValue = event.target.value;

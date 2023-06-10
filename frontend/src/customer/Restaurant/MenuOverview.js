@@ -84,6 +84,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
     var price = 0;
     var time = 0;
     orderList.forEach(o => {
+      console.log(o)
       if(parseInt(o.menuItem.prep_time) > time) time = o.menuItem.prep_time;
       if(o.menuItem.discount_price != null) {
         price += o.menuItem.discount_price * o.count;
