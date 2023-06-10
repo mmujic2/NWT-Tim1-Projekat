@@ -9,15 +9,21 @@
     <img src={image}/>*/
 
 
-
+// Ja sam dirao, imas problem sa tim?
     const [image,setImage] = useState("")
     const onFileChange = (e)=> {
         let files = e.target.files;
+
         let fileReader = new FileReader();
+
         fileReader.readAsDataURL(files[0]);
  
+
         fileReader.onload = (event) => {
+
             setImage(event.target.result)
+
             console.log(event.target.result)
+            
         }
     }
