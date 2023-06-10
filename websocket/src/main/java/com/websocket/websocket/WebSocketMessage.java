@@ -1,4 +1,4 @@
-package the.convenient.foodie.order.dao;
+package com.websocket.websocket;
 
 public class WebSocketMessage {
     private String message;

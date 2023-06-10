@@ -302,7 +302,7 @@ public class OrderController {
         order.setOrderStatus(status);
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Order " + order.getOrderCode() + " status changed to: " + status);
+        SendWebSocketMessage(order.getUser_id(), "Order " + order.getOrderCode() + " status changed to: " + status, status);
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
@@ -314,15 +314,15 @@ public class OrderController {
         order.setOrderStatus("In delivery");
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Courier " + username + " will pick up order " + order.getOrderCode()+"!" );
+        SendWebSocketMessage(order.getUser_id(), "Courier " + username + " will pick up order " + order.getOrderCode()+"!", "In delivery" );
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
-    public void SendWebSocketMessage(String uuid, String message) {
+    public void SendWebSocketMessage(String uuid, String message, String status) {
         try {
-            System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message)));
+            System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message, status)));
             restTemplate.postForObject("http://websocket-service/websocket/message/" + uuid,
-                    new ObjectMapper().writeValueAsString(new WebSocketMessage(message)), String.class);
+                    new ObjectMapper().writeValueAsString(new WebSocketMessage(message, status)), String.class);
         } catch (Exception e) {
             //throw new RuntimeException(e);
         }

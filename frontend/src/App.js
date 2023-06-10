@@ -23,6 +23,15 @@ function App() {
   const [show, setShow] = useState(false);
   const [socketMsg, setSocketMsg] = useState([]);
 
+  const manageSocketMessage = (msg) => {
+    console.log(msg)
+    var message = JSON.parse(msg)
+    if(message.status) {
+      setSocketMsg(message.message)
+      setShow(true);
+    }
+  }
+
   return (
     <>
       {TokenService.getUserUUID() != undefined ? (
@@ -31,15 +40,11 @@ function App() {
            msg={socketMsg}
            show={show}
            setShow={setShow}
-      ></Alert>
+          ></Alert>
           <SockJsClient
             url="http://localhost:7050/websocket"
             topics={["/message/" + TokenService.getUserUUID()]}
-            onMessage={(msg) => {
-              console.log(msg);
-              setSocketMsg([msg.message]);
-              setShow(true);
-            }}
+            onMessage={manageSocketMessage}
           ></SockJsClient>
         </>
       ) : (
