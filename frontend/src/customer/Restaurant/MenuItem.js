@@ -29,7 +29,7 @@ function MenuItem({
   const [value, setValue] = useState(0);
   const user = authService.getCurrentUser();
   const addToOrder = (e) => {
-    if(value <= 0) return;
+    if (value <= 0) return;
     var found = false;
     var orderListCopy = JSON.parse(JSON.stringify(orderList));
     for (var i = 0; i < orderListCopy.length; i++) {
@@ -58,7 +58,7 @@ function MenuItem({
         className="box"
       >
         <Row>
-          <Col className={grid ? "col-5" : "col-3 "}>
+          <Col className={grid ? "col-5" : "col-4 "}>
             <Card.Img
               variant="top"
               src={menuItem.image ? `${menuItem.image} ` : defaultImage}
@@ -166,22 +166,36 @@ function MenuItem({
                         display: "flex",
                       }}
                     >
-                      <Row style={{ marginBottom: "5px", marginLeft: "0px" }}>
-                        <Col style={{ padding: "0px" }}>
+                      <Row style={{ marginBottom: "5px", marginLeft: "0px",height:"27px" }}>
+                        <Col style={{ padding: "0px", }}>
                           <MDBInput
-                            value={value} 
-                            onChange={(e) => {if(e.target.value < 0) setValue(0); else setValue(e.target.value);}} 
-                            id='typeNumber' 
-                            type='number'
-                            style={{width: "50px", height: "25px", fontSize: "16px"}}/>
+                            value={value}
+                            onChange={(e) => {
+                              if (e.target.value < 0) setValue(0);
+                              else setValue(e.target.value);
+                            }}
+                            id="typeNumber"
+                            type="number"
+                            style={{
+                              width: "70px",
+                              height: "27px",
+                              fontSize: "14px",
+                              borderTopRightRadius: 0,
+                              borderBottomRightRadius: 0,
+                              boxShadow:"none",
+                            
+                            }}
+                          />
                         </Col>
                         <Col style={{ padding: "0px" }}>
                           <Button
                             style={{
                               width: "50px",
-                              height: "25px",
+                              height: "26px",
                               fontSize: "16px",
                               padding: "0px",
+                              borderTopLeftRadius: 0,
+                              borderBottomLeftRadius: 0,
                             }}
                             onClick={(e) => addToOrder(e)}
                           >
