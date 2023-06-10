@@ -91,7 +91,7 @@ function MenuCard({
             overflow: "hidden",
             backgroundColor: "#D9D9D9",
           }}
-          className="box"
+          className="px-3"
         >
           <Row>
             <Col className="col-7 p-0">

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
 import the.convenient.foodie.restaurant.dto.restaurant.*;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
+import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.model.OpeningHours;
 import the.convenient.foodie.restaurant.model.Restaurant;
@@ -28,6 +29,9 @@ public class RestaurantService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private FavoriteRestaurantRepository favoriteRestaurantRepository;
 
 
     public Restaurant addNewRestaurant(RestaurantCreateRequest request, String username) {
@@ -190,5 +194,8 @@ public class RestaurantService {
     }
 
 
-
+    public Long getCustomersFavorited(String restaurantUUID) {
+        restaurantRepository.findByUUID(restaurantUUID).orElseThrow();
+        return favoriteRestaurantRepository.countNumberOfFavorites(restaurantUUID);
+    }
 }

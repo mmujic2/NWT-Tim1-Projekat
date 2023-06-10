@@ -366,6 +366,10 @@ function ListContainer({
                       setMenuItems={setItems}
                       menuItems={items}
                       setLoading={setLoadingPage}
+                      alert={alert}
+                      setAlert={setAlert}
+                      showAlert={showAlert}
+                      setShowAlert={setShowAlert}
                     />
                   ) : type == "review" ? (
                     <ReviewCard
