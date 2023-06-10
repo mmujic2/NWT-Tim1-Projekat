@@ -112,7 +112,7 @@ function Header() {
         }
 
         const scores = () => {
-            let path="/admin/scores"
+            let path="/admin/overview"
             if(location.pathname!=path)
             navigate(path)
         }

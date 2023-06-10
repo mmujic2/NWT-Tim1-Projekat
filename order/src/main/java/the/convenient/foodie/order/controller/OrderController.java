@@ -271,6 +271,53 @@ public class OrderController {
         return orderMap;
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminorders")
+    public Map<String, Long> getAdminOrders(){
+        Map<String, Long> ordersMap = new HashMap<>();
+        ArrayList<String> names = new ArrayList<>();
+        var allOrders = orderRepository.findAll();
+        allOrders.forEach(order -> {
+            if(!names.contains(order.getRestaurantName())) names.add(order.getRestaurantName());
+        });
+
+        for(var name : names) {
+            ordersMap.put(name, allOrders.stream().filter(x -> x.getRestaurantName().equals(name)).count());
+        }
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders);
+        return ordersMap;
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminspending")
+    public Long getAdminSpending(){
+        long moneySpent;
+        var allOrders = orderRepository.findAll();
+        moneySpent = allOrders.stream().mapToLong(order -> (long) order.getTotalPrice()).sum();
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders.size());
+        return moneySpent;
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminrestaurantrevenue")
+    public Map<String, Long> getAdminRestaurantRevenue(){
+        Map<String, Long> ordersMap = new HashMap<>();
+        ArrayList<String> names = new ArrayList<>();
+        var allOrders = orderRepository.findAll();
+        allOrders.forEach(order -> {
+            if(!names.contains(order.getRestaurantName())) names.add(order.getRestaurantName());
+        });
+
+        for(var name : names) {
+            ArrayList<Order> listOrders = (ArrayList<Order>) allOrders.stream().filter(x -> x.getRestaurantName().equals(name)).collect(Collectors.toList());
+            long  money = listOrders.stream().mapToLong(order -> (long) order.getTotalPrice()).sum();
+            ordersMap.put(name, money );
+        }
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders);
+        return ordersMap;
+    }
+
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/getforuser")
     public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("uuid") String userUuid) {

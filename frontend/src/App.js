@@ -18,6 +18,7 @@ import Alert from "./shared/util/Alert";
 import RestaurantDetails from "./restaurantManager/RestaurantDetails/RestaurantDetails";
 import AddMenu from "./restaurantManager/Menus/AddMenu";
 import AdminCouriers from "./admin/Home/AdminCouriers";
+import AdminOverview from "./admin/Home/AdminOverview";
 
 function App() {
   const [show, setShow] = useState(false);
@@ -103,6 +104,10 @@ function App() {
           <Route
             path="/admin/couriers"
             element={<AdminCouriers></AdminCouriers>}
+          ></Route>
+          <Route
+            path="/admin/overview"
+            element={<AdminOverview></AdminOverview>}
           ></Route>
         </Route>
       </Routes>

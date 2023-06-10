@@ -16,6 +16,45 @@ class OrderService {
         
       }
 
+      getAdminOrders() {
+        try {
+          return api
+              .get("/order/adminorders")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
+      getAdminSpending() {
+        try {
+          return api
+              .get("/order/adminspending")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
+      getAdminRestaurantRevenue() {
+        try {
+          return api
+              .get("/order/adminrestaurantrevenue")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
       changeOrderStatus(orderId, status) {
        return api
           .put("/order/status/" + orderId + "/" + status)
