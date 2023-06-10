@@ -271,14 +271,40 @@ function MenuItem({
                         height: "auto",
                       }}
                     />
-                    <div
-                      style={{
-                        paddingLeft: "2px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {menuItem.price.toFixed(2)}
-                    </div>
+                    {menuItem?.discount_price ? (
+                      <div>
+                        <del
+                          style={{
+                            paddingLeft: "2px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {menuItem.price.toFixed(2)}
+                        </del>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          paddingLeft: "2px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {menuItem.price.toFixed(2)}
+                      </div>
+                    )}
+                    {menuItem?.discount_price ? (
+                      <div
+                        style={{
+                          fontWeight: "bold",
+                          paddingLeft: "8px",
+                        }}
+                      >
+                        {menuItem?.discount_price.toFixed(2)}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+
                     <div
                       style={{
                         paddingLeft: "2px",
