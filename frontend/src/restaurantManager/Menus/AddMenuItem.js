@@ -143,18 +143,11 @@ export default function AddMenuItem({
     console.log(isValid);
     if (isValid) {
       console.log(menuItems);
-      setMenuItems((current) => [...current, menuItem]);
-      setMenuItem({
-        name: "",
-        description: "",
-        price: 0,
-        discount_price: 0,
-        prep_time: null,
-        image: null,
-      });
+
       document.body.style.cursor = "wait";
       menuService.setMenuItems([menuItem], menuId).then((res) => {
         if (res.status == 200) {
+          setMenuItems(res.data.menuItems);
           document.body.style.cursor = "default";
           setAlert({
             ...alert,
@@ -168,6 +161,14 @@ export default function AddMenuItem({
         }
       });
 
+      setMenuItem({
+        name: "",
+        description: "",
+        price: 0,
+        discount_price: 0,
+        prep_time: null,
+        image: null,
+      });
       setOpen(false);
     }
   };

@@ -24,6 +24,10 @@ function MenuItem({
   menuItems,
   setMenuItem,
   setLoading,
+  alert,
+  setAlert,
+  showAlert,
+  setShowAlert,
 }) {
   const [editOpen, setEditOpen] = useState(false);
   const [value, setValue] = useState(0);
@@ -126,9 +130,19 @@ function MenuItem({
                             );
                             setLoading(false);
                             setMenuItems(updatedMenuItems);
+                            setAlert({
+                              ...alert,
+                              msg: "Successfully deleted a menu item!",
+                              type: "success",
+                            });
+                            setShowAlert(true);
                           } else {
-                            // setAlert({ ...alert, msg: res.data, type: "error" });
-                            // setShowAlert(true);
+                            setAlert({
+                              ...alert,
+                              msg: res.data,
+                              type: "error",
+                            });
+                            setShowAlert(true);
                           }
                         });
                       }}
@@ -154,63 +168,65 @@ function MenuItem({
                 <></>
               )}
               {setOrderList != undefined && orderList != undefined ? (
-                  <div>
-                    <div
+                <div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 15,
+                      right: 20,
+                      display: "flex",
+                    }}
+                  >
+                    <Row
                       style={{
-                        position: "absolute",
-                        top: 15,
-                        right: 20,
-                        display: "flex",
+                        marginBottom: "5px",
+                        marginLeft: "0px",
+                        height: "27px",
                       }}
                     >
-                      <Row
-                        style={{
-                          marginBottom: "5px",
-                          marginLeft: "0px",
-                          height: "27px",
-                        }}
-                      >
-                        <Col style={{ padding: "0px" }}>
-                          <MDBInput
-                            value={value}
-                            onChange={(e) => {
-                              if (e.target.value < 0) setValue(0);
-                              else setValue(e.target.value);
-                            }}
-                            id="typeNumber"
-                            type="number"
-                            style={{
-                              width: "70px",
-                              height: "27px",
-                              fontSize: "14px",
-                              borderTopRightRadius: 0,
-                              borderBottomRightRadius: 0,
-                              boxShadow: "none",
-                            }}
-                          />
-                        </Col>
-                        <Col style={{ padding: "0px" }}>
-                          <Button
-                            style={{
-                              width: "50px",
-                              height: "26px",
-                              fontSize: "16px",
-                              padding: "0px",
-                              borderTopLeftRadius: 0,
-                              borderBottomLeftRadius: 0,
-                            }}
-                            onClick={(e) => addToOrder(e)}
-                          >
-                            Add
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
+                      <Col style={{ padding: "0px" }}>
+                        <MDBInput
+                          value={value}
+                          onChange={(e) => {
+                            if (e.target.value < 0) setValue(0);
+                            else setValue(e.target.value);
+                          }}
+                          id="typeNumber"
+                          type="number"
+                          style={{
+                            width: "70px",
+                            height: "27px",
+                            fontSize: "14px",
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                            boxShadow: "none",
+                          }}
+                        />
+                      </Col>
+                      <Col style={{ padding: "0px" }}>
+                        <Button
+                          style={{
+                            width: "50px",
+                            height: "26px",
+                            fontSize: "16px",
+                            padding: "0px",
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                          }}
+                          onClick={(e) => addToOrder(e)}
+                        >
+                          Add
+                        </Button>
+                      </Col>
+                    </Row>
                   </div>
-                ) : (
-                  <></>
-                )}
-              <Card.Text style={{ clear: left, fontSize: "14px",paddingTop:"10px" }}>
+                </div>
+              ) : (
+                <></>
+              )}
+              <Card.Text
+                style={{ clear: left, fontSize: "14px", paddingTop: "10px" }}
+              >
                 <div style={{ color: "#606060" }}>{menuItem.description}</div>
 
                 <br />
@@ -296,7 +312,7 @@ function MenuItem({
                         style={{
                           fontWeight: "bold",
                           paddingLeft: "8px",
-                          color:"#fe724c"
+                          color: "#fe724c",
                         }}
                       >
                         {menuItem?.discount_price.toFixed(2)}

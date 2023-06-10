@@ -199,6 +199,10 @@ function AddMenu() {
                     type={"menuItems"}
                     grid={false}
                     setLoadingPage={setLoading}
+                    setAlert={setAlert}
+                    showAlert={showAlert}
+                    alert={alert}
+                    setShowAlert={setShowAlert}
                   ></ListContainer>
                 </div>
               ) : (
