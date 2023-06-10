@@ -44,10 +44,11 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
   const marginBetweenOrderItems = "10px";
 
   useEffect(() => {
-    var c1 = restaurant.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
-    var c2 = tokenService.getUser().user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
-    var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0] )*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10;
-    setDeliveryPrice(Math.round(d) / 10);
+    
+    //var c1 = restaurant.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    //var c2 = tokenService.getUser().user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    //var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0] )*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10;
+    setDeliveryPrice(userService.getDistanceToRestaurant(restaurant));
 
     discountService.getRequiredScore().then(response => {
       if(response.status < 300) {

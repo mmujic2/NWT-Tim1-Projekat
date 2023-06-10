@@ -78,10 +78,12 @@ class UserService {
         }
   }
 
-
-
-
-
+  getDistanceToRestaurant(restaurant) {
+    var c1 = restaurant.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    var c2 = JSON.parse(localStorage.getItem("user")).user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
+    var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0])*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10;
+    return (Math.round(d) / 10);
+  }
 }
 
 export default new UserService();
