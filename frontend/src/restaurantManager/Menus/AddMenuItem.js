@@ -13,6 +13,8 @@ import { Figure, Row } from "react-bootstrap";
 import defaultImage from "../../images/default.png";
 //import { Button, Form, Row, Col, ButtonGroup, Stack } from "react-bootstrap";
 import menuService from "../../service/menu.service";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function AddMenuItem({
   open,
@@ -26,14 +28,57 @@ export default function AddMenuItem({
   alert,
   setAlert,
 }) {
+  const [menuItemId, setMenuItemId] = useState();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const url = new URLSearchParams(location);
+  var mounted = false;
   const [menuItem, setMenuItem] = useState({
     name: item?.name || "",
     description: item?.description || "",
     price: item?.price || 0,
     discount_price: item?.discount_price || null,
-    prep_time: item?.prep_time || null,
+    prep_time: item?.prep_time || 0,
     image: item?.image || null,
   });
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const menuItemId1 = searchParams.get("menuItem");
+    // Use the id value in your component logic
+    if (menuItemId1 != null) {
+      if (!mounted) {
+        mounted = true;
+
+        setMenuItemId(menuItemId1);
+        setOpen(true);
+        document.body.style.cursor = "wait";
+        console.log(menuItemId1);
+        console.log(mounted);
+
+        menuService.getMenuItemById(menuItemId1).then((res) => {
+          document.body.style.cursor = "default";
+          setMenuItem(res.data);
+        });
+      } else {
+        console.log("blabla");
+      }
+    }
+    /*   if (menuItemId1 != null && menuItemId1 != undefined) setOpen(true);
+        /*  menuService.getMenuById(id).then((res) => {
+          if (res.status == 200) {
+            setFormData(res.data);
+            setLoading(false);
+            setActive(res.data.active);
+            setMenuItems(res.data.menuItems);
+          } else {
+            setAlert({ ...alert, msg: res.data, type: "error" });
+            setShowAlert(true);
+          }
+        });
+      }
+    } else setLoading(false);*/
+  }, [location.search]);
 
   const [discount, setDiscount] = useState(false);
   const [validation, setValidation] = useState({
@@ -64,6 +109,7 @@ export default function AddMenuItem({
       prep_time: true,
       image: true,
     });
+    if (menuItemId != null) navigate("/menu/add?id=" + menuId);
     setValid(true);
     setOpen(false);
   };
@@ -134,32 +180,48 @@ export default function AddMenuItem({
     }
 
     setValidation(updatedValidation);
-    console.log(updatedValidation);
     return { isValid };
   };
 
   const handleCreate = () => {
     const { isValid } = checkValidation(menuItem);
-    console.log(isValid);
-    if (isValid) {
-      console.log(menuItems);
 
+    if (isValid) {
       document.body.style.cursor = "wait";
-      menuService.setMenuItems([menuItem], menuId).then((res) => {
-        if (res.status == 200) {
-          setMenuItems(res.data.menuItems);
-          document.body.style.cursor = "default";
-          setAlert({
-            ...alert,
-            msg: "Successfully added menu-item!",
-            type: "success",
-          });
-          setShowAlert(true);
-        } else {
-          setAlert({ ...alert, msg: res.data, type: "error" });
-          setShowAlert(true);
-        }
-      });
+      if (menuItemId != null && menuItemId != undefined) {
+        menuService.updateMenuItem(menuItemId, menuItem).then((res) => {
+          console.log(res);
+          if (res.status == 201) {
+            document.body.style.cursor = "default";
+            setAlert({
+              ...alert,
+              msg: "Successfully updated menu-item!",
+              type: "success",
+            });
+            setShowAlert(true);
+            navigate("/menu/add?id=" + menuId);
+          } else {
+            setAlert({ ...alert, msg: res.data, type: "error" });
+            setShowAlert(true);
+          }
+        });
+      } else {
+        menuService.setMenuItems([menuItem], menuId).then((res) => {
+          if (res.status == 200) {
+            setMenuItems(res.data.menuItems);
+            document.body.style.cursor = "default";
+            setAlert({
+              ...alert,
+              msg: "Successfully added menu-item!",
+              type: "success",
+            });
+            setShowAlert(true);
+          } else {
+            setAlert({ ...alert, msg: res.data, type: "error" });
+            setShowAlert(true);
+          }
+        });
+      }
 
       setMenuItem({
         name: "",
@@ -190,7 +252,10 @@ export default function AddMenuItem({
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add a menu item</DialogTitle>
+        <DialogTitle>
+          {" "}
+          {menuItemId == null ? "Add a menu item" : "Update a menu item"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -198,6 +263,7 @@ export default function AddMenuItem({
             name="name"
             id="name"
             label="Name"
+            value={menuItem.name}
             type="text"
             fullWidth
             variant="standard"
@@ -217,6 +283,7 @@ export default function AddMenuItem({
             label="Description"
             type="text"
             fullWidth
+            value={menuItem.description}
             multiline
             rows={4}
             helperText={
@@ -239,6 +306,10 @@ export default function AddMenuItem({
             value={menuItem?.price}
             required
             error={!validation.price}
+            inputProps={{
+              min: 0,
+              step: "0.5"
+            }}
             helperText={
               !validation.price ? "Menu item price must be defined!" : ""
             }
@@ -262,6 +333,7 @@ export default function AddMenuItem({
               name="prep_time"
               required
               error={!validation.prep_time}
+              inputProps={{min:0}}
               helperText={
                 !validation.prep_time ? validation.prep_time_error_m : ""
               }
@@ -301,6 +373,10 @@ export default function AddMenuItem({
                   ? validation.discount_price_error_m
                   : ""
               }
+              inputProps={{
+                min: 0,
+                step: "0.5"
+              }}
               value={menuItem?.discount_price}
               onChange={(event) => {
                 const inputValue = event.target.value;
@@ -352,7 +428,9 @@ export default function AddMenuItem({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleCreate}>Create</Button>
+          <Button onClick={handleCreate}>
+            {menuItemId == null ? "Create" : "Update"}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

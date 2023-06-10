@@ -31,11 +31,13 @@ function MenuItem({
   setShowAlert,
 }) {
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const [editOpen, setEditOpen] = useState(false);
   const [value, setValue] = useState(0);
   const user = authService.getCurrentUser();
   const addToOrder = (e) => {
+    console.log(menuItem)
     if (value <= 0) return;
     var found = false;
     var orderListCopy = JSON.parse(JSON.stringify(orderList));
@@ -155,6 +157,7 @@ function MenuItem({
                         console.log("UREDI");
                         setEditOpen(true);
                         console.log(editOpen);
+                        navigate("/menu/add?menuItem=" + menuItem.id);
                         e.stopPropagation();
                       }}
                       style={{

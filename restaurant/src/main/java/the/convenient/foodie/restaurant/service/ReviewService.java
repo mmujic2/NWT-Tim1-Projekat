@@ -21,6 +21,16 @@ public class ReviewService {
     private RestaurantRepository restaurantRepository;
 
     public Review addNewReview(ReviewCreateRequest request) {
+        var existingReview = reviewRepository.findByUserAndRestaurant(request.getUserUUID(),request.getRestaurantId());
+        if(existingReview!=null)
+        {
+            existingReview.setRating(request.getRating());
+            existingReview.setComment(request.getComment());
+            existingReview.setModified(LocalDateTime.now());
+            existingReview.setModifiedBy(request.getUserUUID());
+            reviewRepository.save(existingReview);
+            return existingReview;
+        }
         Review review = new Review();
         review.setRating(request.getRating());
         review.setComment(request.getComment());
@@ -29,8 +39,7 @@ public class ReviewService {
         var restaurant = restaurantRepository.findById(request.getRestaurantId()).orElseThrow(()-> exception);
         review.setRestaurant(restaurant);
         review.setCreated(LocalDateTime.now());
-        //Update with userID/name
-        review.setCreatedBy("test");
+        review.setCreatedBy(request.getUserUUID());
         reviewRepository.save(review);
 
         return review;

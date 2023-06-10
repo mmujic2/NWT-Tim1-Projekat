@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import restaurantService from '../../service/restaurant.service';
-import { Container ,Button } from 'react-bootstrap';
+import { Container ,Button, Modal } from 'react-bootstrap';
 import Loader from '../../shared/util/Loader/Loader';
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -8,14 +8,16 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { Search, Add } from '@mui/icons-material'
 import userService from '../../service/user.service';
-import RestaurantModal from './RestaurantModal';
+import CourierModal from './CourierModal';
 
 
 function AdminCouriers() {
     var mounted = false;
     const [searchResults, setSearchResults] = useState();
     const [loading, setLoading] = useState(false);
+    const [chosenCourier, setchosenCourier] = useState({firstname:"", lastname:"", username:"", email:"", phoneNumber:""});
     const [openReportDialog, setOpenReportDialog] = useState(false);
+    const [showModal, setshowModal] = useState(false);
 
     useEffect(() => {
         if (!mounted) {
@@ -71,24 +73,32 @@ function AdminCouriers() {
             text: "Phone number"
         },
       ];
+      const closeModal=()=>{
+        setshowModal(false)
+      }
+
+
+        const openModal=()=>{
+            setshowModal(true)
+        }
 
       const rowEvents = {
         onClick: (e, row, rowIndex) => {
           console.log(row) // ovo je objekat u tom redu
-        //deleteCouriers(row.id) // ovo upali ako hoces da brises couriere
+          setchosenCourier(row)
+          setshowModal(true);
         }
       };
 
 
-      const deleteCouriers = (id) => {
-        console.log("Gledaj ovo")
-        console.log(id)
+      const deleteCourier = () => {
         setSearchResults((current) =>
-            current.filter((rest) => rest.id !== id)
+            current.filter((rest) => rest.id !== chosenCourier.id)
         );
-        userService.deleteUser(id).then( res => {
+        userService.deleteUser(chosenCourier.id).then( res => {
             console.log(res);
         })
+        setshowModal(false);
       }
 
 
@@ -101,12 +111,12 @@ function AdminCouriers() {
                             <h2 style={{ textAlign: "start", float: "left", margin:0 }}>{"All couriers"}</h2>
                             <Container style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end", backgroundColor: "#F5F5F4", marginBottom: 0, marginRight: 0,padding:0, paddingBottom:10 }}>
                                 <Button style={{ clear: "left", textAlign: "center", width: "fit-content",  }} class="rounded" onClick={addNewCourier}>Add courier <Add ></Add></Button>
-                                <RestaurantModal
+                                <CourierModal
                                 show={openReportDialog}
                                 setShow={setOpenReportDialog}
-                                restaurants={searchResults}
-                                setRestaurants={setSearchResults}
-                                ></RestaurantModal>
+                                couriers={searchResults}
+                                setCouriers={setSearchResults}
+                                ></CourierModal>
                             </Container>
                                 <hr style={{ clear: "left", margin:0 }}></hr>
                         </Container>
@@ -120,6 +130,29 @@ function AdminCouriers() {
                             columns={columns}
                             pagination={paginationFactory({ sizePerPage: 5 })}
                         />
+                        <Modal show={showModal} onHide={closeModal}>
+                            <Modal.Header closeButton>
+                            <Modal.Title>Overview: {chosenCourier.username}</Modal.Title>
+                            </Modal.Header>
+                            
+                            <Modal.Body>
+                                Full name: {chosenCourier.firstname}  {chosenCourier.lastname}
+                                <br></br>
+                                Email: {chosenCourier.email}
+                                <br></br>
+                                Phone number: {chosenCourier.phoneNumber}
+                                <br></br>
+                                Do you want to delete this courier?
+                            </Modal.Body>
+                            <Modal.Footer>
+                            <Button variant="secondary" onClick={closeModal}>
+                                Cancel
+                            </Button>
+                            <Button variant="danger" onClick={deleteCourier}>
+                                Delete
+                            </Button>
+                            </Modal.Footer>
+                        </Modal>
                         
                     </Container> : <></>}
             </Loader>

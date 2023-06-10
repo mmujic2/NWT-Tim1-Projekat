@@ -28,6 +28,18 @@ class UserService {
         }
   }
 
+  addCourier(courier){
+    try{
+      return api
+            .post("/auth/register-courier",courier)
+            .then(response=> {
+              return response;
+            })
+        } catch(e) {
+          console.log(e)
+        }
+  }
+
   deleteUser(id){
     try{
       return api

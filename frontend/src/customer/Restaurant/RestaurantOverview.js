@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import { HeartFill } from "react-bootstrap-icons";
+import { HeartFill, StarFill } from "react-bootstrap-icons";
 import Image from "react-bootstrap/Image";
 import { useLocation } from "react-router-dom";
 import StarRatings from "react-star-ratings";
@@ -11,6 +11,7 @@ import Loader from "../../shared/util/Loader/Loader";
 import NotFound from "../../shared/util/NotFound";
 import Gallery from "./Gallery";
 import MenuOverview from "./MenuOverview";
+import AddReviewPopup from "../Review/AddReviewPopup";
 
 function RestaurantOverview() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function RestaurantOverview() {
   const [alert, setAlert] = useState({});
   const [showAlert, setShowAlert] = useState(false);
   const [categories, setCategories] = useState("");
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
 
   var mounted = false;
   useEffect(() => {
@@ -53,6 +55,7 @@ function RestaurantOverview() {
     if (restaurant.customerFavorite) {
       return (
         <Button
+          size="sm"
           onClick={() => removeFromFavorites(restaurant.id)}
           style={{
             width: "fit-content",
@@ -67,6 +70,7 @@ function RestaurantOverview() {
             style={{
               color: "white",
               marginRight: "5px",
+              marginBottom: "5px",
             }}
           />
           Remove from favorites{" "}
@@ -75,6 +79,7 @@ function RestaurantOverview() {
     } else {
       return (
         <Button
+          size="sm"
           onClick={() => addToFavorites(restaurant.id)}
           style={{
             width: "fit-content",
@@ -89,12 +94,35 @@ function RestaurantOverview() {
             style={{
               color: "white",
               marginRight: "5px",
+              marginBottom: "5px",
             }}
           />
           Add to favorites{" "}
         </Button>
       );
     }
+  };
+
+  const addReviewButton = () => {
+    return (
+      <Button
+        size="sm"
+        onClick={() => addReview()}
+        style={{
+          width: "fit-content",
+          backgroundColor: "#fe724c",
+          borderColor: "#fe724c",
+          padding: "5px",
+          marginRight: "10px",
+          float: "left",
+        }}
+      >
+        <StarFill
+          style={{ color: "white", marginRight: "5px", marginBottom: "5px" }}
+        />
+        Add a review
+      </Button>
+    );
   };
 
   const addToFavorites = (id) => {
@@ -131,6 +159,10 @@ function RestaurantOverview() {
     });
   };
 
+  const addReview = () => {
+    setShowReviewPopup(true);
+  };
+
   return (
     <>
       {notFound ? <NotFound header={false} /> : <></>}
@@ -142,6 +174,13 @@ function RestaurantOverview() {
             type={alert.type}
             msg={alert.msg}
           ></CustomAlert>
+          <AddReviewPopup
+            setAlert={setAlert}
+            setShowAlert={setShowAlert}
+            restaurantId={restaurant?.id}
+            show={showReviewPopup}
+            setShow={setShowReviewPopup}
+          />
           {restaurant ? (
             <div>
               <Container
@@ -158,11 +197,7 @@ function RestaurantOverview() {
                   <Image
                     fluid
                     thumbnail
-                    src={
-                      restaurant.logo
-                        ? `${restaurant.logo} `
-                        : defaultImage
-                    }
+                    src={restaurant.logo ? `${restaurant.logo} ` : defaultImage}
                     style={{
                       objectFit: "cover",
                       height: "250px",
@@ -175,11 +210,23 @@ function RestaurantOverview() {
                     className="shadow-lg"
                   />
                   <div style={{ marginLeft: "340px", marginTop: "15px" }}>
-                    <Row>
-                      <Col className="col-8">
-                        <h2>{restaurant.name} {restaurant.open ? <></> : <span style={{color: "red"}}>(CLOSED)</span>}</h2>
+                    <Row style={{ gap: 0 }}>
+                      <Col className="col-7">
+                        <h2>
+                          {restaurant.name}{" "}
+                          {restaurant.open ? (
+                            <></>
+                          ) : (
+                            <span style={{ color: "red" }}>(CLOSED)</span>
+                          )}
+                        </h2>
                       </Col>
-                      <Col>{favoritesButton()}</Col>
+                      <Col className="col-3" style={{ padding: 0 }}>
+                        {favoritesButton()}
+                      </Col>
+                      <Col className="col-2 " style={{ padding: 0 }}>
+                        {addReviewButton()}
+                      </Col>
                     </Row>
                     <h6>{restaurant.address}</h6>
                     <h6 style={{ color: "#fe724c", fontWeight: "bold" }}>
@@ -217,7 +264,11 @@ function RestaurantOverview() {
                   </div>
                 </div>
                 <div style={{ marginTop: "50px" }}>
-                  <MenuOverview restaurant={restaurant} setAlert={setAlert} setShowAlert={setShowAlert}></MenuOverview>
+                  <MenuOverview
+                    restaurant={restaurant}
+                    setAlert={setAlert}
+                    setShowAlert={setShowAlert}
+                  ></MenuOverview>
                 </div>
               </Container>
             </div>
