@@ -177,7 +177,7 @@ function RestaurantOverview() {
                   <div style={{ marginLeft: "340px", marginTop: "15px" }}>
                     <Row>
                       <Col className="col-8">
-                        <h2>{restaurant.name}</h2>
+                        <h2>{restaurant.name} {restaurant.open ? <></> : <span style={{color: "red"}}>(CLOSED)</span>}</h2>
                       </Col>
                       <Col>{favoritesButton()}</Col>
                     </Row>

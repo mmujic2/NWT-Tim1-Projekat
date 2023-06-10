@@ -49,7 +49,7 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
     //var c2 = tokenService.getUser().user.mapCoordinates.split(", ").map(x => parseFloat(x) / 180 * Math.PI);
     //var d = Math.acos(Math.sin(c1[0])*Math.sin(c2[0])+Math.cos(c1[0] )*Math.cos(c2[0])*Math.cos(c2[1]-c1[1])) * 6371 * 10;
     setDeliveryPrice(userService.getDistanceToRestaurant(restaurant));
-
+    console.log(restaurant)
     discountService.getRequiredScore().then(response => {
       if(response.status < 300) {
         setRequiredScore(response.data);
@@ -326,112 +326,116 @@ function MenuOverview({ restaurant, setAlert, setShowAlert }) {
                         marginBottom: "5px",
                       }}
                       >
-                      {tokenService.getUser().user.mapCoordinates != null
-                      ?
-                        (orderList.length > 0 
+                      {restaurant.open ? 
+                        (tokenService.getUser().user.mapCoordinates != null
                         ?
-                          <>
-                            {orderListToUI()}
+                          (orderList.length > 0 
+                          ?
+                            <>
+                              {orderListToUI()}
 
-                            <hr></hr>
-                            
-                            <Row style={{fontSize: "16px", marginTop: "20px"}} >
-                              <Col xs={8}>
-                                <MDBInput 
-                                  id='form1' 
-                                  type='text' 
-                                  placeholder="Got a coupon?"
-                                  value={couponCode}
-                                  onChange={(e) => setCouponCode(e.target.value)}
-                                />
-                              </Col>
-                              <Col xs={3}>
-                                {
-                                  !checkingCoupon 
+                              <hr></hr>
+                              
+                              <Row style={{fontSize: "16px", marginTop: "20px"}} >
+                                <Col xs={8}>
+                                  <MDBInput 
+                                    id='form1' 
+                                    type='text' 
+                                    placeholder="Got a coupon?"
+                                    value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value)}
+                                  />
+                                </Col>
+                                <Col xs={3}>
+                                  {
+                                    !checkingCoupon 
+                                    ?
+                                      <Button style={{fontSize: "16px", width: "100%"}} onClick={checkCoupon}> Check </Button> 
+                                    : 
+                                      <MDBSpinner></MDBSpinner>
+                                  }
+                                </Col>
+                              </Row>
+                              {
+                                checkedCoupon 
+                                ? 
+                                  (
+                                    couponValid ? <div style={{fontSize: "10px", color: "green"}}>Coupon valid! </div> 
+                                                : <div style={{fontSize: "10px", color: "red"}}>Coupon invalid! </div>
+                                  )
+                                : 
+                                  <></>
+                              }
+                              {
+                                !freeDeliveryUsed 
+                                ? 
+                                  <Row >
+                                    <Col xs={8}>
+                                      <div style={{fontSize: "16px", marginTop: "20px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
+                                    </Col>
+                                    <Col xs={3}>
+                                      <Button style={{fontSize: "16px", marginTop: marginBetweenOrderItems}} onClick={checkFreeDelivery}> Use </Button> 
+                                    </Col>
+                                  </Row>
+                                :
+                                  hasFreeDelivery
                                   ?
-                                    <Button style={{fontSize: "16px", width: "100%"}} onClick={checkCoupon}> Check </Button> 
-                                  : 
-                                    <MDBSpinner></MDBSpinner>
-                                }
-                              </Col>
-                            </Row>
-                            {
-                              checkedCoupon 
-                              ? 
-                                (
-                                  couponValid ? <div style={{fontSize: "10px", color: "green"}}>Coupon valid! </div> 
-                                              : <div style={{fontSize: "10px", color: "red"}}>Coupon invalid! </div>
-                                )
-                              : 
-                                <></>
-                            }
-                            {
-                              !freeDeliveryUsed 
-                              ? 
-                                <Row >
-                                  <Col xs={8}>
-                                    <div style={{fontSize: "16px", marginTop: "20px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
-                                  </Col>
-                                  <Col xs={3}>
-                                    <Button style={{fontSize: "16px", marginTop: marginBetweenOrderItems}} onClick={checkFreeDelivery}> Use </Button> 
-                                  </Col>
-                                </Row>
-                              :
-                                hasFreeDelivery
-                                ?
-                                  <>
-                                    <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: <del>{deliveryPrice.toFixed(2)}</del> 0.00 KM</div>
-                                    <div style={{fontSize: "10px", color: "green"}}>Free delivery used! </div> 
-                                  </>
-                                  
-                                :
-                                  <>
-                                    <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
-                                    <div style={{fontSize: "10px", color: "red"}}>Not enough score for free delivery! </div> 
-                                  </>
-                            }
-                            
+                                    <>
+                                      <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: <del>{deliveryPrice.toFixed(2)}</del> 0.00 KM</div>
+                                      <div style={{fontSize: "10px", color: "green"}}>Free delivery used! </div> 
+                                    </>
+                                    
+                                  :
+                                    <>
+                                      <div style={{fontSize: "16px", marginTop: "10px"}}>Delivery fee: {deliveryPrice.toFixed(2)} KM</div>
+                                      <div style={{fontSize: "10px", color: "red"}}>Not enough score for free delivery! </div> 
+                                    </>
+                              }
+                              
 
-                            {
-                              couponValid
-                              ?
-                                <>
-                                  <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total discount: {totalDiscount}%</div>
-                                  <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: <del>{(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)}</del>  {((totalPrice + (deliveryPrice * !hasFreeDelivery)) * (1 - totalDiscount / 100)).toFixed(2)} KM </div>
-                                </>
-                              :
-                                <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: {(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)} KM</div>
-                            }
-                            <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Delivery time: {(estDeliveryTime).toFixed(0)} min</div>
-                            <hr></hr>
-                            {
-                              orderCreated
-                              ?
-                                <></>
-                              :
-                                placingOrder
+                              {
+                                couponValid
                                 ?
-                                <Row>
-                                  <Col xs={5}></Col>
-                                  <Col xs={1}><MDBSpinner></MDBSpinner></Col>
-                                  <Col xs={5}></Col>
-                                </Row>
+                                  <>
+                                    <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total discount: {totalDiscount}%</div>
+                                    <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: <del>{(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)}</del>  {((totalPrice + (deliveryPrice * !hasFreeDelivery)) * (1 - totalDiscount / 100)).toFixed(2)} KM </div>
+                                  </>
                                 :
-                                <Row>
-                                  <Col xs={2}></Col>
-                                  <Col xs={7}><Button onClick={placeOrder}>Place order</Button></Col>
-                                  <Col xs={2}></Col>
-                                </Row>
-                                
-                            }
-                            
-                          </>
+                                  <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Total price: {(totalPrice + (deliveryPrice * !hasFreeDelivery)).toFixed(2)} KM</div>
+                              }
+                              <div style={{fontSize: "16px", marginTop: marginBetweenOrderItems}}>Delivery time: {(estDeliveryTime).toFixed(0)} min</div>
+                              <hr></hr>
+                              {
+                                orderCreated
+                                ?
+                                  <></>
+                                :
+                                  placingOrder
+                                  ?
+                                  <Row>
+                                    <Col xs={5}></Col>
+                                    <Col xs={1}><MDBSpinner></MDBSpinner></Col>
+                                    <Col xs={5}></Col>
+                                  </Row>
+                                  :
+                                  <Row>
+                                    <Col xs={2}></Col>
+                                    <Col xs={7}><Button onClick={placeOrder}>Place order</Button></Col>
+                                    <Col xs={2}></Col>
+                                  </Row>
+                                  
+                              }
+                              
+                            </>
+                          :
+                            <>Add items to order</>
+                          )
+                          
                         :
-                          <>Add items to order</>
+                          <>Please add address and phone number to account before ordering</>
                         )
-                        
-                      :
-                        <>Please add address to account before ordering</>
+                        :
+                        <> Restuarant is closed </>
                       }
                         
                       </Container>
