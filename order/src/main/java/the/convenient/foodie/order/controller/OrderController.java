@@ -106,7 +106,7 @@ public class OrderController {
                 MenuItem temp = null;
                 var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/get/" + id.toString(), String.class);
                 temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
-
+                temp.setImage(null);
                 menuItems.add(temp);
                 if(!processedIds.contains(id)) {
                     menuItemRepository.save(temp);
@@ -213,6 +213,9 @@ public class OrderController {
         try {
             objectMapper.readValue(menuItemsJson, MenuItem[].class);
             List<MenuItem> menuItemsList = objectMapper.readValue(menuItemsJson, new TypeReference<>() {});
+            for(var item : menuItemsList) {
+                item.setImage(null);
+            }
             menuItemRepository.saveAll(menuItemsList);
             System.out.println("Done");
         } catch (Exception e) {
