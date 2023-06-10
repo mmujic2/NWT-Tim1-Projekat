@@ -87,6 +87,26 @@ class MenuService {
       console.log(e);
     }
   }
+
+  getMenuItemById(id) {
+    try {
+      return api.get("/menu-item/" + id).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  updateMenuItem(id, req) {
+    try {
+      return api.put("/menu-item/update/" + id, req).then((response) => {
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
 
 export default new MenuService();

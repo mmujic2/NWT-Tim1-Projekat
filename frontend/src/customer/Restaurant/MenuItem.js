@@ -31,6 +31,7 @@ function MenuItem({
   setShowAlert,
 }) {
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const [editOpen, setEditOpen] = useState(false);
   const [value, setValue] = useState(0);
@@ -155,6 +156,7 @@ function MenuItem({
                         console.log("UREDI");
                         setEditOpen(true);
                         console.log(editOpen);
+                        navigate("/menu/add?menuItem=" + menuItem.id);
                         e.stopPropagation();
                       }}
                       style={{

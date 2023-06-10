@@ -24,17 +24,19 @@ function AddMenu() {
   const id = useParams();
   const [loading, setLoading] = useState(true);
   const [idMenu, setIdMenu] = useState();
+  const [menuItemId, setMenuItemId] = useState();
   const location = useLocation();
-
+  const url = new URLSearchParams(location);
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get("id");
-    console.log(id);
+
     // Use the id value in your component logic
     if (id != null) {
       if (!mounted) {
         mounted = true;
         setIdMenu(id);
+
         menuService.getMenuById(id).then((res) => {
           if (res.status == 200) {
             setFormData(res.data);
@@ -110,7 +112,7 @@ function AddMenu() {
         ></CustomAlert>
 
         <AddMenuItem
-          open={open}
+          open={open || menuItemId != undefined}
           setOpen={setOpen}
           menuItems={menuItems}
           setMenuItems={setMenuItems}
