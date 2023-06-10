@@ -313,7 +313,7 @@ export default function AddMenuItem({
               }}
             />
             <FormControlLabel
-              className="col-5"
+              className="col-6"
               style={{marginLeft:"10px"}}
               control={
                 <Checkbox

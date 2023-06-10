@@ -55,7 +55,6 @@ function MenuItem({
           backgroundColor: "#D9D9D9",
           padding: 0,
         }}
-        className="box"
       >
         <Row>
           <Col className={grid ? "col-5" : "col-4 "}>
