@@ -188,11 +188,9 @@ export default function AddMenuItem({
 
     if (isValid) {
       document.body.style.cursor = "wait";
-      var req = {...menuItem}
-      if(!discount)
-        req.discount_price=null;
+      var req = { ...menuItem };
+      if (!discount) req.discount_price = null;
       if (menuItemId != null && menuItemId != undefined) {
-
         menuService.updateMenuItem(menuItemId, req).then((res) => {
           console.log(res);
           if (res.status == 201) {
@@ -204,6 +202,7 @@ export default function AddMenuItem({
             });
             setShowAlert(true);
             navigate("/menu/add?id=" + menuId);
+            setMenuItemId(null);
           } else {
             setAlert({ ...alert, msg: res.data, type: "error" });
             setShowAlert(true);
@@ -312,7 +311,7 @@ export default function AddMenuItem({
             error={!validation.price}
             inputProps={{
               min: 0,
-              step: "0.5"
+              step: "0.5",
             }}
             helperText={
               !validation.price ? "Menu item price must be defined!" : ""
@@ -337,7 +336,7 @@ export default function AddMenuItem({
               name="prep_time"
               required
               error={!validation.prep_time}
-              inputProps={{min:0}}
+              inputProps={{ min: 0 }}
               helperText={
                 !validation.prep_time ? validation.prep_time_error_m : ""
               }
@@ -379,7 +378,7 @@ export default function AddMenuItem({
               }
               inputProps={{
                 min: 0,
-                step: "0.5"
+                step: "0.5",
               }}
               value={menuItem?.discount_price}
               onChange={(event) => {
@@ -399,7 +398,12 @@ export default function AddMenuItem({
               control={
                 <Checkbox
                   defaultChecked={discount}
-                  onChange={(e) => {setDiscount(!discount); if(!e.target.checked) {setMenuItem({...menuItem,discount_price:null})}}}
+                  onChange={(e) => {
+                    setDiscount(!discount);
+                    if (!e.target.checked) {
+                      setMenuItem({ ...menuItem, discount_price: null });
+                    }
+                  }}
                 />
               }
               label="Discounted price"
