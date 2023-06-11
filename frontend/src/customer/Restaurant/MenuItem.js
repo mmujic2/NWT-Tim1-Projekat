@@ -129,28 +129,12 @@ function MenuItem({
                 {menuItem.name}
               </Card.Title>
               {user.role == "RESTAURANT_MANAGER" ? (
-                <Container
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                    backgroundColor: "#D9D9D9",
-                    height: "40px",
-                    marginBottom: 0,
-                    marginTop: 0,
-                    marginRight: 0,
-                    padding: 10,
-                    float: "right",
-                    position: "absolute",
-                    top: 10,
-                    right: 0,
-                  }}
-                >
+               
                   <div
                     class="btn-group"
                     role="group"
                     aria-label="Basic example"
-                    style={{ float: "right" }}
+                    style={{ position:"absolute",top:5,right:5}}
                   >
                     <Button
                       onClick={(e) => {
@@ -195,7 +179,6 @@ function MenuItem({
                       <Delete fontSize="small"></Delete>
                     </Button>
                   </div>
-                </Container>
               ) : (
                 <></>
               )}
