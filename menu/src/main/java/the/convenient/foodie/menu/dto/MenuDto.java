@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 public class MenuDto implements Serializable {
+
+    private Long id;
     @NotNull(message = "Active status should not be null")
     private boolean active;
 
@@ -13,6 +15,13 @@ public class MenuDto implements Serializable {
     private String name;
 
     public MenuDto() {
+    }
+
+    public MenuDto(Long id, String uuid, String name, Boolean active) {
+        this.id=id;
+        this.active=active;
+        this.restaurant_uuid=uuid;
+        this.name= name;
     }
 
     public MenuDto(boolean active, String restaurant_uuid, String name) {
@@ -47,5 +56,13 @@ public class MenuDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

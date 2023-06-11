@@ -236,7 +236,7 @@ public class MenuController {
     }
 
     @GetMapping(path = "/restaurant-menus/uuid/{restaurantUUID}")
-    public  List<Menu> getRestaurantMenus (@PathVariable String restaurantUUID,
+    public  List<MenuDto> getRestaurantMenus (@PathVariable String restaurantUUID,
                                            @RequestHeader("username") String username) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -247,7 +247,7 @@ public class MenuController {
                 .setEvent("Get menus for a restaurant with uudid " + restaurantUUID).setServiceName("menu-service")
                 .setUser(username)
                 .build());
-        var menus = menuService.getRestaurantMenus(restaurantUUID);
+        var menus = menuService.getRestaurantMenusShort(restaurantUUID);
         return menus;
     }
 
