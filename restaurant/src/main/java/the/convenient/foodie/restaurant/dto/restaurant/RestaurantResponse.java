@@ -35,7 +35,7 @@ public class RestaurantResponse {
     Integer customersRated;
     Integer customersFavorited;
 
-    public RestaurantResponse(Restaurant restaurant, Double rating, Number customersRated, Number customersFavorited) {
+    public RestaurantResponse(Restaurant restaurant, Number rating, Number customersRated, Number customersFavorited) {
         this.id= restaurant.getId();
         this.name=restaurant.getName();
         this.uuid = restaurant.getUuid();
@@ -44,7 +44,7 @@ public class RestaurantResponse {
         if(restaurant.getOpeningHours()!=null)
             this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
         this.logo=restaurant.getLogo();
-        this.rating=rating;
+        this.rating=rating.doubleValue();
         this.customersFavorited = customersFavorited.intValue();
         this.customersRated = customersRated.intValue();
         if(restaurant.getCategories()!=null)

@@ -23,4 +23,6 @@ public interface RestaurantRepositoryCustom {
     RestaurantResponse getRestaurantByManagerUUID(String uuid);
 
     String getRestaurantUUIDByManagerUUID(String uuid);
+
+    List<RestaurantResponse> getFullRestaurants();
 }

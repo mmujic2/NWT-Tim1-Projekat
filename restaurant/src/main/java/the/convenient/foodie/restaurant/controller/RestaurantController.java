@@ -126,7 +126,7 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     @GetMapping(path="/all/full")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<List<RestaurantShortResponse>> getAllFullRestaurants() {
+    public @ResponseBody ResponseEntity<List<RestaurantResponse>> getAllFullRestaurants() {
 
         var restaurants = restaurantService.getFullRestaurants();
         return new ResponseEntity<>(restaurants, HttpStatus.OK);

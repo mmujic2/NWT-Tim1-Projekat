@@ -103,6 +103,15 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryCustom {
         return res;
     }
 
+    @Override
+    public List<RestaurantResponse> getFullRestaurants() {
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantResponse(r,COALESCE(avg(rev.rating),0),count(rev.id)," +
+                "(SELECT count(fr.id) FROM FavoriteRestaurant fr WHERE fr.restaurant.id=r.id))"
+                + " FROM Restaurant r LEFT JOIN Review rev ON r.id=rev.restaurant.id GROUP BY r ORDER BY r.created DESC";
+        var query = entityManager.createQuery(hql,RestaurantResponse.class);
+        return query.getResultList();
+    }
+
 
     @Override
     public List<RestaurantShortResponse> getRestaurants(FilterRestaurantRequest filters,String sortBy, Boolean ascending) {

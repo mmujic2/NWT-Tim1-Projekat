@@ -66,10 +66,10 @@ public class RestaurantService {
 
         return restaurantRepository.getRestaurants(filterRestaurantRequest,sortBy,ascending);
     }
-    public List<RestaurantShortResponse> getFullRestaurants() {
+    public List<RestaurantResponse> getFullRestaurants() {
 
         return restaurantRepository
-                .getRestaurants(null,"DATE",false);
+                .getFullRestaurants();
     }
 
     public RestaurantShortResponse getRestaurantById(Long id,String customerUUID) {
