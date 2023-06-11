@@ -61,6 +61,18 @@ class DiscountService {
     return api.get("/requiredscore/get");
   }
 
+  updateRequiredScore(reqScore) {
+    try {
+      return api
+        .post("/requiredscore/add",reqScore)
+        .then((response) => {
+          return response;
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   incrementUserOrders(orders) {
     return api.post("/score/update/incrementorders/" + orders).then(response => {
       console.log(response);

@@ -105,7 +105,8 @@ function AdminRestaurants() {
         },
         {
             dataField: "customersFavorited",
-            text: "Favourited"
+            text: "Favourited",
+            sort:true
         },
       ];
 
