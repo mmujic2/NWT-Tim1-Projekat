@@ -104,7 +104,6 @@ public class MenuService {
             var objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.registerModule(new ParameterNamesModule());
-
             rabbitTemplate.convertAndSend("menuItemCreate", objectMapper.writeValueAsString(newItemsWithUUID));
         } catch (Exception e) {
             System.out.println("Something went wrong when fetching items");

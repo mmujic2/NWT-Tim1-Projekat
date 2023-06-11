@@ -179,6 +179,7 @@ public class OrderController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Get all orders")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "200", description = "Successfully found all orders",
@@ -187,7 +188,7 @@ public class OrderController {
     })
     @GetMapping(path = "/get")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Iterable<Order> GetAllOrders() {
+    public @ResponseBody Iterable<Order> GetAllOrders(@RequestHeader("username") String username) {
         //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(x);
         // rabbitTemplate.convertAndSend("", "this is a message");
@@ -198,7 +199,7 @@ public class OrderController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched all orders").setServiceName("order-service")
-                .setUser("zustiuhsjkgzu")
+                .setUser(username)
                 .build());
 
         return orderRepository.findAll();
@@ -206,6 +207,7 @@ public class OrderController {
 
     @RabbitListener(queues = "menuItemCreate")
     public void listen(String menuItemsJson) {
+        System.out.println(menuItemsJson);
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
@@ -214,10 +216,11 @@ public class OrderController {
             objectMapper.readValue(menuItemsJson, MenuItem[].class);
             List<MenuItem> menuItemsList = objectMapper.readValue(menuItemsJson, new TypeReference<>() {});
             for(var item : menuItemsList) {
+                menuItemRepository.save(item);
                 item.setImage(null);
             }
-            menuItemRepository.saveAll(menuItemsList);
             System.out.println("Done");
+            System.out.println(menuItemsList.get(0));
         } catch (Exception e) {
             rabbitTemplate.convertAndSend("menuItemCreateError", menuItemsJson);
         }
