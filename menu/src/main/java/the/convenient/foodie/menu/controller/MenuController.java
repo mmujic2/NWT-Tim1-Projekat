@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -46,8 +47,6 @@ public class MenuController {
             @RequestHeader("username") String username
     ) {
         var menus = menuService.getAllMenus();
-        // String response = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
-        //System.out.println(response);
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
@@ -86,6 +85,7 @@ public class MenuController {
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Create a new menu")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new menu",
@@ -112,6 +112,7 @@ public class MenuController {
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Update menu informations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated menu information",
@@ -142,6 +143,7 @@ public class MenuController {
         return new ResponseEntity<>(menu, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Delete a menu")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the menu with provided ID"),
@@ -165,6 +167,7 @@ public class MenuController {
         return new ResponseEntity<>(menuService.deleteMenu(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Set menu items for menu")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated menu items",
@@ -197,6 +200,7 @@ public class MenuController {
         return new ResponseEntity<>(menu, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @PostMapping(path = "/add-menu/{restaurantid}")
     public @ResponseBody ResponseEntity<Menu> addNewMenuForRestaurant(
             @PathVariable Long restaurantid,
