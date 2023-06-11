@@ -18,3 +18,6 @@ Pri implementaciji projekta korištena je mikroservisna arhitektura. Za implemen
 Za pokretanje aplikacije pomoću Docker-a, potrebno je preuzeti [Docker](https://www.docker.com) za operativni sistem koji koristite. Nakon pokretanja dockera, potrebno je pomoću terminala se pozicionirati u root projekta i pokrenuti `docker compose up` komandu. Alternativno, iz root projekta možete preuzeti `docker-compose.yml`, i terminal podesiti na lokaciju na kojoj se nalazi ova datoteka, te pokrenuti `docker compose up`.
 
 Pri prvom pokretanju je potrebno sačekati određeno vrijeme dok se sve slike preuzmu.
+
+## Dokumentacija
+PNWT-2022 - [PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/folders/1c-2JFAH6VcxvNkYe4_qD5xVJCudUtzj3)
