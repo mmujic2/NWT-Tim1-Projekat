@@ -1,9 +1,8 @@
 #
 # Build stage
 #
-# FROM eclipse-temurin:17-jdk-alpine
-FROM openjdk:17-ea-jdk-buster
+FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
 COPY target/*.jar app.jar
-EXPOSE 8090
+EXPOSE 7050
 ENTRYPOINT ["java","-Xmx100m","-jar","/app.jar"]

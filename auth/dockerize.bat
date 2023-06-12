@@ -1,1 +1,1 @@
-mvnw.cmd package & docker build . -t authservice & pause >nul
+mvnw.cmd package & docker build . -t authservice

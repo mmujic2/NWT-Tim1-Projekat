@@ -1,1 +1,1 @@
-mvnw.cmd package & docker build . -t discountservice & pause >nul
+mvnw.cmd package & docker build . -t discountservice

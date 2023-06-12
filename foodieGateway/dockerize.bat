@@ -1,1 +1,1 @@
-mvnw.cmd package & docker build . -t gateway & pause >nul
+mvnw.cmd package & docker build . -t gateway

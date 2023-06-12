@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "menu-item")
 public class MenuItemController {
+    @Value("${grpc_host}") String grpcHost;
 
     @Autowired
     private MenuItemService menuItemService;
@@ -67,7 +69,7 @@ public class MenuItemController {
             @Parameter(description = "Menu Item ID", required = true)
             @PathVariable Long id,
             @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -97,7 +99,7 @@ public class MenuItemController {
             @Parameter(description = "Menu item information to be updated", required = true)
             @Valid @RequestBody MenuItemDto menuItemDto,
             @RequestHeader("username") String username){
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -123,7 +125,7 @@ public class MenuItemController {
             @Parameter(description = "Menu Item ID", required = true)
             @PathVariable  Long id,
             @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()

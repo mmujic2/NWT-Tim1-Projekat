@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +31,8 @@ import java.util.List;
 @RestController
 @RequestMapping(path="/restaurant")
 public class RestaurantController {
+    @Value("${grpc_host}") String grpcHost;
+
     @Autowired
     private RestaurantService restaurantService;
 
@@ -58,7 +61,7 @@ public class RestaurantController {
 
         var restaurant = restaurantService.addNewRestaurant(request,username);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -97,7 +100,7 @@ public class RestaurantController {
         Restaurant restaurant = null;
         restaurant = restaurantService.updateRestaurant(request,id,userUUID);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -286,7 +289,7 @@ public class RestaurantController {
             @PathVariable Long id,
             @RequestHeader("username") String username) {
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -321,7 +324,7 @@ public class RestaurantController {
             @RequestHeader("username") String username) {
         var restaurant = restaurantService.addCategoriesToRestaurant(id,categoryIds,userUUID);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -357,7 +360,7 @@ public class RestaurantController {
             @RequestHeader("username") String username) {
         var restaurant = restaurantService.setRestaurantOpeningHours(id,request,userUUID);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -390,7 +393,7 @@ public class RestaurantController {
     ) {
 
         var favoriteRestaurant = favoriteRestaurantService.addRestaurantToFavorites(id,user);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -422,7 +425,7 @@ public class RestaurantController {
 
         favoriteRestaurantService.removeRestaurantFromFavorites(id,user);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -487,7 +490,7 @@ public class RestaurantController {
 
        var id = restaurantImageService.uploadRestaurantImage(request,uuid,restaurantid);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -514,7 +517,7 @@ public class RestaurantController {
             @PathVariable Long id,
             @RequestHeader("username") String username) {
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()

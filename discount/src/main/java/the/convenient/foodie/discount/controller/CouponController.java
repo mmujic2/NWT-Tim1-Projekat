@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,10 +30,13 @@ import java.util.List;
 @Validated
 @RequestMapping(path="/coupon") // This means URL's start with /demo (after Application path)
 public class CouponController {
+    @Value("${grpc_host}") String grpcHost;
+
     @Autowired
     public RestTemplate restTemplate;
     @Autowired
     private CouponService couponService;
+
 
     //@PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Get all coupons")
@@ -48,7 +52,7 @@ public class CouponController {
         //String response = restTemplate.getForObject("http://order-service/order/get", String.class);
         //System.out.println(response);
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -72,7 +76,7 @@ public class CouponController {
                     content = @Content)})
     @GetMapping(path = "/{id}")
     public  @ResponseBody ResponseEntity<Coupon> getCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable  Integer id, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -97,7 +101,7 @@ public class CouponController {
     @PostMapping(path = "/add")
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Coupon> addNewCoupon(@Parameter(description = "Information required for coupon creation", required = true) @Valid @RequestBody CouponDto couponDto, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -124,7 +128,7 @@ public class CouponController {
     )
     @PutMapping(path = "/update/{id}")
     public @ResponseBody ResponseEntity<Coupon> updateCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @Parameter(description = "Coupon information to be updated", required = true) @Valid @RequestBody CouponDto couponDto,@RequestHeader("username") String username){
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -146,7 +150,7 @@ public class CouponController {
                     content = @Content)})
     @DeleteMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<String> deleteCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -168,7 +172,7 @@ public class CouponController {
                 content = @Content)})
     @PostMapping(path="/filter")
     public @ResponseBody ResponseEntity<List<String>> filterRestaurants(@Parameter(description = "Restaurant UUID list", required = true) @RequestBody List<String> restaurants) {
-        //ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        //ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost 9090).usePlaintext().build();
         //EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         /*var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -192,7 +196,7 @@ public class CouponController {
                     content = @Content)})
     @PostMapping(path="/apply/{id}")
     public @ResponseBody ResponseEntity<Integer> useCoupon(@Parameter(description = "Coupon ID", required = true) @PathVariable Integer id, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()
@@ -217,7 +221,7 @@ public class CouponController {
                     content = @Content)})
     @GetMapping(path = "/res/{uuid}")
     public  @ResponseBody ResponseEntity<List<Coupon>> getCouponForRestaurant(@Parameter(description = "Restaurant UUID", required = true) @PathVariable  String uuid, @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(EventRequest
                 .newBuilder()

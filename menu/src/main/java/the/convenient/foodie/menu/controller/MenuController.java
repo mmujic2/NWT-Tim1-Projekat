@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +31,7 @@ import java.util.List;
 @Validated
 @RequestMapping(path = "menu")
 public class MenuController {
+    @Value("${grpc_host}") String grpcHost;
 
     @Autowired
     public RestTemplate restTemplate;
@@ -47,7 +49,7 @@ public class MenuController {
             @RequestHeader("username") String username
     ) {
         var menus = menuService.getAllMenus();
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -73,7 +75,7 @@ public class MenuController {
             @PathVariable Long id,
             @RequestHeader("username") String username) {
         var menu = menuService.getMenu(id);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -100,7 +102,7 @@ public class MenuController {
             @Valid @RequestBody MenuDto menuDto,
             @RequestHeader("username") String username) {
         var menu = menuService.addNewMenu(menuDto);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -130,7 +132,7 @@ public class MenuController {
             @Parameter(description = "Menu information to be updated", required = true)
             @Valid @RequestBody MenuDto menuDto,
             @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -155,7 +157,7 @@ public class MenuController {
             @Parameter(description = "Menu ID", required = true)
             @PathVariable Long id,
             @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -186,7 +188,7 @@ public class MenuController {
             @Parameter(description = "Values of menu items", required = true)
             @RequestBody List<@Valid MenuItemDto> menuItemDtos,
             @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -210,7 +212,7 @@ public class MenuController {
         String restaurantUUID = restTemplate.getForObject("http://restaurant-service/restaurant/uuid/" + restaurantid, String.class);
         menuDto.setRestaurant_uuid(restaurantUUID);
         var menu = menuService.addNewMenu(menuDto);
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -225,7 +227,7 @@ public class MenuController {
     @GetMapping(path = "/restaurant-menus/{restaurantid}")
     public  List<Menu> getRestaurantMenus (@PathVariable Long restaurantid,
                                            @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -242,7 +244,7 @@ public class MenuController {
     @GetMapping(path = "/restaurant-menus/uuid/{restaurantUUID}")
     public  List<MenuDto> getRestaurantMenus (@PathVariable String restaurantUUID,
                                            @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()
@@ -259,7 +261,7 @@ public class MenuController {
     public  List<Menu> getActiveRestaurantMenus (@PathVariable
                                                  String restaurantUUID,
                                            @RequestHeader("username") String username) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
         var response = stub.logevent(com.example.demo.EventRequest
                 .newBuilder()

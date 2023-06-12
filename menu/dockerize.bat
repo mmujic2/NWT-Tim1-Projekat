@@ -1,1 +1,1 @@
-mvnw.cmd package & docker build . -t menuservice & pause >nul
+mvnw.cmd package & docker build . -t menuservice

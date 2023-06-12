@@ -1,1 +1,1 @@
-docker build . -t frontend & pause >nul
+docker build . -t frontend

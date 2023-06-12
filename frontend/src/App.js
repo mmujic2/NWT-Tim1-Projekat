@@ -44,7 +44,7 @@ function App() {
            setShow={setShow}
           ></WebsocketAlert>
           <SockJsClient
-            url="http://localhost:7050/websocket"
+            url="http://websocket:7050/websocket"
             topics={["/message/" + TokenService.getUserUUID()]}
             onMessage={manageSocketMessage}
           ></SockJsClient>

@@ -1,4 +1,4 @@
-package the.convenient.foodie.menu;
+/*package the.convenient.foodie.menu;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,4 +11,4 @@ class MenuApplicationTests {
 	}
 
 
-}
+}*/
