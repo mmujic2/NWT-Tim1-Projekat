@@ -20,4 +20,7 @@ Za pokretanje aplikacije pomoću Docker-a, potrebno je preuzeti [Docker](https:/
 Pri prvom pokretanju je potrebno sačekati određeno vrijeme dok se sve slike preuzmu.
 
 ## Dokumentacija
-PNWT-2022 - [PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/folders/1c-2JFAH6VcxvNkYe4_qD5xVJCudUtzj3)
+PNWT-2023 - [PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/folders/1c-2JFAH6VcxvNkYe4_qD5xVJCudUtzj3)
+
+## Video prezetacije
+[PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/u/0/folders/1jVlAXzam1ly9xAUcGLTPF9fOPJ9BjNIJ?fbclid=IwAR0yGr90iJfHMvpBjk2EQO8nfTtiPsHwMS7W5zk6XxEzW_EaZ21qFZMe_LY)
