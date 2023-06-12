@@ -20,11 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import the.convenient.foodie.order.dao.*;
@@ -69,6 +71,7 @@ public class OrderController {
         this.menuItemRepository = menuItemRepository;
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(description = "Create a new order")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "201", description = "Successfully created a new order",
@@ -91,8 +94,11 @@ public class OrderController {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
         XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.registerModule(new JavaTimeModule());
+        xmlMapper.registerModule(new ParameterNamesModule());
 
         List<MenuItem> menuItems = new ArrayList<>();
+        List<Long> processedIds = new ArrayList<>();
         for(var id : orderCreateRequest.getMenuItemIds()) {
             var newMenuItem = menuItemRepository.findById(id);
             if(newMenuItem.isPresent()) {
@@ -100,17 +106,15 @@ public class OrderController {
             }
             else {
                 MenuItem temp = null;
-                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/" + id.toString(), String.class);
-
-                try {
-                    temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
-                }
-                catch(Exception e) {
-                    continue;
-                }
+                var menuItemXml = restTemplate.getForObject("http://menu-service/menu-item/get/" + id.toString(), String.class);
+                temp = xmlMapper.readValue(menuItemXml, MenuItem.class);
+                temp.setImage(null);
                 menuItems.add(temp);
-                menuItemRepository.save(temp);
+                if(!processedIds.contains(id)) {
+                    menuItemRepository.save(temp);
+                }
             }
+            processedIds.add(id);
         }
 
         System.out.println(menuItems);
@@ -120,7 +124,7 @@ public class OrderController {
                 orderCreateRequest.getEstimatedDeliveryTime(),
                 LocalDateTime.now(),
                 orderCreateRequest.getCouponId(),
-                OrderStatus.Processing.toString(),
+                OrderStatus.PENDING.getName(),
                 orderCreateRequest.getTotalPrice(),
                 null,
                 orderCreateRequest.getDeliveryFee(),
@@ -177,6 +181,7 @@ public class OrderController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Get all orders")
     @ApiResponses(value = {
             @ApiResponse( responseCode = "200", description = "Successfully found all orders",
@@ -185,7 +190,7 @@ public class OrderController {
     })
     @GetMapping(path = "/get")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Iterable<Order> GetAllOrders() {
+    public @ResponseBody Iterable<Order> GetAllOrders(@RequestHeader("username") String username) {
         //var x = restTemplate.getForObject("http://discount-service/coupon/all", String.class);
         //System.out.println(x);
         // rabbitTemplate.convertAndSend("", "this is a message");
@@ -197,7 +202,7 @@ public class OrderController {
                 .setTimestamp(LocalDateTime.now().toString())
                 .setAction("GET")
                 .setEvent("Fetched all orders").setServiceName("order-service")
-                .setUser("zustiuhsjkgzu")
+                .setUser(username)
                 .build());
 
         return orderRepository.findAll();
@@ -205,6 +210,7 @@ public class OrderController {
 
     @RabbitListener(queues = "menuItemCreate")
     public void listen(String menuItemsJson) {
+        System.out.println(menuItemsJson);
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new ParameterNamesModule());
@@ -212,8 +218,12 @@ public class OrderController {
         try {
             objectMapper.readValue(menuItemsJson, MenuItem[].class);
             List<MenuItem> menuItemsList = objectMapper.readValue(menuItemsJson, new TypeReference<>() {});
-            menuItemRepository.saveAll(menuItemsList);
+            for(var item : menuItemsList) {
+                menuItemRepository.save(item);
+                item.setImage(null);
+            }
             System.out.println("Done");
+            System.out.println(menuItemsList.get(0));
         } catch (Exception e) {
             rabbitTemplate.convertAndSend("menuItemCreateError", menuItemsJson);
         }
@@ -267,6 +277,54 @@ public class OrderController {
         return orderMap;
     }
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminorders")
+    public Map<String, Long> getAdminOrders(){
+        Map<String, Long> ordersMap = new HashMap<>();
+        ArrayList<String> names = new ArrayList<>();
+        var allOrders = orderRepository.findAll();
+        allOrders.forEach(order -> {
+            if(!names.contains(order.getRestaurantName())) names.add(order.getRestaurantName());
+        });
+
+        for(var name : names) {
+            ordersMap.put(name, allOrders.stream().filter(x -> x.getRestaurantName().equals(name)).count());
+        }
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders);
+        return ordersMap;
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminspending")
+    public Long getAdminSpending(){
+        long moneySpent;
+        var allOrders = orderRepository.findAll();
+        moneySpent = allOrders.stream().mapToLong(order -> (long) order.getTotalPrice()).sum();
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders.size());
+        return moneySpent;
+    }
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    @GetMapping("/adminrestaurantrevenue")
+    public Map<String, Long> getAdminRestaurantRevenue(){
+        Map<String, Long> ordersMap = new HashMap<>();
+        ArrayList<String> names = new ArrayList<>();
+        var allOrders = orderRepository.findAll();
+        allOrders.forEach(order -> {
+            if(!names.contains(order.getRestaurantName())) names.add(order.getRestaurantName());
+        });
+
+        for(var name : names) {
+            ArrayList<Order> listOrders = (ArrayList<Order>) allOrders.stream().filter(x -> x.getRestaurantName().equals(name)).collect(Collectors.toList());
+            long  money = listOrders.stream().mapToLong(order -> (long) order.getTotalPrice()).sum();
+            ordersMap.put(name, money );
+        }
+        System.out.println("Odradio sam sve");
+        System.out.println(allOrders);
+        return ordersMap;
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/getforuser")
     public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("uuid") String userUuid) {
         /*return ResponseEntity.ok(orderRepository.findAll().stream()
@@ -276,45 +334,90 @@ public class OrderController {
         return ResponseEntity.ok(orderRepository.getOrdersByUserUUID(userUuid).stream().map(OrderResponse::new).toList());
     }
 
+    @PreAuthorize("hasAnyRole('COURIER','RESTAURANT_MANAGER','CUSTOMER')")
     @PutMapping("/status/{id}/{status}")
-    public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
+    public ResponseEntity<?> changeOrderStatus(@PathVariable Long id ,@PathVariable String status) throws JsonProcessingException {
         var order = orderRepository.findById(id).orElseThrow();
+        switch(status) {
+            case ("In preparation"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+            case ("Rejected"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+                break;
+            case ("Cancelled"):
+                if(!order.getOrderStatus().equals(OrderStatus.PENDING.getName()))
+                    return new ResponseEntity<>("Order is not pending!",HttpStatus.BAD_REQUEST);
+                break;
+            case ("Accepted for delivery"):
+                if(!order.getOrderStatus().equals(OrderStatus.READY_FOR_DELIVERY.getName()))
+                    return new ResponseEntity<>("Order is not ready for delivery!",HttpStatus.BAD_REQUEST);
+                break;
+        }
         order.setOrderStatus(status);
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Order status changed to: " + status);
+        SendWebSocketMessage(order.getUser_id(), "Order " + order.getOrderCode() + " status changed to: " + status, status);
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @PutMapping("/adddeliveryperson/{id}")
-    public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid) {
+    public ResponseEntity<OrderResponse> addDeliveryPersonToOrder(@PathVariable Long id, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
         var order = orderRepository.findById(id).orElseThrow();
         order.setDeliveryPersonId(uuid);
         order.setOrderStatus("In delivery");
         orderRepository.save(order);
 
-        SendWebSocketMessage(order.getUser_id(), "Order status changed to: In delivery");
+        SendWebSocketMessage(order.getUser_id(), "Courier " + username + " will pick up order " + order.getOrderCode()+"!", "In delivery" );
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
-    public void SendWebSocketMessage(String uuid, String message) {
+    public void SendWebSocketMessage(String uuid, String message, String status) {
         try {
-            System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message)));
+            System.out.println(new ObjectMapper().writeValueAsString(new WebSocketMessage(message, status)));
             restTemplate.postForObject("http://websocket-service/websocket/message/" + uuid,
-                    new ObjectMapper().writeValueAsString(new WebSocketMessage(message)), String.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+                    new ObjectMapper().writeValueAsString(new WebSocketMessage(message, status)), String.class);
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
         }
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @GetMapping("/get/readyfordelivery")
     public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrders() {
         return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrders().stream().map(OrderResponse::new).toList());
     }
 
+    @PreAuthorize("hasRole('COURIER')")
     @GetMapping("/get/deliveryperson")
     public ResponseEntity<List<OrderResponse>> getOrdersByDeliveryPersonId(@RequestHeader("uuid") String uuid) {
         return ResponseEntity.ok(orderRepository.getOrdersByDeliveryPersonId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/pending")
+    public ResponseEntity<List<OrderResponse>> getPendingOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getPendingOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/in-preparation")
+    public ResponseEntity<List<OrderResponse>> getInPreparationOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getInPreparationOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/ready-for-delivery")
+    public ResponseEntity<List<OrderResponse>> getReadyForDeliveryOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getReadyForDeliveryOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @GetMapping("/get/restaurant/{uuid}/delivered")
+    public ResponseEntity<List<OrderResponse>> getDeliveredOrdersForRestaurant(@PathVariable("uuid") String uuid) {
+        return ResponseEntity.ok(orderRepository.getDeliveredOrdersByRestaurantId(uuid).stream().map(OrderResponse::new).toList());
     }
 
     @PostConstruct

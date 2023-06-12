@@ -3,14 +3,13 @@ import TokenService from "./token.service";
 
 class AuthService {
   login(username, password) {
-    
     return api
       .post("/auth/login", {
         username,
-        password
+        password,
       })
-      .then(response => {
-        if (response.status===200) {
+      .then((response) => {
+        if (response.status === 200) {
           TokenService.setUser(response.data);
         }
 
@@ -20,61 +19,53 @@ class AuthService {
 
   register(req) {
     try {
-    return api
-        .post("/auth/register",req)
-        .then(response=> {
-            if(response.status == 201) {
-                TokenService.setUser(response.data);
+      return api.post("/auth/register", req).then((response) => {
+        if (response.status == 201) {
+          TokenService.setUser(response.data);
+        }
 
-            } 
-
-            return response;
-        })
-    } catch(e) {
-      console.log(e)
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
   updateUserInformation(req) {
     try {
-    return api
-        .post("/auth/user/update",req)
-        .then(response=> {
-            if(response.status == 200) {
-                TokenService.setUser(response.data);
+      return api.post("/auth/user/update", req).then((response) => {
+        if (response.status == 200) {
+          TokenService.setUser(response.data);
+        }
 
-            } 
-
-            return response;
-        })
-    } catch(e) {
-      console.log(e)
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
   logout() {
     try {
-      return api
-          .post("/auth/logout")
-          .then(response=> {
-            if(response.status==200)
-              TokenService.removeUser();
-  
-              return response;
-          })
-      } catch(e) {
-        console.log(e)
-      }
-    
+      return api.post("/auth/logout").then((response) => {
+        if (response.status == 200) TokenService.removeUser();
+
+        return response;
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
-
-
 
   getCurrentUser() {
     let user = TokenService.getUser();
-    if(user!=null)
-      return user.user
-    return null
+    if (user != null) return user.user;
+    return null;
+  }
+
+  getCurrentRestaurantUUID() {
+    let restaurantUUID = TokenService.getRestaurantUUID();
+    return restaurantUUID;
   }
 }
 

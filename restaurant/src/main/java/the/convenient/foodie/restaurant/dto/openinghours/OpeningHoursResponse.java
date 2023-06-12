@@ -31,7 +31,7 @@ public class OpeningHoursResponse {
         this.wednesdayClose = openingHours.getWednesdayClose();
         this.thursdayOpen = openingHours.getThursdayOpen();
         this.thursdayClose = openingHours.getThursdayClose();
-        this.fridayOpen = openingHours.getFridayClose();
+        this.fridayOpen = openingHours.getFridayOpen();
         this.fridayClose = openingHours.getFridayClose();
         this.saturdayOpen = openingHours.getSaturdayOpen();
         this.saturdayClose = openingHours.getSaturdayClose();

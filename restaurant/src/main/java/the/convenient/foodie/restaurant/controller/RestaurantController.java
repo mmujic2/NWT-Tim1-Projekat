@@ -41,7 +41,7 @@ public class RestaurantController {
 
 
 
-    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Create a new restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new restaurant",
@@ -55,8 +55,8 @@ public class RestaurantController {
             @Parameter(description = "Information required for restaurant creation", required = true)
             @Valid @RequestBody RestaurantCreateRequest request, @RequestHeader("uuid") String uuid, @RequestHeader("username") String username) {
 
-        request.setManagerUUID(uuid);
-        var restaurant = restaurantService.addNewRestaurant(request);
+
+        var restaurant = restaurantService.addNewRestaurant(request,username);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -93,9 +93,9 @@ public class RestaurantController {
             @RequestHeader("uuid") String userUUID,
             @RequestHeader("username") String username) {
 
-        request.setUpdatedBy(userUUID);
+
         Restaurant restaurant = null;
-        restaurant = restaurantService.updateRestaurant(request,id);
+        restaurant = restaurantService.updateRestaurant(request,id,userUUID);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -167,8 +167,44 @@ public class RestaurantController {
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<RestaurantShortResponse> getRestaurantById(
             @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable  Long id) {
-        var restaurant = restaurantService.getRestaurantById(id);
+            @PathVariable  Long id,
+            @RequestHeader("uuid") String userUUID) {
+        var restaurant = restaurantService.getRestaurantById(id,userUUID);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Get a restaurant by restaurant manager  UUID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the restaurant with provided restaurant manager UUID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided restaurant manager UUID not found",
+                    content = @Content)})
+    @GetMapping(path="/manager")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<RestaurantResponse> getRestaurantByManagerUUID(
+            @RequestHeader("uuid") String managerUUID) {
+        var restaurant = restaurantService.getRestaurantByManagerUUID(managerUUID);
+        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Get restaurant UUID by restaurant manager  UUID")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the restaurant with provided restaurant manager UUID",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Restaurant.class)),
+                    }),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided restaurant manager UUID not found",
+                    content = @Content)})
+    @GetMapping(path="/uuid/manager")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> getRestaurantUUIDByManagerUUID(
+            @RequestHeader("uuid") String managerUUID) {
+        var restaurant = restaurantService.getRestaurantUUIDByManagerUUID(managerUUID);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
@@ -237,7 +273,7 @@ public class RestaurantController {
 
     }
 
-    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @Operation(description = "Delete a restaurant")
     @ApiResponses ( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the restaurant with provided ID"),
@@ -432,24 +468,24 @@ public class RestaurantController {
     }
 
     @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
-    @Operation(description = "Upload images to restaurant gallery")
+    @Operation(description = "Upload image to restaurant gallery")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully added restaurant images",
+            @ApiResponse(responseCode = "201", description = "Successfully added restaurant image",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Restaurant.class)) }),
             @ApiResponse(responseCode = "400", description = "Invalid information supplied",
                     content = @Content)})
     @PostMapping(path="/image/add/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ResponseEntity<String> addRestaurantImages (
+    public @ResponseBody ResponseEntity<Long> addRestaurantImage (
             @Parameter(description = "Image data", required = true)
-            @Valid @RequestBody List<RestaurantImageUploadRequest> request,
+            @Valid @RequestBody RestaurantImageUploadRequest request,
             @Parameter (description = "Restaurant id", required = true)
             @PathVariable("id") Long restaurantid,
             @RequestHeader("uuid") String uuid,
             @RequestHeader("username") String username) {
 
-       restaurantImageService.uploadRestaurantImages(request,uuid,restaurantid);
+       var id = restaurantImageService.uploadRestaurantImage(request,uuid,restaurantid);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
         EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
@@ -462,7 +498,45 @@ public class RestaurantController {
                 .build());
 
 
-        return new ResponseEntity<>("Successfully added restaurant images!",HttpStatus.CREATED);
+        return new ResponseEntity<>(id,HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    @Operation(description = "Delete an image from restaurant gallery")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted the image with provided ID"),
+            @ApiResponse(responseCode = "404", description = "Image with provided ID not found",
+                    content = @Content)})
+    @DeleteMapping(path="/image/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<String> deleteRestaurantImage(
+            @Parameter(description = "Image ID", required = true)
+            @PathVariable Long id,
+            @RequestHeader("username") String username) {
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
+        EventServiceGrpc.EventServiceBlockingStub stub = EventServiceGrpc.newBlockingStub(channel);
+        var response = stub.logevent(com.example.demo.EventRequest
+                .newBuilder()
+                .setTimestamp(LocalDateTime.now().toString())
+                .setAction("DELETE")
+                .setEvent("Deleted image with id " + id).setServiceName("restaurant-service")
+                .setUser(username)
+                .build());
+
+        return new ResponseEntity<>(restaurantImageService.deleteRestaurantImage(id),HttpStatus.OK);
+    }
+
+    @Operation(description = "Get number of customers who marked the restaurant as favorite")
+    @ApiResponses ( value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched number of customers who marked the restaurant with provided UUID as a favorite"),
+            @ApiResponse(responseCode = "404", description = "Restaurant with provided UUID not found",
+                    content = @Content)})
+    @GetMapping(path="/favorites/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Long> getCustomersFavorited(@Parameter(description = "Restaurant UUID",required = true)
+                                      @PathVariable("uuid") String restaurantUUID) {
+        return ResponseEntity.ok(restaurantService.getCustomersFavorited(restaurantUUID));
     }
 }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursCreateRequest;
 import the.convenient.foodie.restaurant.dto.restaurant.*;
 import the.convenient.foodie.restaurant.repository.CategoryRepository;
+import the.convenient.foodie.restaurant.repository.FavoriteRestaurantRepository;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.model.OpeningHours;
 import the.convenient.foodie.restaurant.model.Restaurant;
@@ -29,25 +30,32 @@ public class RestaurantService {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    public Restaurant addNewRestaurant(RestaurantCreateRequest request) {
+    @Autowired
+    private FavoriteRestaurantRepository favoriteRestaurantRepository;
+
+
+    public Restaurant addNewRestaurant(RestaurantCreateRequest request, String username) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
         restaurant.setManagerUUID(request.getManagerUUID());
+        restaurant.setAddress(request.getAddress());
+        restaurant.setMapCoordinates(request.getMapCoordinates());
         restaurant.setCreated(LocalDateTime.now());
-        restaurant.setCreatedBy(request.getManagerUUID());
+        restaurant.setCreatedBy(username);
         restaurantRepository.save(restaurant);
 
         return restaurant;
     }
 
-    public Restaurant updateRestaurant(RestaurantUpdateRequest request, Long id) {
+    public Restaurant updateRestaurant(RestaurantUpdateRequest request, Long id,String uuid) {
             var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
                 var restaurant = restaurantRepository.findById(id).orElseThrow(()-> exception);
                 restaurant.setName(request.getName());
                 restaurant.setMapCoordinates(request.getMapCoordinates());
                 restaurant.setAddress(request.getAddress());
+                restaurant.setLogo(request.getLogo());
                 restaurant.setModified(LocalDateTime.now());
-                restaurant.setModifiedBy(request.getUpdatedBy());
+                restaurant.setModifiedBy(uuid);
                 restaurantRepository.save(restaurant);
                 return restaurant;
 
@@ -61,17 +69,41 @@ public class RestaurantService {
     public List<RestaurantResponse> getFullRestaurants() {
 
         return restaurantRepository
-                .findAll()
-                .stream()
-                .map(t -> new RestaurantResponse(t,0.,0,0))
-                .collect(Collectors.toList());
+                .getFullRestaurants();
     }
 
-    public RestaurantShortResponse getRestaurantById(Long id) {
+    public RestaurantShortResponse getRestaurantById(Long id,String customerUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         try {
-            return restaurantRepository.getRestaurantShortResponseById(id);
+            var restaurant = restaurantRepository.getRestaurantShortResponseById(id);
+            System.out.println(restaurant);
+            restaurant.setCustomerFavorite(restaurantRepository.checkIfRestaurantIsCustomersFavorite(id,customerUUID));
+            return restaurant;
         } catch(Exception e) {
+            e.printStackTrace();
+            throw exception;
+        }
+
+    }
+
+    public RestaurantResponse getRestaurantByManagerUUID(String managerUUID) {
+        var exception = new EntityNotFoundException("Restaurant with manager UUID " + managerUUID + " does not exist!");
+        try {
+            var restaurant = restaurantRepository.getRestaurantByManagerUUID(managerUUID);
+            return restaurant;
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw exception;
+        }
+
+    }
+
+    public String getRestaurantUUIDByManagerUUID(String managerUUID) {
+        var exception = new EntityNotFoundException("Restaurant with manager UUID " + managerUUID + " does not exist!");
+        try {
+            return restaurantRepository.getRestaurantUUIDByManagerUUID(managerUUID);
+        } catch(Exception e) {
+            e.printStackTrace();
             throw exception;
         }
 
@@ -102,6 +134,10 @@ public class RestaurantService {
     public Restaurant addCategoriesToRestaurant(Long id, List<Long> categoryIds,String userUUID) {
         var exception = new EntityNotFoundException("Restaurant with id " + id + " does not exist!");
         var restaurant = restaurantRepository.findById(id).orElseThrow(()->exception);
+        if(restaurant.getCategories().stream().map(c -> c.getId()).collect(Collectors.toList()).equals(categoryIds)) {
+            System.out.println("all match");
+            return restaurant;
+        }
         var categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
         restaurant.setCategories(categories);
         restaurant.setModified(LocalDateTime.now());
@@ -152,5 +188,11 @@ public class RestaurantService {
         if(uuid==null)
             throw exception;
         return uuid;
+    }
+
+
+    public Long getCustomersFavorited(String restaurantUUID) {
+        restaurantRepository.findByUUID(restaurantUUID).orElseThrow();
+        return favoriteRestaurantRepository.countNumberOfFavorites(restaurantUUID);
     }
 }

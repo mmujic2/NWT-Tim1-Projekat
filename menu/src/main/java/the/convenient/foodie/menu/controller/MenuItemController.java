@@ -20,6 +20,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.menu.dto.IntegerListDto;
 import the.convenient.foodie.menu.dto.MenuItemDto;
@@ -49,10 +50,12 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getAllItems());
     }
 
+    @GetMapping("/get/{id}")
     public ResponseEntity<MenuItem> getItemById(@PathVariable Long id) {
         return ResponseEntity.ok(menuItemRepository.findById(id).orElseThrow());
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Delete a menu item")
     @ApiResponses( value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted the menu item with provided ID"),
@@ -76,6 +79,7 @@ public class MenuItemController {
         return new ResponseEntity<>(menuItemService.deleteMenuItem(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Update menu item informations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated menu item information",

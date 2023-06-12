@@ -90,4 +90,9 @@ public class RequiredScoreController {
     public @ResponseBody ResponseEntity<String> deleteRequiredScore(@Parameter(description = "Required score ID", required = true) @PathVariable Integer id) {
         return new ResponseEntity<>(requiredScoreService.deleteRequiredScore(id), HttpStatus.OK);
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<RequiredScore> getRequiredScore() {
+        return ResponseEntity.ok(requiredScoreService.getRequiredScore());
+    }
 }

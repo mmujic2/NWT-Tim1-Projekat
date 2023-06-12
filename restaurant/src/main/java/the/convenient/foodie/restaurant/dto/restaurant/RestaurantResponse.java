@@ -1,10 +1,13 @@
 package the.convenient.foodie.restaurant.dto.restaurant;
 
+import the.convenient.foodie.restaurant.dto.category.CategoryResponse;
 import the.convenient.foodie.restaurant.dto.openinghours.OpeningHoursResponse;
 import the.convenient.foodie.restaurant.model.Restaurant;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,29 +29,50 @@ public class RestaurantResponse {
 
     String mapCoordinates;
 
-    Set<String> categories;
+    List<CategoryResponse> categories;
     Double rating;
 
     Integer customersRated;
     Integer customersFavorited;
 
-    public RestaurantResponse(Restaurant restaurant, Double rating, Number customersRated, Number customersFavorited) {
+    public RestaurantResponse(Restaurant restaurant, Number rating, Number customersRated, Number customersFavorited) {
         this.id= restaurant.getId();
         this.name=restaurant.getName();
         this.uuid = restaurant.getUuid();
         this.address=restaurant.getAddress();
         this.mapCoordinates = restaurant.getMapCoordinates();
-        this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
+        if(restaurant.getOpeningHours()!=null)
+            this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
         this.logo=restaurant.getLogo();
-        this.rating=rating;
+        this.rating=rating.doubleValue();
         this.customersFavorited = customersFavorited.intValue();
         this.customersRated = customersRated.intValue();
-        this.categories=restaurant.getCategories().stream().map(c->c.getName()).collect(Collectors.toSet());
+        if(restaurant.getCategories()!=null)
+            this.categories= restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        else
+            this.categories = new ArrayList<>();
         this.managerUuid=restaurant.getManagerUUID();
 
     }
 
-    public RestaurantResponse(Long id, String uuid, String name, String address, String logo, OpeningHoursResponse openingHours, String mapCoordinates, Set<String> categories, Double rating, Integer customersRated, Integer customersFavorited) {
+    public RestaurantResponse(Restaurant restaurant) {
+        this.id= restaurant.getId();
+        this.name=restaurant.getName();
+        this.uuid = restaurant.getUuid();
+        this.address=restaurant.getAddress();
+        this.mapCoordinates = restaurant.getMapCoordinates();
+        if(restaurant.getOpeningHours()!=null)
+            this.openingHours = new OpeningHoursResponse(restaurant.getOpeningHours());
+        this.logo=restaurant.getLogo();
+        if(this.getCategories()!=null)
+            this.categories=restaurant.getCategories().stream().map( c -> new CategoryResponse(c.getId(),c.getName())).collect(Collectors.toList());
+        else
+            this.categories=new ArrayList<>();
+        this.managerUuid=restaurant.getManagerUUID();
+
+    }
+
+    public RestaurantResponse(Long id, String uuid, String name, String address, String logo, OpeningHoursResponse openingHours, String mapCoordinates, List<CategoryResponse> categories, Double rating, Integer customersRated, Integer customersFavorited) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
@@ -121,11 +145,11 @@ public class RestaurantResponse {
         this.mapCoordinates = mapCoordinates;
     }
 
-    public Set<String> getCategories() {
+    public List<CategoryResponse> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<String> categories) {
+    public void setCategories(List<CategoryResponse> categories) {
         this.categories = categories;
     }
 

@@ -26,6 +26,10 @@ public class Menu implements Serializable {
     @NotNull(message = "Active status should not be null")
     private boolean active;
 
+    @Column(name = "name")
+    @NotNull(message = "Name should not be null")
+    private String name;
+
     @Column(name="date_created")
     @NotNull(message = "Creation date must be specified!")
     private LocalDateTime date_created;
@@ -100,5 +104,13 @@ public class Menu implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

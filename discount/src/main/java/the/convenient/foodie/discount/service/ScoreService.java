@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import the.convenient.foodie.discount.dao.ScoreRepository;
 import the.convenient.foodie.discount.dto.ScoreDto;
+import the.convenient.foodie.discount.entity.Coupon;
 import the.convenient.foodie.discount.entity.Score;
 
 import java.util.ArrayList;
@@ -47,7 +48,28 @@ public class ScoreService {
         return score;
     }
 
+    public Score getScoreByUserId(String useruuid) {
+        Score score = null;
+        try {
+            score = scoreRepository.findAll().stream().filter(x -> x.getUser_id().equals(useruuid)).findFirst().orElseThrow();
+        }catch(Exception e) {
+            score = new Score(useruuid, 0, 0);
+            scoreRepository.save(score);
+        }
+        return score;
+    }
 
+    public Score incrementUserOrders(String useruuid, Integer orders) {
+        var score = scoreRepository.findAll().stream().filter(x -> x.getUser_id().equals(useruuid)).findFirst().orElseThrow();
+        score.setNumber_of_orders(score.getNumber_of_orders() + orders);
+        if(score.getNumber_of_orders() < 0) score.setNumber_of_orders(0);
+        return scoreRepository.save(score);
+    }
 
-
+    public Score incrementUserMoneySpent(String useruuid, Integer money) {
+        var score = scoreRepository.findAll().stream().filter(x -> x.getUser_id().equals(useruuid)).findFirst().orElseThrow();
+        score.setMoney_spent(score.getMoney_spent() + money);
+        if(score.getMoney_spent() < 0) score.setMoney_spent(0);
+        return scoreRepository.save(score);
+    }
 }

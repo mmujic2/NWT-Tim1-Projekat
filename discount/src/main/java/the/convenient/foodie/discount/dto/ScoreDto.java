@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class ScoreDto implements Serializable {
 
     @NotNull(message = "User ID should not be null")
-    private Integer user_id;
+    private String user_id;
 
     @NotNull(message = "Number of orders should not be null")
     @Positive(message = "Number of orders can not be negative")
@@ -27,16 +27,17 @@ public class ScoreDto implements Serializable {
         this.money_spent = 0;
     }
 
-    public ScoreDto(Integer number_of_orders, Integer money_spent) {
+    public ScoreDto(String user_id, Integer number_of_orders, Integer money_spent) {
+        this.user_id = user_id;
         this.number_of_orders = number_of_orders;
         this.money_spent = money_spent;
     }
 
-    public Integer getUser_id() {
+    public String getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(Integer user_id) {
+    public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
 

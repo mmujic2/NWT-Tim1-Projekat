@@ -2,9 +2,11 @@ package the.convenient.foodie.order.dao;
 
 public class WebSocketMessage {
     private String message;
+    private String status;
 
-    public WebSocketMessage(String message) {
+    public WebSocketMessage(String message, String status) {
         this.message = message;
+        this.status = status;
     }
 
     public String getMessage() {
@@ -13,5 +15,13 @@ public class WebSocketMessage {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

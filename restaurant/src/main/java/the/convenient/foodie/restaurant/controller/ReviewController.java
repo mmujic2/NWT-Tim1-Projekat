@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
+import the.convenient.foodie.restaurant.dto.review.ReviewResponse;
 import the.convenient.foodie.restaurant.model.Review;
 import the.convenient.foodie.restaurant.service.ReviewService;
 
@@ -34,15 +35,15 @@ public class ReviewController {
             @ApiResponse(responseCode = "200", description = "Successfully found all reviews for the restaurant",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Review.class)) }),
-            @ApiResponse(responseCode = "400", description = "Restaurant with provided ID does not exist",
+            @ApiResponse(responseCode = "400", description = "Restaurant with provided UUID does not exist",
                     content = @Content)})
-    @GetMapping(path="/restaurant/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ResponseEntity<List<Review>> getReviewsForRestaurant (
-            @Parameter(description = "Restaurant ID", required = true)
-            @PathVariable Long id) {
-        var reviews = reviewService.getReviewsForRestaurant(id);
-        return new ResponseEntity<>(reviews,HttpStatus.CREATED);
+    @GetMapping(path="/restaurant/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<List<ReviewResponse>> getReviewsForRestaurant (
+            @Parameter(description = "Restaurant UUID", required = true)
+            @PathVariable String uuid) {
+        var reviews = reviewService.getReviewsForRestaurant(uuid);
+        return new ResponseEntity<>(reviews,HttpStatus.OK);
     }
 
     @Operation(description = "Get all reviews created by a user")
@@ -117,6 +118,8 @@ public class ReviewController {
 
         return new ResponseEntity<>(reviewService.deleteReview(id),HttpStatus.OK);
     }
+
+
 
 
 

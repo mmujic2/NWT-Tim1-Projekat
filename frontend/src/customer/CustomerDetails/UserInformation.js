@@ -61,7 +61,7 @@ function UserInformation() {
 
                 } else {
                     document.body.style.cursor = "default";
-                    setAlert({ ...alert, msg: res.data.errors, type: "error" })
+                    setAlert({ ...alert, msg: res.data, type: "error" })
                     setShowAlert(true)
                 }
 

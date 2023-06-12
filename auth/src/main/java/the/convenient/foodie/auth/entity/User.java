@@ -65,7 +65,7 @@ public class User implements UserDetails {
     @Column(name="role")
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.REMOVE})
     private List<Token> userTokens;
 
     @Override

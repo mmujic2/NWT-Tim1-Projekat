@@ -35,6 +35,7 @@ public class MenuItemService {
         menuItem.setDiscount_price(menuItemDto.getDiscount_price());
         menuItem.setPrep_time(menuItemDto.getPrep_time());
         menuItem.setDate_modified(LocalDateTime.now());
+        menuItem.setImage(menuItemDto.getImage());
         menuItemRepository.save(menuItem);
         return menuItem;
     }

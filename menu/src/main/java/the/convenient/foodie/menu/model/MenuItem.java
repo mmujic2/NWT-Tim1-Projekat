@@ -44,7 +44,7 @@ public class MenuItem implements Serializable {
 
     @Column(name = "image")
     @Lob
-    private byte[] image;
+    private String image;
 
     @Column(name="date_created")
     @NotNull(message = "Creation date must be specified!")
@@ -61,7 +61,7 @@ public class MenuItem implements Serializable {
         }
     }
 
-    public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, byte[] image, LocalDateTime date_created, LocalDateTime date_modified) {
+    public MenuItem(Long id, String name, String description, Double price, Double discount_price, Double prep_time, String uuid, String image, LocalDateTime date_created, LocalDateTime date_modified) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -133,11 +133,11 @@ public class MenuItem implements Serializable {
         this.uuid = uuid;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

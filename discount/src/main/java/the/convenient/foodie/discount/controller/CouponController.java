@@ -86,7 +86,7 @@ public class CouponController {
         return new ResponseEntity<>(coupon, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
+    // @PreAuthorize("hasRole('RESTAURANT_MANAGER')")
     @Operation(description = "Create a new coupon")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created a new coupon",

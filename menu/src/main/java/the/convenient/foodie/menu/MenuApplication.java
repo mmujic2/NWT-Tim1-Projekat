@@ -33,8 +33,8 @@ public class MenuApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception
 	{
-		cleanDB();
-		dumpData();
+		//cleanDB();
+		//dumpData();
 	}
 
 	private void cleanDB() {

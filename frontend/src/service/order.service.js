@@ -16,46 +16,86 @@ class OrderService {
         
       }
 
+      getAdminOrders() {
+        try {
+          return api
+              .get("/order/adminorders")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
+      getAdminSpending() {
+        try {
+          return api
+              .get("/order/adminspending")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
+      getAdminRestaurantRevenue() {
+        try {
+          return api
+              .get("/order/adminrestaurantrevenue")
+              .then(response=> {
+                return response;
+              })
+          } catch(e) {
+            console.log(e)
+          }
+        
+      }
+
       changeOrderStatus(orderId, status) {
-        api
+       return api
           .put("/order/status/" + orderId + "/" + status)
-          .then(response => {
-        })
+          
       }
 
       acceptOrderForRestaurant(orderId) {
         //promjena statusa u In preparation
         //znaci da je restoran prihvatio narudzbu
-        this.changeOrderStatus(orderId, "In preparation")
+        return this.changeOrderStatus(orderId, "In preparation")
       }
 
       acceptOrderForCourier(orderId) {
         //promjena status u In delivery
         //znaci da je dostavljac prihvatio narudzbu za dostavu
         //posto ovo poziva courier, njegov uuid ce biti u headeru, jer je on current user
-        api
+        return api
           .put("/order/adddeliveryperson/" + orderId)
-          .then(response => {
-
-        })
+          
       }
 
       rejectOrder(orderId) {
         //promjena statusa u Rejected
         //znaci da je restoran odbio naredbu
-        this.changeOrderStatus(orderId, "Rejected")
+        return this.changeOrderStatus(orderId, "Rejected")
       }
 
       orderReady(orderId) {
         //promjena statusa u Ready for delivery
         //znaci da je restoran pripremio narudzbu i sad je neki od dostavljaca moze preuzeti
-        this.changeOrderStatus(orderId, "Ready for delivery")
+        return this.changeOrderStatus(orderId, "Ready for delivery")
       }
 
       orderDelivered(orderId) {
         //promjena statusa u Delivered
         //znaci da je narudzba dostavljena naruciocu
-        this.changeOrderStatus(orderId, "Delivered")
+        return this.changeOrderStatus(orderId, "Delivered")
+      }
+
+      cancelOrder(orderId) {
+        return this.changeOrderStatus(orderId,"Cancelled")
       }
 
       getReadyForDeliveryOrders() {
@@ -64,6 +104,34 @@ class OrderService {
 
       getDeliveryPersonOrders() {
         return api.get("/order/get/deliveryperson")
+      }
+
+      getRestaurantPastOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Delivered
+        return api.get("/order/get/restaurant/" + uuid +"/delivered")
+      }
+
+      getRestaurantPendingOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Pending (sve novokreirane narudzbe neka imaju ovaj status) 
+        return api.get("/order/get/restaurant/" + uuid +"/pending")
+      }
+
+      getRestaurantInPreparationOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status In preparation
+        return api.get("/order/get/restaurant/" + uuid +"/in-preparation")
+      }
+
+      getRestaurantReadyOrders(uuid) {
+        //treba vratiti narudzbe za restoran ciji je UUID proslijeđen
+        //narudzbe moraju imati status Ready for delivery
+        return api.get("/order/get/restaurant/" + uuid +"/ready-for-delivery")
+      }
+
+      createOrder(orderCreateRequest) {
+        return api.post("/order/add", orderCreateRequest)
       }
 
 }

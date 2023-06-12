@@ -3,6 +3,7 @@ package the.convenient.foodie.restaurant.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import the.convenient.foodie.restaurant.dto.review.ReviewResponse;
 import the.convenient.foodie.restaurant.repository.RestaurantRepository;
 import the.convenient.foodie.restaurant.repository.ReviewRepository;
 import the.convenient.foodie.restaurant.dto.review.ReviewCreateRequest;
@@ -20,6 +21,16 @@ public class ReviewService {
     private RestaurantRepository restaurantRepository;
 
     public Review addNewReview(ReviewCreateRequest request) {
+        var existingReview = reviewRepository.findByUserAndRestaurant(request.getUserUUID(),request.getRestaurantId());
+        if(existingReview!=null)
+        {
+            existingReview.setRating(request.getRating());
+            existingReview.setComment(request.getComment());
+            existingReview.setModified(LocalDateTime.now());
+            existingReview.setModifiedBy(request.getUserUUID());
+            reviewRepository.save(existingReview);
+            return existingReview;
+        }
         Review review = new Review();
         review.setRating(request.getRating());
         review.setComment(request.getComment());
@@ -28,17 +39,16 @@ public class ReviewService {
         var restaurant = restaurantRepository.findById(request.getRestaurantId()).orElseThrow(()-> exception);
         review.setRestaurant(restaurant);
         review.setCreated(LocalDateTime.now());
-        //Update with userID/name
-        review.setCreatedBy("test");
+        review.setCreatedBy(request.getUserUUID());
         reviewRepository.save(review);
 
         return review;
     }
 
-    public List<Review> getReviewsForRestaurant(Long restaurantId) {
-        var exception = new EntityNotFoundException("Restaurant with id " + restaurantId + " does not exist!");
-        restaurantRepository.findById(restaurantId).orElseThrow(()-> exception);
-        return reviewRepository.getReviewsForRestaurant(restaurantId);
+    public List<ReviewResponse> getReviewsForRestaurant(String restaurantUUID) {
+        var exception = new EntityNotFoundException("Restaurant with uuid " + restaurantUUID + " does not exist!");
+        restaurantRepository.findByUUID(restaurantUUID).orElseThrow(()-> exception);
+        return reviewRepository.getReviewsForRestaurant(restaurantUUID);
     }
 
     public List<Review> getUserReviews(String userUUID) {

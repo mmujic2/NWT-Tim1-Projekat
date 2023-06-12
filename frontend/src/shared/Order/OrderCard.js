@@ -8,9 +8,10 @@ import dateFormat from 'dateformat';
 import authService from '../../service/auth.service';
 import { useNavigate } from 'react-router-dom';
 import Actions from './Actions';
+import AddReviewPopup from '../../customer/Review/AddReviewPopup';
 
 
-function OrderCard({ order }) {
+function OrderCard({ order,moveOrder,changeOrder,setAlert,setShowAlert,alert }) {
     const [noActions,setNoActions] = useState(false)
     const navigate = useNavigate();
     const user = authService.getCurrentUser();
@@ -104,7 +105,7 @@ function OrderCard({ order }) {
                         </Card.Body>
                     </Card>
                     <div style={{float:"right"}}>
-                    <Actions status={order.orderStatus} setNoActions={setNoActions}/>
+                    <Actions order={order} setNoActions={setNoActions} moveOrder={moveOrder} setOrder={changeOrder} setAlert={setAlert} setShowAlert={setShowAlert} alert={alert}/>
                     </div>
                 </>
                 : <></>}

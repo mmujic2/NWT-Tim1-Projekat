@@ -16,13 +16,14 @@ public class FavoriteRestaurantRepositoryImpl implements FavoriteRestaurantRepos
 
     @Override
     public List<RestaurantShortResponse> getFavoriteRestaurants(String userUUID) {
-        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.id),count(fr.id))  " +
+        var hql = "SELECT new the.convenient.foodie.restaurant.dto.restaurant.RestaurantShortResponse(r,avg(rev.rating),count(rev.id),(SELECT count(fr2.id) FROM FavoriteRestaurant fr2 WHERE fr2.restaurant.id=r.id))  " +
                 "from Restaurant r LEFT JOIN FavoriteRestaurant fr ON r.id = fr.restaurant.id LEFT JOIN Review"
                 + " rev ON r.id=rev.restaurant.id WHERE fr.userUUID=:userUUID GROUP BY r";
         var query = entityManager.createQuery(hql, RestaurantShortResponse.class).setParameter("userUUID",userUUID);
         return query.getResultList();
     }
 
+    @Transactional
     @Override
     public void removeRestaurantFromFavorites(Long restaurantId, String userUUID){
         var hql = "DELETE from FavoriteRestaurant fr where fr.userUUID=:userUUID and"+

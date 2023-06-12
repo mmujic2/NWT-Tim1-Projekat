@@ -47,6 +47,7 @@ public class MenuService {
         menu.setActive(menuDto.isActive());
         menu.setRestaurant_uuid(menuDto.getRestaurant_uuid());
         menu.setDate_created(LocalDateTime.now());
+        menu.setName(menuDto.getName());
         menuRepository.save(menu);
         return menu;
     }
@@ -63,6 +64,7 @@ public class MenuService {
         menu.setActive(menuDto.isActive());
         menu.setRestaurant_uuid(menuDto.getRestaurant_uuid());
         menu.setDate_modified(LocalDateTime.now());
+        menu.setName(menuDto.getName());
         menuRepository.save(menu);
         return menu;
     }
@@ -86,6 +88,7 @@ public class MenuService {
             menuItem.setDiscount_price(menuItemDao.getDiscount_price());
             //menuItem.setUuid(UUIDGenerator.generateType1UUID().toString());
             menuItem.setDate_created(LocalDateTime.now());
+            menuItem.setImage(menuItemDao.getImage());
             items.add(menuItem);
             newItems.add(menuItem);
         }
@@ -101,7 +104,6 @@ public class MenuService {
             var objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.registerModule(new ParameterNamesModule());
-
             rabbitTemplate.convertAndSend("menuItemCreate", objectMapper.writeValueAsString(newItemsWithUUID));
         } catch (Exception e) {
             System.out.println("Something went wrong when fetching items");
@@ -109,7 +111,15 @@ public class MenuService {
         return menu;
     }
 
+    public List<MenuDto> getRestaurantMenusShort(String restaurantUUID) {
+        return menuRepository.getMenusForRestaurantShort(restaurantUUID);
+    }
+
     public List<Menu> getRestaurantMenus(String restaurantUUID) {
         return menuRepository.getMenusForRestaurant(restaurantUUID);
+    }
+
+    public List<Menu> getActiveRestaurantMenus(String restaurantUUID) {
+        return menuRepository.getActiveMenusForRestaurant(restaurantUUID);
     }
 }
