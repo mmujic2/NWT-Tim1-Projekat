@@ -15,6 +15,7 @@ import TokenService from "./service/token.service";
 import SockJsClient from "react-stomp";
 import { useState } from "react";
 import Alert from "./shared/util/Alert";
+import WebsocketAlert from "./shared/util/WebsocketAlert";
 import RestaurantDetails from "./restaurantManager/RestaurantDetails/RestaurantDetails";
 import AddMenu from "./restaurantManager/Menus/AddMenu";
 import AdminCouriers from "./admin/Home/AdminCouriers";
@@ -22,26 +23,26 @@ import AdminOverview from "./admin/Home/AdminOverview";
 
 function App() {
   const [show, setShow] = useState(false);
-  const [socketMsg, setSocketMsg] = useState([]);
+  const [socketMsg, setSocketMsg] = useState({message: "test2"});
 
   const manageSocketMessage = (msg) => {
-    console.log(msg)
-    var message = JSON.parse(msg)
-    if(message.status) {
-      setSocketMsg(message.message)
+    //console.log(msg)
+    //var message = JSON.parse(msg)
+    if(msg.status) {
+      setSocketMsg(msg)
       setShow(true);
     }
   }
 
   return (
     <>
-      {TokenService.getUserUUID() != undefined ? (
+      {(TokenService.getUserUUID() != undefined && socketMsg.message != undefined) ? (
         <>
-          <Alert
-           msg={socketMsg}
+          <WebsocketAlert
+           msg={socketMsg.message}
            show={show}
            setShow={setShow}
-          ></Alert>
+          ></WebsocketAlert>
           <SockJsClient
             url="http://localhost:7050/websocket"
             topics={["/message/" + TokenService.getUserUUID()]}
