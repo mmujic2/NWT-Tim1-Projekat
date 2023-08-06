@@ -1,26 +1,26 @@
 # The Convenient Foodie
 
-The Convenient Foodie je aplikacija za naručivanje i brzu dostavu hrane na adresu korisnika. Svjesni smo da je najljepše imati obrok u ugodnosti vlastitog doma, a da je sve više restorana u gradu na različitim udaljenim lokacijama iz kojih potiče naša najomiljenija hrana, među kojima ima i restorana koji ne omogućavaju naručivanje. Naša aplikacija rješava ovaj problem na način da uvezuje sve restorane na jedno mjesto, iz kojeg korisnik uz par klikova može naručiti svoj omiljeni obrok na adresu svog doma.
+The Convenient Foodie is an application for ordering and fast delivery of food to the user's address. We are aware that it is best to have a meal in the comfort of your own home, and that there are more and more restaurants in the city in different remote locations where our most favorite food comes from, among which there are also restaurants that do not allow ordering. Our application solves this problem by connecting all restaurants to one place, from which the user can order his favorite meal to his home address with a few clicks.
 
-## Korištene tehnologije
-Pri implementaciji projekta korištena je mikroservisna arhitektura. Za implementaciju su korištene sljedeće tehnologije:
+## Technologies used
+A microservice architecture was used during the implementation of the project. The following technologies were used for implementation:
 - Java Spring Boot
 - React
 - MySQL
 
-## Članovi tima:
+## Team members:
 *	*Mujić Mehmed*
 *	*Ćatić Irvin*
 *	*Hadžibajramović Amila*
 *	*Behić Samra*
 
-## Pokretanje aplikacije pomoću Docker-a
-Za pokretanje aplikacije pomoću Docker-a, potrebno je preuzeti [Docker](https://www.docker.com) za operativni sistem koji koristite. Nakon pokretanja dockera, potrebno je pomoću terminala se pozicionirati u root projekta i pokrenuti `docker compose up` komandu. Alternativno, iz root projekta možete preuzeti `docker-compose.yml`, i terminal podesiti na lokaciju na kojoj se nalazi ova datoteka, te pokrenuti `docker compose up`.
+## Running an application using Docker
+To run an application using Docker, it is necessary to download [Docker](https://www.docker.com) for the operating system you are using. After starting docker, it is necessary to use the terminal to position yourself in the root of the project and run the `docker compose up' command. Alternatively, you can download `docker-compose.yml` from the root project, set the terminal to the location where this file is located, and run `docker compose up`.
 
-Pri prvom pokretanju je potrebno sačekati određeno vrijeme dok se sve slike preuzmu.
+At the first launch, it is necessary to wait a certain time until all images are downloaded.
 
-## Dokumentacija
+## Documentation
 PNWT-2023 - [PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/folders/1c-2JFAH6VcxvNkYe4_qD5xVJCudUtzj3)
 
-## Video prezetacije
+## Video presentation
 [PNWT-Tim1-Dokumentacija](https://drive.google.com/drive/u/0/folders/1jVlAXzam1ly9xAUcGLTPF9fOPJ9BjNIJ?fbclid=IwAR0yGr90iJfHMvpBjk2EQO8nfTtiPsHwMS7W5zk6XxEzW_EaZ21qFZMe_LY)
