@@ -15,7 +15,7 @@ A microservice architecture was used during the implementation of the project. T
 *	*Behić Samra*
 
 ## Running an application using Docker
-To run an application using Docker, it is necessary to download [Docker](https://www.docker.com) for the operating system you are using. After starting docker, it is necessary to use the terminal to position yourself in the root of the project and run the `docker compose up' command. Alternatively, you can download `docker-compose.yml` from the root project, set the terminal to the location where this file is located, and run `docker compose up`.
+To run an application using Docker, it is necessary to download [Docker](https://www.docker.com) for the operating system you are using. After starting docker, it is necessary to use the terminal to position yourself in the root of the project and run the 'docker compose up' command. Alternatively, you can download 'docker-compose.yml' from the root project, set the terminal to the location where this file is located, and run 'docker compose up'.
 
 At the first launch, it is necessary to wait a certain time until all images are downloaded.
 
